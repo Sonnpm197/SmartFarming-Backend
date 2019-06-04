@@ -1,4 +1,4 @@
-package com.son.CapstoneProject;
+package com.son.CapstoneProject.configuration;
 
 import com.son.CapstoneProject.repository.QuestionSearchRepository;
 
@@ -35,10 +35,9 @@ public class HibernateSearchConfiguration implements ApplicationListener<Applica
         try {
             FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManagerFactory.createEntityManager());
             fullTextEntityManager.createIndexer().startAndWait();
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             System.out.println("An error occurred trying to build the search index: " + e.toString());
         }
-        return;
     }
 
 }

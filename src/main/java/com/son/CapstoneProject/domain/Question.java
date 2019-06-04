@@ -56,7 +56,14 @@ public class Question implements Serializable {
     // default: index=Index.YES, analyze=Analyze.YES and store=Store.NO
     @Analyzer(definition = "customAnalyzer")
     @Field(store = Store.YES)
-    @Column(columnDefinition = "text")
+    @Column(columnDefinition = "nvarchar(100)")
+    private String title;
+
+    // default: index=Index.YES, analyze=Analyze.YES and store=Store.NO
+    // TODO: change whether we should analise this field or not
+//    @Analyzer(definition = "customAnalyzer")
+//    @Field(store = Store.YES)
+//    @Column(columnDefinition = "text")
     private String content;
 
     // Many questions can be asked by an user
@@ -69,7 +76,8 @@ public class Question implements Serializable {
     // @JsonIgnore to ignore this field when parsing the request body to this class (deserialization)
     // "@JsonIgnore is used to ignore the logical property used IN SERIALIZATION AND DESERIALIZATION"
     @JsonIgnore
-    // @JsonManagedReference means this list is shown in response, and @JsonBackReference (for a single object) means
+    // @JsonManagedReference means this list is shown in response,
+    // and @JsonBackReference (for a single object) means
     // this will not be shown in response (avoid recursive)
     @JsonManagedReference
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "question")
