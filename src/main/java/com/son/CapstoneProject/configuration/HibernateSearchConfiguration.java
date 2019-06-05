@@ -1,10 +1,6 @@
 package com.son.CapstoneProject.configuration;
 
-import com.son.CapstoneProject.repository.QuestionSearchRepository;
-
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceContext;
 
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.Search;

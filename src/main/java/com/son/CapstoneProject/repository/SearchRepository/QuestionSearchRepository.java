@@ -1,4 +1,4 @@
-package com.son.CapstoneProject.repository;
+package com.son.CapstoneProject.repository.SearchRepository;
 
 import com.son.CapstoneProject.domain.Question;
 import org.hibernate.search.jpa.FullTextEntityManager;
@@ -7,20 +7,18 @@ import org.hibernate.search.jpa.Search;
 import org.hibernate.search.query.dsl.QueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Repository
 public class QuestionSearchRepository {
 
-    @Autowired
 //    @PersistenceContext allows you to specify which persistence unit you want to use.
 //    Your project might have multiple data sources connected to different DBs
 //    and @PersistenceContext allows you to say which one you want to operate on
+    @Autowired
     private EntityManager entityManager;
 
     private FullTextQuery getJpaQuery(org.apache.lucene.search.Query luceneQuery) {
@@ -37,7 +35,7 @@ public class QuestionSearchRepository {
     }
 
     /*
-    * it relieves the programmer of having to use transaction.begin() and commit(). If you
+     * it relieves the programmer of having to use transaction.begin() and commit(). If you
      * have a method that calls two DAO methods which normally would each have a transaction.begin and
      * transaction.commit encompassing the real operations and call them it would result in two transactions
      * ( and there might be rollback issues if the previous dao method was supposed to be rolled back too).
@@ -48,7 +46,7 @@ public class QuestionSearchRepository {
     public List<Question> searchQuestions(String searchedText) {
         org.apache.lucene.search.Query luceneQuery = getQueryBuilder()
                 .keyword()
-                .onField("content")
+                .onFields("title", "content")
                 .matching(searchedText)
                 .createQuery();
 

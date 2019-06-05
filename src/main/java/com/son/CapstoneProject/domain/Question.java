@@ -59,11 +59,10 @@ public class Question implements Serializable {
     @Column(columnDefinition = "nvarchar(100)")
     private String title;
 
-    // default: index=Index.YES, analyze=Analyze.YES and store=Store.NO
     // TODO: change whether we should analise this field or not
-//    @Analyzer(definition = "customAnalyzer")
-//    @Field(store = Store.YES)
-//    @Column(columnDefinition = "text")
+    @Analyzer(definition = "customAnalyzer")
+    @Field(store = Store.YES)
+    @Column(columnDefinition = "ntext")
     private String content;
 
     // Many questions can be asked by an user
@@ -82,7 +81,5 @@ public class Question implements Serializable {
     @JsonManagedReference
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "question")
     private List<Answer> answers = new ArrayList<>();
-
-    private int reputation;
 
 }

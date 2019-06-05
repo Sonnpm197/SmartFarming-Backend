@@ -1,7 +1,7 @@
-package com.son.CapstoneProject.controller.individualRole;
+package com.son.CapstoneProject.controller.authenticated;
 
-import com.son.CapstoneProject.domain.Question;
-import com.son.CapstoneProject.repository.QuestionRepository;
+import com.son.CapstoneProject.domain.Article;
+import com.son.CapstoneProject.repository.ArticleRepository;
 import com.son.CapstoneProject.uploadFile.FileStorageService;
 import com.son.CapstoneProject.uploadFile.UploadFileResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +28,9 @@ public class AdminController {
     @Autowired
     private FileStorageService fileStorageService;
 
+    @Autowired
+    private ArticleRepository articleRepository;
+
     @PostMapping("/uploadFile")
     public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file) {
         String fileName = fileStorageService.storeFile(file);
@@ -50,6 +53,7 @@ public class AdminController {
     /**
      * This method is to download a file from URI
      * *Note: to use regular expression we need a format like: varName:regex
+     *
      * @param fileName
      * @param request
      * @return
@@ -68,7 +72,7 @@ public class AdminController {
         }
 
         // Fallback to the default content type if type could not be determined
-        if(contentType == null) {
+        if (contentType == null) {
             contentType = "application/octet-stream";
         }
 
@@ -78,4 +82,58 @@ public class AdminController {
                 .body(resource);
     }
 
+    /**
+     * Admins can add a new article
+     * @param article
+     * @return
+     */
+    @PostMapping(value = "/addArticle",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public Article addArticle(@RequestBody Article article) {
+        return articleRepository.save(article);
+    }
+
+    /**
+     * Admins can update an article
+     * @param updatedArticle
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    @PutMapping("/updateArticle/{id}")
+    public ResponseEntity<Article> updateArticle(
+            @RequestBody Article updatedArticle,
+            @PathVariable Long id)
+            throws Exception {
+        Article oldSkill = articleRepository.findById(id)
+                .orElseThrow(() -> new Exception("Not found"));
+
+        // Update values
+        oldSkill.setTitle(updatedArticle.getTitle());
+        oldSkill.setContent(updatedArticle.getContent());
+
+        Article question = articleRepository.save(oldSkill);
+        return ResponseEntity.ok(question);
+    }
+
+    /**
+     * Admins can delete an article
+     *
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    @DeleteMapping("/deleteArticle/{id}")
+    public Map<String, Boolean> deleteArticle(@PathVariable Long id) throws Exception {
+        Article article = articleRepository.findById(id)
+                .orElseThrow(() -> new Exception("Not found to delete"));
+
+        // Delete article
+        articleRepository.delete(article);
+
+        Map<String, Boolean> map = new HashMap<>();
+        map.put("deleteArticle: " + id, Boolean.TRUE);
+        return map;
+    }
 }

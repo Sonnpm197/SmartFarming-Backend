@@ -2,7 +2,7 @@ package com.son.CapstoneProject.controller;
 
 import com.son.CapstoneProject.domain.Question;
 import com.son.CapstoneProject.repository.QuestionRepository;
-import com.son.CapstoneProject.repository.QuestionSearchRepository;
+import com.son.CapstoneProject.repository.SearchRepository.QuestionSearchRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,12 +23,15 @@ public class ForumController {
     @Autowired
     private QuestionSearchRepository questionSearchRepository;
 
-    @GetMapping("/viewAll")
-    public List<Question> viewAllAskedQuestions(HttpServletRequest servletRequest) {
-        System.out.println(servletRequest.getRemoteAddr());
-        // Access via proxy
-        String ipAddress = servletRequest.getHeader("X-FORWARDED-FOR");
+    @GetMapping("/viewAllQuestions")
+    public List<Question> viewAllQuestions() {
         return questionRepository.findAll();
+    }
+
+    @GetMapping("/viewQuestion/{id}")
+    public Question viewQuestion(@PathVariable Long id) throws Exception {
+        return questionRepository.findById(id)
+                .orElseThrow(() -> new Exception("Not found"));
     }
 
     @GetMapping("/searchQuestions/{textSearch}")

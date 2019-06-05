@@ -1,23 +1,23 @@
-package com.son.CapstoneProject.controller.individualRole;
+package com.son.CapstoneProject.controller.authenticated;
 
 import com.son.CapstoneProject.domain.Answer;
 import com.son.CapstoneProject.domain.Question;
-import com.son.CapstoneProject.repository.*;
+import com.son.CapstoneProject.repository.AnswerRepository;
+import com.son.CapstoneProject.repository.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
- * This class is for a client's events
+ * This class is for both admins and clients
  */
 @RestController
-@RequestMapping("/client")
-public class ClientController {
+@RequestMapping("/user")
+public class UserController {
 
     // This repository is for users to add, update, and delete questions
     @Autowired
@@ -51,7 +51,11 @@ public class ClientController {
             throws Exception {
         Question oldQuestion = questionRepository.findById(id)
                 .orElseThrow(() -> new Exception("Not found"));
+
+        // Update values
+        oldQuestion.setTitle(updatedQuestion.getTitle());
         oldQuestion.setContent(updatedQuestion.getContent());
+
         Question question = questionRepository.save(oldQuestion);
         return ResponseEntity.ok(question);
     }
@@ -68,7 +72,7 @@ public class ClientController {
                 .orElseThrow(() -> new Exception("Not found to delete"));
         questionRepository.delete(question);
         Map<String, Boolean> map = new HashMap<>();
-        map.put("deleted question", Boolean.TRUE);
+        map.put("deleteQuestion", Boolean.TRUE);
         return map;
     }
 
@@ -115,7 +119,7 @@ public class ClientController {
                 .orElseThrow(() -> new Exception("Not found to delete"));
         answerRepository.delete(answer);
         Map<String, Boolean> map = new HashMap<>();
-        map.put("deleted answer", Boolean.TRUE);
+        map.put("deleteAnswer", Boolean.TRUE);
         return map;
     }
 }

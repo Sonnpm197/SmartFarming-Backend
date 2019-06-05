@@ -22,6 +22,7 @@ public class Answer implements Serializable {
     @GeneratedValue
     private Long id;
 
+    @Column(columnDefinition = "ntext")
     private String content;
 
     // Many answers can be replied by an user

@@ -31,8 +31,6 @@ public class Client implements Serializable {
 
     private String profileName;
 
-    private int reputation;
-
     // An user can ask many questions
     @JsonIgnore
     @JsonManagedReference

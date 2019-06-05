@@ -57,10 +57,11 @@
         </dependency>
 
         <!--Hibernate Search with lucene-->
+        <!--Note: Spring 2.1 uses Hibernate ORM 5.3, which matches hibernate search 5.10-->
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-search-orm</artifactId>
-            <version>5.9.0.Final</version>
+            <version>5.10.3.Final</version>
         </dependency>
 
         <dependency>

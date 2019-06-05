@@ -81,7 +81,7 @@
     </database>
     <schema id="20" parent="3" name="dbo">
       <ObjectId>1</ObjectId>
-      <IntrospectionTimestamp>2019-05-13.06:04:37.003</IntrospectionTimestamp>
+      <IntrospectionTimestamp>2019-06-06.02:57:17.400</IntrospectionTimestamp>
       <Current>1</Current>
       <Visible>1</Visible>
     </schema>
@@ -136,26 +136,27 @@
     <table id="33" parent="20" name="answer">
       <ObjectId>1525580473</ObjectId>
       <CreatedTimestamp>2019-05-13.06:03:48.040</CreatedTimestamp>
-      <ModifiedTimestamp>2019-05-13.06:03:48.053</ModifiedTimestamp>
+      <ModifiedTimestamp>2019-06-06.02:50:49.820</ModifiedTimestamp>
     </table>
-    <table id="34" parent="20" name="client">
+    <table id="34" parent="20" name="article">
+      <ObjectId>114099447</ObjectId>
+      <CreatedTimestamp>2019-06-06.02:28:09.903</CreatedTimestamp>
+      <ModifiedTimestamp>2019-06-06.02:28:09.903</ModifiedTimestamp>
+    </table>
+    <table id="35" parent="20" name="client">
       <ObjectId>1173579219</ObjectId>
       <CreatedTimestamp>2019-05-12.05:53:57.670</CreatedTimestamp>
-      <ModifiedTimestamp>2019-05-13.06:03:48.057</ModifiedTimestamp>
+      <ModifiedTimestamp>2019-06-06.02:39:40.640</ModifiedTimestamp>
     </table>
-    <table id="35" parent="20" name="question">
+    <table id="36" parent="20" name="question">
       <ObjectId>1557580587</ObjectId>
       <CreatedTimestamp>2019-05-13.06:03:48.040</CreatedTimestamp>
-      <ModifiedTimestamp>2019-05-13.06:03:48.057</ModifiedTimestamp>
+      <ModifiedTimestamp>2019-06-06.02:43:40.500</ModifiedTimestamp>
     </table>
-    <column id="36" parent="33" name="id">
+    <column id="37" parent="33" name="id">
       <Position>1</Position>
       <DataType>bigint|0s</DataType>
       <NotNull>1</NotNull>
-    </column>
-    <column id="37" parent="33" name="content">
-      <Position>2</Position>
-      <DataType>varchar(255 char)|0s</DataType>
     </column>
     <column id="38" parent="33" name="client_email">
       <Position>3</Position>
@@ -165,14 +166,18 @@
       <Position>4</Position>
       <DataType>bigint|0s</DataType>
     </column>
-    <index id="40" parent="33" name="PK__answer__3213E83F46CB13DD">
+    <column id="40" parent="33" name="content">
+      <Position>5</Position>
+      <DataType>ntext|0s</DataType>
+    </column>
+    <index id="41" parent="33" name="PK__answer__3213E83F46CB13DD">
       <Position>1</Position>
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Clustering>1</Clustering>
       <Unique>1</Unique>
     </index>
-    <key id="41" parent="33" name="PK__answer__3213E83F46CB13DD">
+    <key id="42" parent="33" name="PK__answer__3213E83F46CB13DD">
       <ObjectId>1541580530</ObjectId>
       <NameSurrogate>1</NameSurrogate>
       <CreatedTimestamp>2019-05-13.06:03:48.040</CreatedTimestamp>
@@ -181,7 +186,7 @@
       <UnderlyingIndexName>PK__answer__3213E83F46CB13DD</UnderlyingIndexName>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="42" parent="33" name="FK_ANSWER_CLIENT">
+    <foreign-key id="43" parent="33" name="FK_ANSWER_CLIENT">
       <ObjectId>1589580701</ObjectId>
       <CreatedTimestamp>2019-05-13.06:03:48.047</CreatedTimestamp>
       <ModifiedTimestamp>2019-05-13.06:03:48.047</ModifiedTimestamp>
@@ -192,7 +197,7 @@
       <RefKeyName>PK__client__AB6E61657F1F1D0D</RefKeyName>
       <RefColNames>email</RefColNames>
     </foreign-key>
-    <foreign-key id="43" parent="33" name="FK_ANSWER_QUESTION">
+    <foreign-key id="44" parent="33" name="FK_ANSWER_QUESTION">
       <ObjectId>1605580758</ObjectId>
       <CreatedTimestamp>2019-05-13.06:03:48.053</CreatedTimestamp>
       <ModifiedTimestamp>2019-05-13.06:03:48.053</ModifiedTimestamp>
@@ -203,36 +208,64 @@
       <RefKeyName>PK__question__3213E83FE738AF33</RefKeyName>
       <RefColNames>id</RefColNames>
     </foreign-key>
-    <column id="44" parent="34" name="email">
+    <column id="45" parent="34" name="id">
+      <Position>1</Position>
+      <DataType>bigint|0s</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="46" parent="34" name="category">
+      <Position>2</Position>
+      <DataType>nvarchar(50 char)|0s</DataType>
+    </column>
+    <column id="47" parent="34" name="content">
+      <Position>3</Position>
+      <DataType>ntext|0s</DataType>
+    </column>
+    <column id="48" parent="34" name="title">
+      <Position>4</Position>
+      <DataType>nvarchar(255 char)|0s</DataType>
+    </column>
+    <index id="49" parent="34" name="PK__article__3213E83FE8024937">
+      <Position>1</Position>
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>id</ColNames>
+      <Clustering>1</Clustering>
+      <Unique>1</Unique>
+    </index>
+    <key id="50" parent="34" name="PK__article__3213E83FE8024937">
+      <ObjectId>130099504</ObjectId>
+      <NameSurrogate>1</NameSurrogate>
+      <CreatedTimestamp>2019-06-06.02:28:09.903</CreatedTimestamp>
+      <ModifiedTimestamp>2019-06-06.02:28:09.903</ModifiedTimestamp>
+      <ColNames>id</ColNames>
+      <UnderlyingIndexName>PK__article__3213E83FE8024937</UnderlyingIndexName>
+      <Primary>1</Primary>
+    </key>
+    <column id="51" parent="35" name="email">
       <Position>1</Position>
       <DataType>varchar(255 char)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="45" parent="34" name="password">
+    <column id="52" parent="35" name="password">
       <Position>2</Position>
       <DataType>varchar(255 char)|0s</DataType>
     </column>
-    <column id="46" parent="34" name="profile_name">
+    <column id="53" parent="35" name="profile_name">
       <Position>3</Position>
       <DataType>varchar(255 char)|0s</DataType>
     </column>
-    <column id="47" parent="34" name="reputation">
-      <Position>4</Position>
-      <DataType>int|0s</DataType>
-      <NotNull>1</NotNull>
-    </column>
-    <column id="48" parent="34" name="role">
+    <column id="54" parent="35" name="role">
       <Position>5</Position>
       <DataType>varchar(255 char)|0s</DataType>
     </column>
-    <index id="49" parent="34" name="PK__client__AB6E61657F1F1D0D">
+    <index id="55" parent="35" name="PK__client__AB6E61657F1F1D0D">
       <Position>1</Position>
       <NameSurrogate>1</NameSurrogate>
       <ColNames>email</ColNames>
       <Clustering>1</Clustering>
       <Unique>1</Unique>
     </index>
-    <key id="50" parent="34" name="PK__client__AB6E61657F1F1D0D">
+    <key id="56" parent="35" name="PK__client__AB6E61657F1F1D0D">
       <ObjectId>1189579276</ObjectId>
       <NameSurrogate>1</NameSurrogate>
       <CreatedTimestamp>2019-05-12.05:53:57.670</CreatedTimestamp>
@@ -241,32 +274,31 @@
       <UnderlyingIndexName>PK__client__AB6E61657F1F1D0D</UnderlyingIndexName>
       <Primary>1</Primary>
     </key>
-    <column id="51" parent="35" name="id">
+    <column id="57" parent="36" name="id">
       <Position>1</Position>
       <DataType>bigint|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="52" parent="35" name="content">
-      <Position>2</Position>
-      <DataType>text|0s</DataType>
-    </column>
-    <column id="53" parent="35" name="reputation">
-      <Position>3</Position>
-      <DataType>int|0s</DataType>
-      <NotNull>1</NotNull>
-    </column>
-    <column id="54" parent="35" name="client_email">
+    <column id="58" parent="36" name="client_email">
       <Position>4</Position>
       <DataType>varchar(255 char)|0s</DataType>
     </column>
-    <index id="55" parent="35" name="PK__question__3213E83FE738AF33">
+    <column id="59" parent="36" name="title">
+      <Position>5</Position>
+      <DataType>nvarchar(100 char)|0s</DataType>
+    </column>
+    <column id="60" parent="36" name="content">
+      <Position>6</Position>
+      <DataType>ntext|0s</DataType>
+    </column>
+    <index id="61" parent="36" name="PK__question__3213E83FE738AF33">
       <Position>1</Position>
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Clustering>1</Clustering>
       <Unique>1</Unique>
     </index>
-    <key id="56" parent="35" name="PK__question__3213E83FE738AF33">
+    <key id="62" parent="36" name="PK__question__3213E83FE738AF33">
       <ObjectId>1573580644</ObjectId>
       <NameSurrogate>1</NameSurrogate>
       <CreatedTimestamp>2019-05-13.06:03:48.043</CreatedTimestamp>
@@ -275,7 +307,7 @@
       <UnderlyingIndexName>PK__question__3213E83FE738AF33</UnderlyingIndexName>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="57" parent="35" name="FK_QUESTION_CLIENT">
+    <foreign-key id="63" parent="36" name="FK_QUESTION_CLIENT">
       <ObjectId>1621580815</ObjectId>
       <CreatedTimestamp>2019-05-13.06:03:48.053</CreatedTimestamp>
       <ModifiedTimestamp>2019-05-13.06:03:48.053</ModifiedTimestamp>
