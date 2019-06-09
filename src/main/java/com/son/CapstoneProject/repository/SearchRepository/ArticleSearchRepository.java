@@ -1,8 +1,6 @@
 package com.son.CapstoneProject.repository.SearchRepository;
 
-import com.son.CapstoneProject.domain.Question;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
+import com.son.CapstoneProject.domain.Article;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.FullTextQuery;
 import org.hibernate.search.jpa.Search;
@@ -12,11 +10,10 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class QuestionSearchRepository {
+public class ArticleSearchRepository {
 
 //    @PersistenceContext allows you to specify which persistence unit you want to use.
 //    Your project might have multiple data sources connected to different DBs
@@ -26,14 +23,14 @@ public class QuestionSearchRepository {
 
     private FullTextQuery getJpaQuery(org.apache.lucene.search.Query luceneQuery) {
         FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
-        return fullTextEntityManager.createFullTextQuery(luceneQuery, Question.class);
+        return fullTextEntityManager.createFullTextQuery(luceneQuery, Article.class);
     }
 
     private QueryBuilder getQueryBuilder() {
         FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
         return fullTextEntityManager.getSearchFactory()
                 .buildQueryBuilder()
-                .forEntity(Question.class)
+                .forEntity(Article.class)
                 .get();
     }
 
@@ -46,7 +43,7 @@ public class QuestionSearchRepository {
      * commit() cycle. Of course in case you use @transactional the DAOs must not use the begin() and commit() methods
     * */
     @Transactional
-    public List<Question> searchQuestions(String searchedText) {
+    public List<Article> searchArticles(String searchedText) {
         org.apache.lucene.search.Query luceneQuery = getQueryBuilder()
                 .keyword()
                 .onFields("title", "content")
@@ -55,9 +52,9 @@ public class QuestionSearchRepository {
 
         FullTextQuery jpaFullTextQuery = getJpaQuery(luceneQuery);
 
-        List<Question> questions = jpaFullTextQuery.getResultList();
+        List<Article> articles = jpaFullTextQuery.getResultList();
 
-        return questions;
+        return articles;
     }
 
 }

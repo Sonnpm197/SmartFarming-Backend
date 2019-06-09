@@ -23,7 +23,8 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 // As it is correctly suggested in previous answers, lazy loading means that when you
-// fetch your object from the database, the nested objects are not fetched (and may be fetched later when required).
+// fetch your object from the database, the nested objects are not fetched
+// (and may be fetched later when required (LAZY load)).
 // Now Jackson tries to serialize the nested object (== make JSON out of it), but fails as it
 // finds JavassistLazyInitializer instead of normal object. To fix this, use the annotation below
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
