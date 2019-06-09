@@ -5,7 +5,6 @@ import com.son.CapstoneProject.repository.ArticleRepository;
 import com.son.CapstoneProject.uploadFile.FileStorageService;
 import com.son.CapstoneProject.uploadFile.UploadFileResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -24,6 +23,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/admin")
+@CrossOrigin(origins = "${front-end.settings.cross-origin.url}")
 public class AdminController {
 
     @Autowired
@@ -92,8 +92,8 @@ public class AdminController {
     @PostMapping(value = "/addArticle",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public Article addArticle(@RequestBody Article article) {
-        return articleRepository.save(article);
+    public ResponseEntity<Article> addArticle(@RequestBody Article article) {
+        return ResponseEntity.ok(articleRepository.save(article));
     }
 
     /**

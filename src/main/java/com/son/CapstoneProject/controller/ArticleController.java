@@ -1,7 +1,6 @@
 package com.son.CapstoneProject.controller;
 
 import com.son.CapstoneProject.domain.Article;
-import com.son.CapstoneProject.domain.Question;
 import com.son.CapstoneProject.repository.ArticleRepository;
 import com.son.CapstoneProject.repository.SearchRepository.ArticleSearchRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/article")
+@CrossOrigin(origins = "${front-end.settings.cross-origin.url}")
 public class ArticleController {
 
     @Autowired

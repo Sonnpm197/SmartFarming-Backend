@@ -6,11 +6,11 @@ import com.son.CapstoneProject.repository.SearchRepository.QuestionSearchReposit
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
 @RequestMapping("/forum")
+@CrossOrigin(origins = "${front-end.settings.cross-origin.url}")
 public class ForumController {
 
     @Autowired

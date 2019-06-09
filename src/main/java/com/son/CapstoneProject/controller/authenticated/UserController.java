@@ -17,6 +17,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/user")
+@CrossOrigin(origins = "${front-end.settings.cross-origin.url}")
 public class UserController {
 
     // This repository is for users to add, update, and delete questions
