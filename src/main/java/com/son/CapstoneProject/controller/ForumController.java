@@ -4,10 +4,7 @@ import com.son.CapstoneProject.domain.Question;
 import com.son.CapstoneProject.repository.QuestionRepository;
 import com.son.CapstoneProject.repository.SearchRepository.QuestionSearchRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -22,6 +19,11 @@ public class ForumController {
     // This repository is for search question by Lucene
     @Autowired
     private QuestionSearchRepository questionSearchRepository;
+
+    @RequestMapping("/hi")
+    public @ResponseBody String hiThere(){
+        return "hello world!";
+    }
 
     @GetMapping("/viewAllQuestions")
     public List<Question> viewAllQuestions() {
