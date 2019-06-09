@@ -17,7 +17,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/user")
-@CrossOrigin(origins = "${front-end.settings.cross-origin.url}")
+@CrossOrigin(origins = {"${front-end.settings.cross-origin.url}"})
 public class UserController {
 
     // This repository is for users to add, update, and delete questions
@@ -68,12 +68,13 @@ public class UserController {
      * @throws Exception
      */
     @DeleteMapping("/deleteQuestion/{id}")
-    public Map<String, Boolean> deleteQuestion(@PathVariable Long id) throws Exception {
+    public Map<String, String> deleteQuestion(@PathVariable Long id) throws Exception {
         Question question = questionRepository.findById(id)
                 .orElseThrow(() -> new Exception("Not found to delete"));
         questionRepository.delete(question);
-        Map<String, Boolean> map = new HashMap<>();
-        map.put("deleteQuestion", Boolean.TRUE);
+        Map<String, String> map = new HashMap<>();
+        map.put("questionId", "" + id);
+        map.put("deleted", "true");
         return map;
     }
 
@@ -115,12 +116,13 @@ public class UserController {
      * @throws Exception
      */
     @DeleteMapping("/deleteAnswer/{id}")
-    public Map<String, Boolean> deleteAnswer(@PathVariable Long id) throws Exception {
+    public Map<String, String> deleteAnswer(@PathVariable Long id) throws Exception {
         Answer answer = answerRepository.findById(id)
                 .orElseThrow(() -> new Exception("Not found to delete"));
         answerRepository.delete(answer);
-        Map<String, Boolean> map = new HashMap<>();
-        map.put("deleteAnswer", Boolean.TRUE);
+        Map<String, String> map = new HashMap<>();
+        map.put("answerId", "" + id);
+        map.put("deleted", "true");
         return map;
     }
 }

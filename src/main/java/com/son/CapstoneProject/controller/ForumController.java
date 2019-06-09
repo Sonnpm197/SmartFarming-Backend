@@ -10,7 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/forum")
-@CrossOrigin(origins = "${front-end.settings.cross-origin.url}")
+@CrossOrigin(origins = {"${front-end.settings.cross-origin.url}"})
 public class ForumController {
 
     @Autowired

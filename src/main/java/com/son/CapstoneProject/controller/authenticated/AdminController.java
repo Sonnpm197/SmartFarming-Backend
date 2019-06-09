@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/admin")
-@CrossOrigin(origins = "${front-end.settings.cross-origin.url}")
+@CrossOrigin(origins = {"${front-end.settings.cross-origin.url}"})
 public class AdminController {
 
     @Autowired
@@ -128,15 +128,16 @@ public class AdminController {
      * @throws Exception
      */
     @DeleteMapping("/deleteArticle/{id}")
-    public Map<String, Boolean> deleteArticle(@PathVariable Long id) throws Exception {
+    public Map<String, String> deleteArticle(@PathVariable Long id) throws Exception {
         Article article = articleRepository.findById(id)
                 .orElseThrow(() -> new Exception("Not found to delete"));
 
         // Delete article
         articleRepository.delete(article);
 
-        Map<String, Boolean> map = new HashMap<>();
-        map.put("deleteArticle: " + id, Boolean.TRUE);
+        Map<String, String> map = new HashMap<>();
+        map.put("articleId", ("" + id));
+        map.put("deleted", "true");
         return map;
     }
 }
