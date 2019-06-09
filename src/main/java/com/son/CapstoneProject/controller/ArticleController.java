@@ -12,7 +12,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/article")
-@CrossOrigin(origins = "http://localhost:4200")
 public class ArticleController {
 
     @Autowired
