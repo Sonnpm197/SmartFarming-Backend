@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/admin")
+@CrossOrigin(origins = "http://localhost:4200")
 public class AdminController {
 
     @Autowired
