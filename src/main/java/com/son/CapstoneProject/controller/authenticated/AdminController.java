@@ -5,6 +5,7 @@ import com.son.CapstoneProject.repository.ArticleRepository;
 import com.son.CapstoneProject.uploadFile.FileStorageService;
 import com.son.CapstoneProject.uploadFile.UploadFileResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -85,6 +86,7 @@ public class AdminController {
 
     /**
      * Admins can add a new article
+     *
      * @param article
      * @return
      */
@@ -97,6 +99,7 @@ public class AdminController {
 
     /**
      * Admins can update an article
+     *
      * @param updatedArticle
      * @param id
      * @return
