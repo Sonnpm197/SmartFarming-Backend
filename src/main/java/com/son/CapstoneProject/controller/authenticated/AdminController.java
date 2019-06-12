@@ -109,14 +109,14 @@ public class AdminController {
             @RequestBody Article updatedArticle,
             @PathVariable Long id)
             throws Exception {
-        Article oldSkill = articleRepository.findById(id)
+        Article oldArticle = articleRepository.findById(id)
                 .orElseThrow(() -> new Exception("Not found"));
 
         // Update values
-        oldSkill.setTitle(updatedArticle.getTitle());
-        oldSkill.setContent(updatedArticle.getContent());
+        oldArticle.setTitle(updatedArticle.getTitle());
+        oldArticle.setContent(updatedArticle.getContent());
 
-        Article question = articleRepository.save(oldSkill);
+        Article question = articleRepository.save(oldArticle);
         return ResponseEntity.ok(question);
     }
 

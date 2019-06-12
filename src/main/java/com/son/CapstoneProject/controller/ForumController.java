@@ -20,11 +20,6 @@ public class ForumController {
     @Autowired
     private QuestionSearchRepository questionSearchRepository;
 
-    @RequestMapping("/hi")
-    public @ResponseBody String hiThere(){
-        return "hello world!";
-    }
-
     @GetMapping("/viewAllQuestions")
     public List<Question> viewAllQuestions() {
         return questionRepository.findAll();

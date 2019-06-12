@@ -11,6 +11,11 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 @EnableConfigurationProperties({FileStorageProperties.class})
 public class Application extends SpringBootServletInitializer {
 
+    /**
+     * Set source to deploy war file
+     * @param application
+     * @return
+     */
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
         return application.sources(Application.class);

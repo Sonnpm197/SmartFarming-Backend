@@ -24,6 +24,12 @@ public class ArticleController {
         return articleRepository.findAll();
     }
 
+    @GetMapping("/viewQuestion/{id}")
+    public Article viewArticle(@PathVariable Long id) throws Exception {
+        return articleRepository.findById(id)
+                .orElseThrow(() -> new Exception("Not found"));
+    }
+
     @GetMapping("/searchArticles/{textSearch}")
     public List<Article> searchArticles(@PathVariable String textSearch) {
         return articleSearchRepository.searchArticles(textSearch);

@@ -41,7 +41,7 @@ public class AdminControllerTest {
     private FileStorageService fileStorageService;
 
     @Value("${front-end.settings.cross-origin.url}")
-    String frontEndUrl;
+    private String frontEndUrl;
 
     @Test
     public void addArticle() {
