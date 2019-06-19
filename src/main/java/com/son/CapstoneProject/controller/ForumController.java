@@ -1,8 +1,9 @@
 package com.son.CapstoneProject.controller;
 
-import com.son.CapstoneProject.domain.Question;
+import com.son.CapstoneProject.entity.GenericClass;
+import com.son.CapstoneProject.entity.Question;
 import com.son.CapstoneProject.repository.QuestionRepository;
-import com.son.CapstoneProject.repository.SearchRepository.QuestionSearchRepository;
+import com.son.CapstoneProject.repository.searchRepository.HibernateSearchRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +19,7 @@ public class ForumController {
 
     // This repository is for search question by Lucene
     @Autowired
-    private QuestionSearchRepository questionSearchRepository;
+    private HibernateSearchRepository hibernateSearchRepository;
 
     @GetMapping("/viewAllQuestions")
     public List<Question> viewAllQuestions() {
@@ -33,7 +34,11 @@ public class ForumController {
 
     @GetMapping("/searchQuestions/{textSearch}")
     public List<Question> searchQuestions(@PathVariable String textSearch) {
-        return questionSearchRepository.searchQuestions(textSearch);
+        return (List<Question>) hibernateSearchRepository.search2(
+                textSearch,
+                new GenericClass(Question.class),
+                new String[]{"title", "content"} //  fields
+        );
     }
 
 }

@@ -1,7 +1,7 @@
 package com.son.CapstoneProject.controller.authenticated;
 
-import com.son.CapstoneProject.domain.Answer;
-import com.son.CapstoneProject.domain.Question;
+import com.son.CapstoneProject.entity.Answer;
+import com.son.CapstoneProject.entity.Question;
 import com.son.CapstoneProject.repository.AnswerRepository;
 import com.son.CapstoneProject.repository.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +27,11 @@ public class UserController {
     // This repository is for users to add, update, and delete answers
     @Autowired
     private AnswerRepository answerRepository;
+
+    @GetMapping("/test")
+    public String test() {
+        return "You only see this if you are an user";
+    }
 
     /**
      * Add a question

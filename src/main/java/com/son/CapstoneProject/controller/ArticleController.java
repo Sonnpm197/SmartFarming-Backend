@@ -1,8 +1,9 @@
 package com.son.CapstoneProject.controller;
 
-import com.son.CapstoneProject.domain.Article;
+import com.son.CapstoneProject.entity.Article;
+import com.son.CapstoneProject.entity.GenericClass;
 import com.son.CapstoneProject.repository.ArticleRepository;
-import com.son.CapstoneProject.repository.SearchRepository.ArticleSearchRepository;
+import com.son.CapstoneProject.repository.searchRepository.HibernateSearchRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +18,7 @@ public class ArticleController {
     private ArticleRepository articleRepository;
 
     @Autowired
-    private ArticleSearchRepository articleSearchRepository;
+    private HibernateSearchRepository hibernateSearchRepository;
 
     @GetMapping("/viewAllArticles")
     public List<Article> viewAllArticles() {
@@ -32,6 +33,10 @@ public class ArticleController {
 
     @GetMapping("/searchArticles/{textSearch}")
     public List<Article> searchArticles(@PathVariable String textSearch) {
-        return articleSearchRepository.searchArticles(textSearch);
+        return (List<Article>) hibernateSearchRepository.search2(
+                textSearch,
+                new GenericClass(Article.class),
+                new String[]{"title", "content"}
+        );
     }
 }

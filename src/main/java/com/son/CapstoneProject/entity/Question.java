@@ -1,5 +1,6 @@
-package com.son.CapstoneProject.domain;
+package com.son.CapstoneProject.entity;
 
+import com.son.CapstoneProject.entity.login.AppUser;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,7 +10,6 @@ import org.apache.lucene.analysis.charfilter.MappingCharFilterFactory;
 import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
 import org.hibernate.search.annotations.*;
-import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Parameter;
 //import org.codehaus.jackson.annotate.*;
 
@@ -60,7 +60,6 @@ public class Question implements Serializable {
     @Column(columnDefinition = "nvarchar(100)")
     private String title;
 
-    // TODO: change whether we should analise this field or not
     @Analyzer(definition = "customAnalyzer")
     @Field(store = Store.YES)
     @Column(columnDefinition = "ntext")
@@ -69,8 +68,8 @@ public class Question implements Serializable {
     // Many questions can be asked by an user
     @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "clientEmail", foreignKey = @ForeignKey(name = "FK_QUESTION_CLIENT"))
-    private Client client;
+    @JoinColumn(name = "userId", foreignKey = @ForeignKey(name = "FK_QUESTION_APPUSER"))
+    private AppUser appUser;
 
     // One question can have many answers
     // @JsonIgnore to ignore this field when parsing the request body to this class (deserialization)

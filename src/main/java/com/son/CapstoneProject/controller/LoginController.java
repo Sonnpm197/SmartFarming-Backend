@@ -31,7 +31,7 @@ import java.util.List;
 
 @RestController
 @Transactional
-//@CrossOrigin(origins = {"${front-end.settings.cross-origin.url}"})
+@CrossOrigin(origins = {"${front-end.settings.cross-origin.url}"})
 public class LoginController {
 
     @Autowired

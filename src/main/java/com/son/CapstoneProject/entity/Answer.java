@@ -1,15 +1,16 @@
-package com.son.CapstoneProject.domain;
+package com.son.CapstoneProject.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.son.CapstoneProject.entity.login.AppUser;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import com.fasterxml.jackson.annotation.*;
-//import org.codehaus.jackson.annotate.*;
-
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
+
+//import org.codehaus.jackson.annotate.*;
 
 @Entity
 @Getter
@@ -28,8 +29,8 @@ public class Answer implements Serializable {
     // Many answers can be replied by an user
     @JsonBackReference(value = "client")
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "clientEmail", foreignKey = @ForeignKey(name = "FK_ANSWER_CLIENT"))
-    private Client client;
+    @JoinColumn(name = "userId", foreignKey = @ForeignKey(name = "FK_ANSWER_APPUSER"))
+    private AppUser appUser;
 
     // Many answers for 1 questions
     @JsonBackReference(value = "question")

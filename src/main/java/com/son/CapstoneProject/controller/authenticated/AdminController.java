@@ -1,6 +1,6 @@
 package com.son.CapstoneProject.controller.authenticated;
 
-import com.son.CapstoneProject.domain.Article;
+import com.son.CapstoneProject.entity.Article;
 import com.son.CapstoneProject.repository.ArticleRepository;
 import com.son.CapstoneProject.uploadFile.FileStorageService;
 import com.son.CapstoneProject.uploadFile.UploadFileResponse;
@@ -31,6 +31,11 @@ public class AdminController {
 
     @Autowired
     private ArticleRepository articleRepository;
+
+    @GetMapping("/test")
+    public String test() {
+        return "You only see this if you are an administrator";
+    }
 
     @PostMapping("/uploadFile")
     public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file) {
