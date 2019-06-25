@@ -3,6 +3,8 @@ package com.son.CapstoneProject.repository.loginRepository;
 import com.son.CapstoneProject.entity.login.AppRole;
 import com.son.CapstoneProject.entity.login.AppUser;
 import com.son.CapstoneProject.form.AppUserForm;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.social.connect.Connection;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import java.util.ArrayList;
@@ -86,7 +89,7 @@ public class AppUserDAO {
     }
 
     // Auto create App User Account.
-    public AppUser createAppUser(Connection<?> connection) {
+    public AppUser automaticallyCreateAppUser(Connection<?> connection) {
 
         ConnectionKey key = connection.getKey();
         // (facebook,12345), (google,123) ...
@@ -143,6 +146,18 @@ public class AppUserDAO {
         this.appRoleDAO.createRoleFor(appUser, roleNames);
 
         return appUser;
+    }
+
+    public void increaseReputation(Long userId, int newReputation) {
+        try {
+            AppUser appUser = findAppUserByUserId(userId);
+            appUser.setReputation(newReputation);
+            entityManager.getTransaction().begin();
+            entityManager.merge(appUser);
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private String encryptString(String s) {

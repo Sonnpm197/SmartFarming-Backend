@@ -1,10 +1,14 @@
 package com.son.CapstoneProject.controller;
 
 import com.son.CapstoneProject.entity.Article;
-import com.son.CapstoneProject.entity.GenericClass;
+import com.son.CapstoneProject.entity.search.GenericClass;
 import com.son.CapstoneProject.repository.ArticleRepository;
 import com.son.CapstoneProject.repository.searchRepository.HibernateSearchRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,12 +24,20 @@ public class ArticleController {
     @Autowired
     private HibernateSearchRepository hibernateSearchRepository;
 
-    @GetMapping("/viewAllArticles")
-    public List<Article> viewAllArticles() {
-        return articleRepository.findAll();
+    private static final int ARTICLES_PER_PAGE = 5;
+
+//    @GetMapping("/viewAllArticles")
+//    public List<Article> viewAllArticles() {
+//        return articleRepository.findAll();
+//    }
+
+    @GetMapping("/viewArticles/{pageNumber}")
+    public Page<Article> viewArticles(@PathVariable int pageNumber) {
+        PageRequest pageNumWithElements = PageRequest.of(pageNumber, ARTICLES_PER_PAGE, Sort.by("utilTimestamp"));
+        return articleRepository.findAll(pageNumWithElements);
     }
 
-    @GetMapping("/viewQuestion/{id}")
+    @GetMapping("/viewArticle/{id}")
     public Article viewArticle(@PathVariable Long id) throws Exception {
         return articleRepository.findById(id)
                 .orElseThrow(() -> new Exception("Not found"));

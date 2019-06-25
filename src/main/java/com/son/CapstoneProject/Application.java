@@ -1,14 +1,16 @@
 package com.son.CapstoneProject;
 
-import com.son.CapstoneProject.uploadFile.FileStorageProperties;
+import com.son.CapstoneProject.entity.uploadFile.FileStorageProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootApplication
 @EnableConfigurationProperties({FileStorageProperties.class})
+@EnableAsync
 public class Application extends SpringBootServletInitializer {
 
     /**

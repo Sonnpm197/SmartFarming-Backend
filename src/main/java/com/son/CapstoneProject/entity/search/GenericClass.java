@@ -1,4 +1,4 @@
-package com.son.CapstoneProject.entity;
+package com.son.CapstoneProject.entity.search;
 
 /**
  * This class is for get class type in Hibernate Search

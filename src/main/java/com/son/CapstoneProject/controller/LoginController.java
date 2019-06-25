@@ -51,7 +51,7 @@ public class LoginController {
         return "Welcome to my project";
     }
 
-    @GetMapping(value = "/userInfo", produces="application/json")
+    @GetMapping(value = "/userInfo", produces = "application/json")
     public String adminPage(Principal principal) {
 
         // After user login successfully.
@@ -62,7 +62,7 @@ public class LoginController {
         UserDetails loggedIn = (UserDetails) ((Authentication) principal).getPrincipal();
 
         String userInfo = userDetailAsString(loggedIn);
-        
+
         return userInfo;
     }
 
@@ -85,7 +85,7 @@ public class LoginController {
             return message;
         }
 
-       return "Permission Denied";
+        return "Permission Denied";
     }
 
     @GetMapping("/login")
@@ -118,6 +118,7 @@ public class LoginController {
         myForm.setPassword("defaultPassword");
 
         List<String> roleNames = new ArrayList<String>();
+
         // By default every user has this role
         roleNames.add(AppRole.ROLE_USER);
 

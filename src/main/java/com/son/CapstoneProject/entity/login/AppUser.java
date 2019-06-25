@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.son.CapstoneProject.entity.Answer;
 import com.son.CapstoneProject.entity.Question;
+import com.son.CapstoneProject.entity.Tag;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -58,4 +59,7 @@ public class AppUser {
     @JsonManagedReference
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "appUser")
     private List<Answer> answers = new ArrayList<>();
+
+    private int reputation;
+
 }

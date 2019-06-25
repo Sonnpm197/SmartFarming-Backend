@@ -79,6 +79,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/", "/signup", "/login", "/logout")
                 .permitAll();
 
+//         For USER only
         http.authorizeRequests()
                 .antMatchers("/user/**")
                 .access("hasRole('" + AppRole.ROLE_USER + "')");
@@ -119,8 +120,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .logoutSuccessUrl("/logoutSuccessful");
 
         // Customize post redirect Url and sign up page if no accounts presented in Userconnection
-        http.apply(getSpringSocialConfigurer())
-                .signupUrl("/signup");
+        http.apply(getSpringSocialConfigurer()).signupUrl("/signup");
 
     }
 

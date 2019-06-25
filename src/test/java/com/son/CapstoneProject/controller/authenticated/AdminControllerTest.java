@@ -2,7 +2,7 @@ package com.son.CapstoneProject.controller.authenticated;
 
 import com.son.CapstoneProject.entity.Article;
 import com.son.CapstoneProject.repository.ArticleRepository;
-import com.son.CapstoneProject.uploadFile.FileStorageService;
+import com.son.CapstoneProject.service.FileStorageService;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -21,7 +21,7 @@ public class Answer implements Serializable {
 
     @Id
     @GeneratedValue
-    private Long id;
+    private Long answerId;
 
     @Column(columnDefinition = "ntext")
     private String content;
@@ -38,4 +38,6 @@ public class Answer implements Serializable {
     @JoinColumn(name = "questionId", foreignKey = @ForeignKey(name = "FK_ANSWER_QUESTION"))
     private Question question;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    private java.util.Date utilTimestamp;
 }

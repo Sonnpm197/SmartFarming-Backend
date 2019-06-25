@@ -1,8 +1,6 @@
 package com.son.CapstoneProject.repository.searchRepository;
 
-import com.son.CapstoneProject.entity.Article;
-import com.son.CapstoneProject.entity.GenericClass;
-import com.son.CapstoneProject.entity.Question;
+import com.son.CapstoneProject.entity.search.GenericClass;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.hibernate.search.jpa.FullTextEntityManager;

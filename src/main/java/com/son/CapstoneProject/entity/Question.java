@@ -52,7 +52,7 @@ public class Question implements Serializable {
 
     @Id
     @GeneratedValue
-    private Long id;
+    private Long questionId;
 
     // default: index=Index.YES, analyze=Analyze.YES and store=Store.NO
     @Analyzer(definition = "customAnalyzer")
@@ -82,4 +82,23 @@ public class Question implements Serializable {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "question")
     private List<Answer> answers = new ArrayList<>();
 
+    private int viewCount;
+
+    @ElementCollection
+    private List<Long> userIdLikedPost;
+
+    @ElementCollection
+    private List<String> fileDownloadUris;
+
+//    @JsonManagedReference
+    @ManyToMany(fetch = FetchType.LAZY/*, cascade = CascadeType.ALL*/)
+    private List<Tag> tags;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private java.util.Date utilTimestamp;
+
+    // Many edited versions for this question by other users
+//    @JsonManagedReference
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "question")
+    private List<EditedQuestion> editedQuestions;
 }

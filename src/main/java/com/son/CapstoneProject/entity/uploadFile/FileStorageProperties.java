@@ -1,4 +1,4 @@
-package com.son.CapstoneProject.uploadFile;
+package com.son.CapstoneProject.entity.uploadFile;
 
 import lombok.Getter;
 import lombok.Setter;
