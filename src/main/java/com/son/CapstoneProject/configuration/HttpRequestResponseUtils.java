@@ -17,7 +17,7 @@ public class HttpRequestResponseUtils {
             "HTTP_VIA",
             "REMOTE_ADDR"};
 
-    public static String getClientIpAddressIfServletRequestExist(HttpServletRequest request) {
+    public static String getClientIpAddress(HttpServletRequest request) {
 
         if (request == null) {
             return "0.0.0.0";

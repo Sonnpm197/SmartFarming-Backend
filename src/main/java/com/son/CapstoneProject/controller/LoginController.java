@@ -3,6 +3,7 @@ package com.son.CapstoneProject.controller;
 import com.son.CapstoneProject.entity.login.AppRole;
 import com.son.CapstoneProject.entity.login.AppUser;
 import com.son.CapstoneProject.form.AppUserForm;
+import com.son.CapstoneProject.repository.AppUserRepository;
 import com.son.CapstoneProject.repository.loginRepository.AppUserDAO;
 import com.son.CapstoneProject.social.SocialUserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,13 +39,13 @@ public class LoginController {
     private AppUserDAO appUserDAO;
 
     @Autowired
+    private AppUserRepository appUserRepository;
+
+    @Autowired
     private ConnectionFactoryLocator connectionFactoryLocator;
 
     @Autowired
     private UsersConnectionRepository userConnectionRepository;
-
-    @Autowired
-    private HttpSession httpSession;
 
     @GetMapping({"/", "/test"})
     public String test() {
@@ -54,16 +55,16 @@ public class LoginController {
     @GetMapping(value = "/userInfo", produces = "application/json")
     public String adminPage(Principal principal) {
 
+        if (principal == null) {
+            return null;
+        }
+
         // After user login successfully.
         String userName = principal.getName();
 
-        System.out.println("User Name: " + userName);
+        return appUserRepository.findByUserName(userName).toString();
 
-        UserDetails loggedIn = (UserDetails) ((Authentication) principal).getPrincipal();
-
-        String userInfo = userDetailAsString(loggedIn);
-
-        return userInfo;
+        // return userInfo;
     }
 
     @GetMapping(value = "/logoutSuccessful")
@@ -77,7 +78,7 @@ public class LoginController {
         if (principal != null) {
             UserDetails loggedIn = (UserDetails) ((Authentication) principal).getPrincipal();
 
-            String userInfo = userDetailAsString(loggedIn);
+            // String userInfo = userDetailAsString(loggedIn);
 
             String message = "Hi " + principal.getName() //
                     + "<br> You do not have permission to access this page!";

@@ -80,14 +80,14 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .permitAll();
 
 //         For USER only
-        http.authorizeRequests()
-                .antMatchers("/user/**")
-                .access("hasRole('" + AppRole.ROLE_USER + "')");
+//        http.authorizeRequests()
+//                .antMatchers("/user/**")
+//                .access("hasRole('" + AppRole.ROLE_USER + "')");
 
         // For ADMIN only.
-        http.authorizeRequests()
-                .antMatchers("/admin/**")
-                .access("hasRole('" + AppRole.ROLE_ADMIN + "')");
+//        http.authorizeRequests()
+//                .antMatchers("/admin/**")
+//                .access("hasRole('" + AppRole.ROLE_ADMIN + "')");
 
         // When the user has logged in as XX.
         // But access a page that requires role YY,

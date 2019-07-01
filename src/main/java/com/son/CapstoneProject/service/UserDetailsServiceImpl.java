@@ -1,6 +1,7 @@
 package com.son.CapstoneProject.service;
 
 import com.son.CapstoneProject.entity.login.AppUser;
+import com.son.CapstoneProject.repository.AppUserRepository;
 import com.son.CapstoneProject.repository.loginRepository.AppRoleDAO;
 import com.son.CapstoneProject.repository.loginRepository.AppUserDAO;
 import com.son.CapstoneProject.social.SocialUserDetailsImpl;
@@ -23,7 +24,7 @@ import java.util.List;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
-    private AppUserDAO appUserDAO;
+    private AppUserRepository appUserRepository;
 
     @Autowired
     private AppRoleDAO appRoleDAO;
@@ -33,7 +34,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         System.out.println("UserDetailsServiceImpl.loadUserByUsername=" + userName);
 
-        AppUser appUser = this.appUserDAO.findAppUserByUserName(userName);
+        AppUser appUser = appUserRepository.findByUserName(userName);
 
         if (appUser == null) {
             System.out.println("User not found! " + userName);

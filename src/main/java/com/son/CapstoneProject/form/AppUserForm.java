@@ -22,7 +22,6 @@ class CustomSocialUser {
 @NoArgsConstructor
 @ToString
 public class AppUserForm {
-    private Long userId;
     private String email;
     private String userName;
 
@@ -32,6 +31,10 @@ public class AppUserForm {
     private String role;
     private String signInProvider;
     private String providerUserId;
+
+    // Fields for anonymous users
+    private boolean anonymous;
+    private String ipAddress;
 
     public AppUserForm(Connection<?> connection) {
         String provider = connection.getKey().getProviderId();

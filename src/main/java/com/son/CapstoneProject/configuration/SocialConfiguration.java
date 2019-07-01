@@ -1,7 +1,5 @@
 package com.son.CapstoneProject.configuration;
 
-import com.son.CapstoneProject.repository.loginRepository.AppUserDAO;
-import com.son.CapstoneProject.social.ConnectionSignUpImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +12,6 @@ import org.springframework.social.config.annotation.EnableSocial;
 import org.springframework.social.config.annotation.SocialConfigurer;
 import org.springframework.social.connect.ConnectionFactoryLocator;
 import org.springframework.social.connect.ConnectionRepository;
-import org.springframework.social.connect.ConnectionSignUp;
 import org.springframework.social.connect.UsersConnectionRepository;
 import org.springframework.social.connect.jdbc.JdbcUsersConnectionRepository;
 import org.springframework.social.connect.web.ConnectController;
@@ -29,23 +26,12 @@ import javax.sql.DataSource;
 @PropertySource("classpath:social-cfg.properties") // Load to addConnectionFactories(Environment env)
 public class SocialConfiguration implements SocialConfigurer {
 
-    private boolean autoSignUp = false;
-
     @Autowired
     private DataSource dataSource;
-
-    @Autowired
-    private AppUserDAO appUserDAO;
 
     // @env: read from social-cfg.properties file.
     @Override
     public void addConnectionFactories(ConnectionFactoryConfigurer cfConfig, Environment env) {
-
-        try {
-            this.autoSignUp = Boolean.parseBoolean(env.getProperty("social.auto-signup"));
-        } catch (Exception e) {
-            this.autoSignUp = false;
-        }
 
         // Facebook
         FacebookConnectionFactory ffactory = new FacebookConnectionFactory(//
@@ -84,23 +70,16 @@ public class SocialConfiguration implements SocialConfigurer {
                         connectionFactoryLocator,
                         Encryptors.noOpText());
 
-        // After logging in to social networking. Automatically creates corresponding APP_USER
-        // if it does not exist. To enable implicit sign up, you must create an implementation of
-        // the ConnectionSignUp interface and inject an instance of that
-        // ConnectionSignUp to the connection repository.
-        if (autoSignUp) {
-            ConnectionSignUp connectionSignUp = new ConnectionSignUpImpl(appUserDAO);
-            usersConnectionRepository.setConnectionSignUp(connectionSignUp);
-        } else {
-            // After logging in to social networking.
-            // If the corresponding APP_USER record is not found.
-            // Navigate to registration page.
-            usersConnectionRepository.setConnectionSignUp(null);
-        }
+        // After logging in to social networking.
+        // If the corresponding APP_USER record is not found.
+        // Navigate to registration page.
+        usersConnectionRepository.setConnectionSignUp(null);
+
         return usersConnectionRepository;
     }
 
     // This bean manages the connection flow between the account provider and the example application.
+
     /**
      * ConnectController will obtain the appropriate OAuth operations interface from one
      * of the provider connection factories registered with ConnectionFactoryRegistry.

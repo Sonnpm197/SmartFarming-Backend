@@ -1,20 +1,17 @@
 package com.son.CapstoneProject.repository.loginRepository;
 
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-
 import com.son.CapstoneProject.entity.login.AppRole;
 import com.son.CapstoneProject.entity.login.AppUser;
 import com.son.CapstoneProject.entity.login.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+import java.util.List;
 
 @Repository
-@Transactional
 public class AppRoleDAO {
 
     @Autowired

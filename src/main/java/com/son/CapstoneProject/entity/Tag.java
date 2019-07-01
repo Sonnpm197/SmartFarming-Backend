@@ -40,5 +40,5 @@ public class Tag {
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "tags")
     private List<Article> articles;
 
-    private int totalPoint;
+    private int reputation;
 }

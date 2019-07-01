@@ -11,7 +11,6 @@ import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
 import org.hibernate.search.annotations.*;
 import org.hibernate.search.annotations.Parameter;
-//import org.codehaus.jackson.annotate.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -101,4 +100,8 @@ public class Question implements Serializable {
 //    @JsonManagedReference
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "question")
     private List<EditedQuestion> editedQuestions;
+
+//    @JsonManagedReference
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "question")
+    private List<Comment> comments;
 }

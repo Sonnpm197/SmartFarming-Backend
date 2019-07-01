@@ -45,7 +45,7 @@ public class ForumController {
 
     @GetMapping("/viewQuestion/{id}")
     public Question viewQuestion(@PathVariable Long id, HttpServletRequest request) throws Exception {
-        String ipAddress = HttpRequestResponseUtils.getClientIpAddressIfServletRequestExist(request);
+        String ipAddress = HttpRequestResponseUtils.getClientIpAddress(request);
         // Execute asynchronously
         countingService.countView(id, ipAddress);
         return questionRepository.findById(id)

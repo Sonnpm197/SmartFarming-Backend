@@ -1,28 +1,15 @@
 package com.son.CapstoneProject.repository.loginRepository;
 
-import com.son.CapstoneProject.entity.login.AppRole;
 import com.son.CapstoneProject.entity.login.AppUser;
 import com.son.CapstoneProject.form.AppUserForm;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.social.connect.Connection;
-import org.springframework.social.connect.ConnectionKey;
-import org.springframework.social.connect.UserProfile;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Repository
-@Transactional
 public class AppUserDAO {
 
     @Autowired
@@ -31,106 +18,6 @@ public class AppUserDAO {
     @Autowired
     private AppRoleDAO appRoleDAO;
 
-    public AppUser findAppUserByUserId(Long userId) {
-        try {
-            String sql = "Select e from " + AppUser.class.getName() + " e " //
-                    + " Where e.userId = :userId ";
-
-            Query query = entityManager.createQuery(sql, AppUser.class);
-            query.setParameter("userId", userId);
-
-            return (AppUser) query.getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
-
-    public AppUser findAppUserByUserName(String userName) {
-        try {
-            String sql = "Select e from " + AppUser.class.getName() + " e " //
-                    + " Where e.userName = :userName ";
-
-            Query query = entityManager.createQuery(sql, AppUser.class);
-            query.setParameter("userName", userName);
-
-            return (AppUser) query.getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
-
-    public AppUser findByEmail(String email) {
-        try {
-            String sql = "Select e from " + AppUser.class.getName() + " e " //
-                    + " Where e.email = :email ";
-
-            Query query = entityManager.createQuery(sql, AppUser.class);
-            query.setParameter("email", email);
-
-            return (AppUser) query.getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
-
-    private String findAvailableUserName(String userName_prefix) {
-        AppUser account = this.findAppUserByUserName(userName_prefix);
-        if (account == null) {
-            return userName_prefix;
-        }
-        int i = 0;
-        while (true) {
-            String userName = userName_prefix + "_" + i++;
-            account = this.findAppUserByUserName(userName);
-            if (account == null) {
-                return userName;
-            }
-        }
-    }
-
-    // Auto create App User Account.
-    public AppUser automaticallyCreateAppUser(Connection<?> connection) {
-
-        ConnectionKey key = connection.getKey();
-        // (facebook,12345), (google,123) ...
-
-        System.out.println("key= (" + key.getProviderId() + "," + key.getProviderUserId() + ")");
-
-        UserProfile userProfile = connection.fetchUserProfile();
-
-        String email = userProfile.getEmail();
-        AppUser appUser = this.findByEmail(email);
-        if (appUser != null) {
-            return appUser;
-        }
-        String userName_prefix = userProfile.getFirstName().trim().toLowerCase()//
-                + "_" + userProfile.getLastName().trim().toLowerCase();
-
-        String userName = this.findAvailableUserName(userName_prefix);
-        //
-        // Random Password! TODO: Need send email to User!
-        //
-        String randomPassword = UUID.randomUUID().toString().substring(0, 5);
-        String encryptedPassword = encryptString(randomPassword);
-        //
-        appUser = new AppUser();
-        appUser.setEnabled(true);
-        appUser.setEncryptedPassword(encryptedPassword);
-        appUser.setUserName(userName);
-        appUser.setEmail(email);
-        appUser.setFirstName(userProfile.getFirstName());
-        appUser.setLastName(userProfile.getLastName());
-
-        this.entityManager.persist(appUser);
-
-        // Create default Role
-        List<String> roleNames = new ArrayList<String>();
-        roleNames.add(AppRole.ROLE_USER);
-        this.appRoleDAO.createRoleFor(appUser, roleNames);
-
-        return appUser;
-    }
-
     public AppUser registerNewUserAccount(AppUserForm appUserForm, List<String> roleNames) {
         AppUser appUser = new AppUser();
         appUser.setUserName(appUserForm.getUserName());
@@ -138,7 +25,15 @@ public class AppUserDAO {
         appUser.setFirstName(appUserForm.getFirstName());
         appUser.setLastName(appUserForm.getLastName());
         appUser.setEnabled(true);
-        String encryptedPassword = encryptString(appUserForm.getPassword());
+
+        if (appUserForm.isAnonymous()) {
+            appUser.setAnonymous(true);
+            appUser.setIpAddress(appUserForm.getIpAddress());
+        } else {
+            appUser.setAnonymous(false);
+        }
+
+        String encryptedPassword = new BCryptPasswordEncoder().encode(appUserForm.getPassword());
         appUser.setEncryptedPassword(encryptedPassword);
         this.entityManager.persist(appUser);
         this.entityManager.flush();
@@ -146,23 +41,6 @@ public class AppUserDAO {
         this.appRoleDAO.createRoleFor(appUser, roleNames);
 
         return appUser;
-    }
-
-    public void increaseReputation(Long userId, int newReputation) {
-        try {
-            AppUser appUser = findAppUserByUserId(userId);
-            appUser.setReputation(newReputation);
-            entityManager.getTransaction().begin();
-            entityManager.merge(appUser);
-            entityManager.getTransaction().commit();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private String encryptString(String s) {
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        return encoder.encode(s);
     }
 
 }

@@ -49,6 +49,7 @@ public class Article {
     @Column(columnDefinition = "nvarchar(50)")
     private String category;
 
+    // Author
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId", foreignKey = @ForeignKey(name = "FK_ARTICLE_APPUSER"))
     private AppUser appUser;
@@ -62,4 +63,8 @@ public class Article {
 
     @ElementCollection
     private List<String> fileDownloadUris;
+
+//    @JsonManagedReference
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "article")
+    private List<Comment> comments;
 }

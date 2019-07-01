@@ -6,11 +6,7 @@ import lombok.Setter;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "App_Role",
-        uniqueConstraints = {
-                @UniqueConstraint(name = "APP_ROLE_UK", columnNames = "Role_Name")
-        }
-)
+@Table(name = "App_Role")
 @Getter
 @Setter
 public class AppRole {

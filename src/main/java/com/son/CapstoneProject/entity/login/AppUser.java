@@ -14,12 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "App_User",
-        uniqueConstraints = {
-                @UniqueConstraint(name = "APP_USER_UK", columnNames = "User_Name"),
-                @UniqueConstraint(name = "APP_USER_UK2", columnNames = "Email")
-        }
-)
+@Table(name = "App_User")
 @Getter
 @Setter
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -30,22 +25,24 @@ public class AppUser {
     @Column(name = "User_Id", nullable = false)
     private Long userId;
 
-    @Column(name = "User_Name", length = 36, nullable = false)
-    private String userName;
+    private String ipAddress;
 
-    @Column(name = "Email", length = 128, nullable = false)
+    @Column(name = "User_Name", length = 36)
+    private String userName; // User Id from Facebook or google
+
+    @Column(name = "Email", length = 128)
     private String email;
 
-    @Column(name = "First_Name", length = 36, nullable = true)
+    @Column(name = "First_Name", length = 36)
     private String firstName;
 
-    @Column(name = "Last_Name", length = 36, nullable = true)
+    @Column(name = "Last_Name", length = 36)
     private String lastName;
 
-    @Column(name = "Encrypted_Password", length = 128, nullable = false)
+    @Column(name = "Encrypted_Password", length = 128)
     private String encryptedPassword;
 
-    @Column(name = "Enabled", length = 1, nullable = false)
+    @Column(name = "Enabled", length = 1)
     private boolean enabled;
 
     // An user can ask many questions
@@ -62,4 +59,17 @@ public class AppUser {
 
     private int reputation;
 
+    private boolean anonymous;
+
+    @Override
+    public String toString() {
+        return "{" +
+                    "\"userId\":" + "\"" + userId + "\"" +
+                    ", \"userName\":" + "\"" + userName + '\"' +
+                    ", \"email\":" + "\"" + email + '\"' +
+                    ", \"firstName\":" + "\"" + firstName + '\"' +
+                    ", \"lastName\":" + "\"" + lastName + '\"' +
+                    ", \"reputation\":" + "\"" + reputation + "\"" +
+                "}";
+    }
 }

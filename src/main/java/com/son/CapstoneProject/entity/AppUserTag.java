@@ -26,6 +26,6 @@ public class AppUserTag implements Serializable {
     @JoinColumn
     private Tag tag;
 
-    private int totalPoint;
+    private int reputation;
 
 }
