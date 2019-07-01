@@ -41,7 +41,7 @@ public class EditedQuestion implements Serializable {
     private AppUser appUser;
 
 //    @JsonManagedReference
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY/*, cascade = CascadeType.ALL*/)
     private List<Tag> tags;
 
     @Temporal(TemporalType.TIMESTAMP)

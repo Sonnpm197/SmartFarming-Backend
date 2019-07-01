@@ -1,11 +1,10 @@
-package com.son.CapstoneProject.controller;
+package com.son.CapstoneProject.controller.user;
 
 import com.son.CapstoneProject.entity.Article;
 import com.son.CapstoneProject.entity.search.GenericClass;
 import com.son.CapstoneProject.repository.ArticleRepository;
 import com.son.CapstoneProject.repository.searchRepository.HibernateSearchRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -26,10 +25,10 @@ public class ArticleController {
 
     private static final int ARTICLES_PER_PAGE = 5;
 
-//    @GetMapping("/viewAllArticles")
-//    public List<Article> viewAllArticles() {
-//        return articleRepository.findAll();
-//    }
+    @GetMapping("/viewNumberOfArticles")
+    public long viewNumberOfArticles() {
+        return articleRepository.count();
+    }
 
     @GetMapping("/viewArticles/{pageNumber}")
     public Page<Article> viewArticles(@PathVariable int pageNumber) {

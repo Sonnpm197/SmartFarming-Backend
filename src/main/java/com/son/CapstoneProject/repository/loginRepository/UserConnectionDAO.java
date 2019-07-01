@@ -28,7 +28,8 @@ public class UserConnectionDAO {
             List<UserConnection> list = query.getResultList();
 
             return list.isEmpty() ? null : list.get(0);
-        } catch (NoResultException e) {
+        } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }

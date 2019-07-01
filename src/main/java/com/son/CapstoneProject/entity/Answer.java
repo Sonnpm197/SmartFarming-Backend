@@ -2,7 +2,6 @@ package com.son.CapstoneProject.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.son.CapstoneProject.entity.login.AppUser;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -46,4 +45,7 @@ public class Answer implements Serializable {
 //    @JsonManagedReference
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "answer")
     private List<Comment> comments;
+
+    @ElementCollection
+    private List<Long> upvotedUserIds;
 }

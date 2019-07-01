@@ -1,11 +1,13 @@
 package com.son.CapstoneProject.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.son.CapstoneProject.entity.login.AppUser;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import com.fasterxml.jackson.annotation.*;
 import org.apache.lucene.analysis.charfilter.MappingCharFilterFactory;
 import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
@@ -73,7 +75,7 @@ public class Question implements Serializable {
     // One question can have many answers
     // @JsonIgnore to ignore this field when parsing the request body to this class (deserialization)
     // "@JsonIgnore is used to ignore the logical property used IN SERIALIZATION AND DESERIALIZATION"
-    @JsonIgnore
+//    @JsonIgnore
     // @JsonManagedReference means this list is shown in response,
     // and @JsonBackReference (for a single object) means
     // this will not be shown in response (avoid recursive)
@@ -82,9 +84,6 @@ public class Question implements Serializable {
     private List<Answer> answers = new ArrayList<>();
 
     private int viewCount;
-
-    @ElementCollection
-    private List<Long> userIdLikedPost;
 
     @ElementCollection
     private List<String> fileDownloadUris;
@@ -98,10 +97,15 @@ public class Question implements Serializable {
 
     // Many edited versions for this question by other users
 //    @JsonManagedReference
+    @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "question")
     private List<EditedQuestion> editedQuestions;
 
 //    @JsonManagedReference
+//    @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "question")
     private List<Comment> comments;
+
+    @ElementCollection
+    private List<Long> upvotedUserIds;
 }

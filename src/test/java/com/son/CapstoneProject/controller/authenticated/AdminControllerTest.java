@@ -1,6 +1,6 @@
 package com.son.CapstoneProject.controller.authenticated;
 
-import com.son.CapstoneProject.controller.AdminController;
+import com.son.CapstoneProject.controller.admin.AdminController;
 import com.son.CapstoneProject.entity.Article;
 import com.son.CapstoneProject.repository.ArticleRepository;
 import com.son.CapstoneProject.service.FileStorageService;

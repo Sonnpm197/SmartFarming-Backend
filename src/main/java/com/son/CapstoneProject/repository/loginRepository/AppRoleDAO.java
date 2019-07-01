@@ -59,7 +59,7 @@ public class AppRoleDAO {
             AppRole role = this.findAppRoleByName(roleName);
             if (role == null) {
                 role = new AppRole();
-                role.setRoleName(AppRole.ROLE_USER);
+                role.setRoleName(roleName);
                 this.entityManager.persist(role);
                 this.entityManager.flush();
             }

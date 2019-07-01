@@ -1,21 +1,17 @@
 package com.son.CapstoneProject.service;
 
 import com.son.CapstoneProject.entity.login.AppUser;
-import com.son.CapstoneProject.repository.AppUserRepository;
+import com.son.CapstoneProject.repository.loginRepository.AppUserRepository;
 import com.son.CapstoneProject.repository.loginRepository.AppRoleDAO;
-import com.son.CapstoneProject.repository.loginRepository.AppUserDAO;
 import com.son.CapstoneProject.social.SocialUserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service

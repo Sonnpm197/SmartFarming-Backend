@@ -9,6 +9,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 
 @Entity
@@ -47,4 +48,7 @@ public class Comment implements Serializable {
 
     @Temporal(TemporalType.TIMESTAMP)
     private java.util.Date utilTimestamp;
+
+    @ElementCollection
+    private List<Long> upvotedUserIds;
 }

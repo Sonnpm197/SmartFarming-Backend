@@ -1,6 +1,5 @@
 package com.son.CapstoneProject.entity;
 
-import com.fasterxml.jackson.annotation.*;
 import com.son.CapstoneProject.entity.login.AppUser;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -67,4 +66,7 @@ public class Article {
 //    @JsonManagedReference
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "article")
     private List<Comment> comments;
+
+    @ElementCollection
+    private List<Long> upvotedUserIds;
 }

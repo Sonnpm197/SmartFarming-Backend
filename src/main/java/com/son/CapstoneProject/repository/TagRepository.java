@@ -9,6 +9,6 @@ import java.util.List;
 @Repository
 public interface TagRepository extends PagingAndSortingRepository<Tag, Long> {
 
-    List<Tag> findByName(String name);
+    Tag findByName(String name);
 
 }

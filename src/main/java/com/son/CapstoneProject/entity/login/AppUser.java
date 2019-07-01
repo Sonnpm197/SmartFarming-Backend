@@ -39,6 +39,7 @@ public class AppUser {
     @Column(name = "Last_Name", length = 36)
     private String lastName;
 
+    @JsonIgnore
     @Column(name = "Encrypted_Password", length = 128)
     private String encryptedPassword;
 
