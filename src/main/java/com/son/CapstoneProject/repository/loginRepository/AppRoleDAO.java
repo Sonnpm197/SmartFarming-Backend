@@ -44,7 +44,8 @@ public class AppRoleDAO {
             Query query = this.entityManager.createQuery(sql, AppRole.class);
             query.setParameter("roleName", roleName);
             return (AppRole) query.getSingleResult();
-        } catch (NoResultException e) {
+        } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }

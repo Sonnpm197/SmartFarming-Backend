@@ -18,8 +18,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import static com.son.CapstoneProject.entity.login.AppRole.ROLE_ADMIN;
-import static com.son.CapstoneProject.entity.login.AppRole.ROLE_USER;
+import static com.son.CapstoneProject.common.ConstantValue.*;
+import static com.son.CapstoneProject.entity.login.AppRole.*;
 
 @RestController
 @RequestMapping("/upvote")
@@ -54,18 +54,6 @@ public class UpvoteController {
 
     @Autowired
     private ControllerUtils controllerUtils;
-
-    private static final int ARTICLE_UPVOTE_POINT = 1;
-    private static final int ARTICLE_DOWNVOTE_POINT = -1;
-
-    private static final int QUESTION_UPVOTE_POINT = 1;
-    private static final int QUESTION_DOWNVOTE_POINT = -1;
-
-    private static final int ANSWER_UPVOTE_POINT = 1;
-    private static final int ANSWER_DOWNVOTE_POINT = -1;
-
-    private static final int COMMENT_UPVOTE_POINT = 1;
-    private static final int COMMENT_DOWNVOTE_POINT = -1;
 
     @GetMapping("/test")
     public String test() {
@@ -221,7 +209,7 @@ public class UpvoteController {
 
     /**
      * This method is to increase question's author reputation including:
-     * Only increase tag point of admin.
+     * Only increase tag point of admin, and do not increase reputation of admin
      * <p>
      * Increase whole tag points
      * Increase reputation of that user
@@ -285,8 +273,8 @@ public class UpvoteController {
                 }
             }
 
-            // Only increase reputation for users
-            if (!isAdmin) {
+            // Only increase reputation for users who are not admins and anonymous users
+            if (!isAdmin && !appUser.isAnonymous()) {
                 appUser.setReputation(appUser.getReputation() + updatedPoint);
             }
 
@@ -303,7 +291,7 @@ public class UpvoteController {
                         appUserTag.setReputation(0);
                     } else {
                         // Only increase reputation for user
-                        if (!isAdmin) {
+                        if (!isAdmin && !appUser.isAnonymous()) {
                             appUserTag.setReputation(appUserTag.getReputation() + updatedPoint);
                         }
                     }

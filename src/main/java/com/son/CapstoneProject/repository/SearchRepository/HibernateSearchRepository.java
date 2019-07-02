@@ -1,8 +1,12 @@
 package com.son.CapstoneProject.repository.searchRepository;
 
+import com.son.CapstoneProject.entity.Article;
+import com.son.CapstoneProject.entity.Question;
+import com.son.CapstoneProject.entity.Tag;
 import com.son.CapstoneProject.entity.search.GenericClass;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.Query;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.FullTextQuery;
 import org.hibernate.search.jpa.Search;
@@ -14,6 +18,10 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.son.CapstoneProject.common.ConstantValue.ARTICLE;
+import static com.son.CapstoneProject.common.ConstantValue.QUESTION;
+import static com.son.CapstoneProject.common.ConstantValue.TAG;
 
 @Repository
 public class HibernateSearchRepository {
@@ -73,54 +81,76 @@ public class HibernateSearchRepository {
      * @param searchedText
      * @return
      */
-    public List search2(String searchedText, GenericClass genericClass, String[] fields) {
+
+    public List search2(String searchedText, String className, String[] fields, String articleCategory) {
+        GenericClass genericClass = null;
+
+        if (ARTICLE.equalsIgnoreCase(className)) {
+            genericClass = new GenericClass(Article.class);
+        } else if (QUESTION.equalsIgnoreCase(className)) {
+            genericClass = new GenericClass(Question.class);
+        } else if (TAG.equalsIgnoreCase(className)) {
+            genericClass = new GenericClass(Tag.class);
+        }
+
+        List<Article> articles = null;
+        List<Article> finalArticles = new ArrayList<>();
+        List<Question> questions = null;
+        List<Question> finalQuestions = new ArrayList<>();
+        List<Tag> tags = null;
+        List<Tag> finalTags = new ArrayList<>();
+
         try {
             // If it starts with double quotes then search exactly
             if (searchedText.startsWith("\"") && searchedText.endsWith("\"")) {
 
-                List results = new ArrayList<>();
-
                 // Search for each field
                 for (String field : fields) {
+                    List<org.apache.lucene.search.Query> queryList = new ArrayList<>();
                     org.apache.lucene.search.Query phraseQuery = getQueryBuilder(genericClass)
                             .phrase()
                             .withSlop(0) // match exactly
                             .onField(field)
                             .sentence(searchedText)
                             .createQuery();
+                    queryList.add(phraseQuery);
 
-                    FullTextQuery fullTextQuery = getJpaQuery(phraseQuery, genericClass);
-                    results.addAll(fullTextQuery.getResultList());
+                    addDistinctValueToList(articles, finalArticles,
+                            questions, finalQuestions,
+                            tags, finalTags,
+                            queryList, className, genericClass, articleCategory);
+
                 }
 
-                return results;
-            }
+                // At the end of the loop return result
+                returnFinalListByClassName(className, finalArticles, finalQuestions, finalTags);
 
+            }
             // Else search with 'AND' operator
-            String[] arrKeywords = searchedText.split(" ");
+            else {
+                String[] arrKeywords = searchedText.split(" ");
 
-            List<org.apache.lucene.search.Query> queryList = new ArrayList<>();
+                for (String field : fields) {
+                    List<org.apache.lucene.search.Query> queryList = new ArrayList<>();
+                    for (String keyword : arrKeywords) {
+                        org.apache.lucene.search.Query query = getQueryBuilder(genericClass)
+                                .keyword()
+                                .onField(field)
+                                .matching(keyword.trim())
+                                .createQuery();
+                        queryList.add(query);
+                    }
 
-            for (String keyword : arrKeywords) {
-                org.apache.lucene.search.Query query = getQueryBuilder(genericClass)
-                        .keyword()
-                        .onFields(fields)
-                        .matching(keyword.trim())
-                        .createQuery();
-                queryList.add(query);
+                    addDistinctValueToList(articles, finalArticles,
+                            questions, finalQuestions,
+                            tags, finalTags,
+                            queryList, className, genericClass, articleCategory);
+
+                }
+
+                // At the end of the loop return result
+                returnFinalListByClassName(className, finalArticles, finalQuestions, finalTags);
             }
-
-            BooleanQuery.Builder finalQueryBuilder = new BooleanQuery.Builder();
-
-            for (org.apache.lucene.search.Query q : queryList) {
-                finalQueryBuilder.add(q, BooleanClause.Occur.MUST);
-            }
-
-            BooleanQuery finalQuery = finalQueryBuilder.build();
-
-            FullTextQuery fullTextQuery = getJpaQuery(finalQuery, genericClass);
-
-            return fullTextQuery.getResultList();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -129,4 +159,63 @@ public class HibernateSearchRepository {
     }
 
 
+    private void addDistinctValueToList(List<Article> articles, List<Article> finalArticles,
+                                        List<Question> questions, List<Question> finalQuestions,
+                                        List<Tag> tags, List<Tag> finalTags,
+                                        List<Query> queryList, String className, GenericClass genericClass, String articleCategory) {
+
+        // Search in category of article
+        if (articleCategory != null && articleCategory.trim().length() > 0) {
+            org.apache.lucene.search.Query querySearchForArticleCategory = getQueryBuilder(genericClass)
+                    .keyword()
+                    .onField("category")
+                    .matching(articleCategory.trim())
+                    .createQuery();
+            queryList.add(querySearchForArticleCategory);
+        }
+
+        // Build an "and" finalQuery
+        BooleanQuery.Builder finalQueryBuilder = new BooleanQuery.Builder();
+
+        for (org.apache.lucene.search.Query query : queryList) {
+            finalQueryBuilder.add(query, BooleanClause.Occur.MUST);
+        }
+
+        FullTextQuery fullTextQuery = getJpaQuery(finalQueryBuilder.build(), genericClass);
+
+        if (ARTICLE.equalsIgnoreCase(className)) {
+            articles = (List<Article>) fullTextQuery.getResultList();
+            for (Article article : articles) {
+                if (!finalArticles.contains(article)) {
+                    finalArticles.add(article);
+                }
+            }
+        } else if (QUESTION.equalsIgnoreCase(className)) {
+            questions = (List<Question>) fullTextQuery.getResultList();
+            for (Question question : questions) {
+                if (!finalQuestions.contains(question)) {
+                    finalQuestions.add(question);
+                }
+            }
+        } else if (TAG.equalsIgnoreCase(className)) {
+            tags = (List<Tag>) fullTextQuery.getResultList();
+            for (Tag tag : tags) {
+                if (!finalTags.contains(tag)) {
+                    finalTags.add(tag);
+                }
+            }
+        }
+    }
+
+    private List returnFinalListByClassName(String className, List<Article> finalArticles, List<Question> finalQuestions, List<Tag> finalTags) {
+        // At the end of the loop return result
+        if (ARTICLE.equalsIgnoreCase(className)) {
+            return finalArticles;
+        } else if (QUESTION.equalsIgnoreCase(className)) {
+            return finalQuestions;
+        } else if (TAG.equalsIgnoreCase(className)) {
+            return finalTags;
+        }
+        return null;
+    }
 }

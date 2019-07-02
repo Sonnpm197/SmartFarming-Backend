@@ -6,6 +6,7 @@ import com.son.CapstoneProject.entity.*;
 import com.son.CapstoneProject.entity.login.AppUser;
 import com.son.CapstoneProject.entity.search.GenericClass;
 import com.son.CapstoneProject.repository.*;
+import com.son.CapstoneProject.repository.loginRepository.AppUserRepository;
 import com.son.CapstoneProject.repository.searchRepository.HibernateSearchRepository;
 import com.son.CapstoneProject.service.ViewCountingService;
 import org.apache.log4j.Logger;
@@ -20,6 +21,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
+
+import static com.son.CapstoneProject.common.ConstantValue.EDITED_APPROVE_POINT;
+import static com.son.CapstoneProject.common.ConstantValue.QUESTION;
+import static com.son.CapstoneProject.common.ConstantValue.QUESTIONS_PER_PAGE;
 
 @RestController
 @RequestMapping("/question")
@@ -50,9 +55,10 @@ public class QuestionController {
     private ViewCountingService countingService;
 
     @Autowired
-    private HibernateSearchRepository hibernateSearchRepository;
+    private AppUserRepository appUserRepository;
 
-    private static final int QUESTIONS_PER_PAGE = 2;
+    @Autowired
+    private HibernateSearchRepository hibernateSearchRepository;
 
     @GetMapping("/test")
     public String test() {
@@ -74,7 +80,7 @@ public class QuestionController {
     public Question viewQuestion(@PathVariable Long id, HttpServletRequest request) throws Exception {
         String ipAddress = HttpRequestResponseUtils.getClientIpAddress(request);
         // Execute asynchronously
-        countingService.countView(id, ipAddress);
+        countingService.countView(id, ipAddress, QUESTION);
         return questionRepository.findById(id)
                 .orElseThrow(() -> new Exception("Not found"));
     }
@@ -83,8 +89,9 @@ public class QuestionController {
     public List<Question> searchQuestions(@PathVariable String textSearch) {
         return (List<Question>) hibernateSearchRepository.search2(
                 textSearch,
-                new GenericClass(Question.class),
-                new String[]{"title", "content"} //  fields
+                QUESTION,
+                new String[]{"title", "content"}, //  fields
+                null
         );
     }
 
@@ -170,6 +177,75 @@ public class QuestionController {
 
         Question question = questionRepository.save(oldQuestion);
         return ResponseEntity.ok(question);
+    }
+
+    /**
+     * Delete a question
+     *
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    @DeleteMapping("/deleteQuestion/{id}")
+    @Transactional
+    public Map<String, String> deleteQuestion(@RequestBody AppUser appUser,
+                                              @PathVariable Long id,
+                                              HttpServletRequest request) throws Exception {
+
+        String methodName = "UserController.deleteQuestion";
+
+        controllerUtils.validateAppUser(appUser, methodName, false);
+
+        if (appUser.isAnonymous()) {
+            appUser = controllerUtils.saveOrReturnAnonymousUser(HttpRequestResponseUtils.getClientIpAddress(request));
+        } else {
+            controllerUtils.validateAppUser(appUser, methodName, true);
+        }
+
+        Question question = questionRepository.findById(id)
+                .orElseThrow(() -> new Exception(methodName + ": Not found question with id: " + id));
+
+        // Cannot delete other questions
+        if (!appUser.getUserId().equals(question.getAppUser().getUserId())) {
+            String message = methodName + ": You cannot delete other questions";
+            logger.info(message);
+            throw new Exception(message);
+        }
+
+        // Remove the edited versions first
+        List<EditedQuestion> editedQuestions = question.getEditedQuestions();
+        Iterator<EditedQuestion> editedQuestionIterator = editedQuestions.iterator();
+
+        while (editedQuestionIterator.hasNext()) {
+            EditedQuestion editedQuestion = editedQuestionIterator.next();
+            editedQuestionRepository.delete(editedQuestion);
+        }
+
+        // Remove the comments
+        List<Comment> comments = question.getComments();
+        Iterator<Comment> commentIterator = comments.iterator();
+
+        while (commentIterator.hasNext()) {
+            Comment comment = commentIterator.next();
+            commentRepository.delete(comment);
+        }
+
+        // Remove the answers
+        List<Answer> answers = question.getAnswers();
+        Iterator<Answer> answerIterator = answers.iterator();
+
+        while (answerIterator.hasNext()) {
+            Answer answer = answerIterator.next();
+            answerRepository.delete(answer);
+        }
+
+        // Then remove the question
+        questionRepository.delete(question);
+
+        Map<String, String> map = new HashMap<>();
+        map.put("questionId", "" + id);
+        map.put("deleted", "true");
+        return map;
     }
 
     /**
@@ -272,72 +348,57 @@ public class QuestionController {
     }
 
     /**
-     * Delete a question
+     * View all previous edited versions from other users (on your question only)
      *
-     * @param id
+     * Delete this edited version
+     *
+     * Count point for the one who edited your post
+     *
      * @return
-     * @throws Exception
      */
-    @DeleteMapping("/deleteQuestion/{id}")
+    @PostMapping("/approveEditedVersion/{originalQuestionId}")
     @Transactional
-    public Map<String, String> deleteQuestion(@RequestBody AppUser appUser,
-                                              @PathVariable Long id,
-                                              HttpServletRequest request) throws Exception {
+    public Question approveEditedVersion(
+            @RequestBody EditedQuestion editedQuestion,
+            @PathVariable Long originalQuestionId) throws Exception {
 
-        String methodName = "UserController.deleteQuestion";
+        String methodName = "UserController.approveEditedVersion";
 
-        controllerUtils.validateAppUser(appUser, methodName, false);
-
-        if (appUser.isAnonymous()) {
-            appUser = controllerUtils.saveOrReturnAnonymousUser(HttpRequestResponseUtils.getClientIpAddress(request));
-        } else {
-            controllerUtils.validateAppUser(appUser, methodName, true);
-        }
-
-        Question question = questionRepository.findById(id)
-                .orElseThrow(() -> new Exception(methodName + ": Not found question with id: " + id));
-
-        // Cannot delete other questions
-        if (!appUser.getUserId().equals(question.getAppUser().getUserId())) {
-            String message = methodName + ": You cannot delete other questions";
+        if (editedQuestion.getEditedQuestionId() == null) {
+            String message = methodName + "You must include edited question id";
             logger.info(message);
             throw new Exception(message);
         }
 
-        // Remove the edited versions first
-        List<EditedQuestion> editedQuestions = question.getEditedQuestions();
-        Iterator<EditedQuestion> editedQuestionIterator = editedQuestions.iterator();
+        Question question = questionRepository.findById(originalQuestionId).
+                orElseThrow(() -> new Exception(methodName + ": cannot find any originalQuestion with id: " + originalQuestionId));
 
-        while (editedQuestionIterator.hasNext()) {
-            EditedQuestion editedQuestion = editedQuestionIterator.next();
-            editedQuestionRepository.delete(editedQuestion);
+        EditedQuestion editedQuestionFullData = editedQuestionRepository.findById(editedQuestion.getEditedQuestionId()).
+                orElseThrow(() -> new Exception(methodName + ": cannot find any edited question with id: " + editedQuestion.getEditedQuestionId()));
+
+        AppUser userCreatedQuestion = question.getAppUser();
+        AppUser userEditedQuestion = editedQuestion.getAppUser();
+
+        // If this is not your question
+        if (!userCreatedQuestion.getUserId().equals(userEditedQuestion.getUserId())) {
+            String message = methodName + "You cannot approve your own edited question versions";
+            logger.info(message);
+            throw new Exception(message);
         }
 
-        // Remove the comments
-        List<Comment> comments = question.getComments();
-        Iterator<Comment> commentIterator = comments.iterator();
+        // Remove edited version
+        editedQuestionRepository.delete(editedQuestionFullData);
 
-        while (commentIterator.hasNext()) {
-            Comment comment = commentIterator.next();
-            commentRepository.delete(comment);
-        }
+        // The user who edited receive reputation if the author approves
+        userEditedQuestion.setReputation(userEditedQuestion.getReputation() + EDITED_APPROVE_POINT);
+        appUserRepository.save(userEditedQuestion);
 
-        // Remove the answers
-        List<Answer> answers = question.getAnswers();
-        Iterator<Answer> answerIterator = answers.iterator();
-
-        while (answerIterator.hasNext()) {
-            Answer answer = answerIterator.next();
-            answerRepository.delete(answer);
-        }
-
-        // Then remove the question
-        questionRepository.delete(question);
-
-        Map<String, String> map = new HashMap<>();
-        map.put("questionId", "" + id);
-        map.put("deleted", "true");
-        return map;
+        // Update original question
+        question.setTitle(editedQuestion.getTitle());
+        question.setContent(editedQuestion.getContent());
+        question.setTags(editedQuestion.getTags());
+        question.setUtilTimestamp(new Date());
+        return questionRepository.save(question);
     }
 
     /**

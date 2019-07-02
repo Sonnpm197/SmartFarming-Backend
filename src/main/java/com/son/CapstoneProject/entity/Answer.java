@@ -48,4 +48,6 @@ public class Answer implements Serializable {
 
     @ElementCollection
     private List<Long> upvotedUserIds;
+
+    private boolean isAccepted;
 }

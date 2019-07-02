@@ -11,6 +11,7 @@ import org.hibernate.search.annotations.*;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -25,10 +26,6 @@ import java.util.List;
                 @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class),
         }
 )
-
-//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
-//        property  = "articleId",
-//        scope     = Long.class)
 public class Article {
 
     @Id
@@ -45,6 +42,8 @@ public class Article {
     @Column(columnDefinition = "ntext")
     private String content;
 
+    @Analyzer(definition = "articleCustomAnalyzer")
+    @Field(store = Store.YES)
     @Column(columnDefinition = "nvarchar(50)")
     private String category;
 
@@ -71,4 +70,17 @@ public class Article {
     private List<Long> upvotedUserIds;
 
     private int viewCount;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Article article = (Article) o;
+        return Objects.equals(articleId, article.articleId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(articleId);
+    }
 }

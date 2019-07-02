@@ -18,6 +18,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -75,7 +76,7 @@ public class Question implements Serializable {
     // One question can have many answers
     // @JsonIgnore to ignore this field when parsing the request body to this class (deserialization)
     // "@JsonIgnore is used to ignore the logical property used IN SERIALIZATION AND DESERIALIZATION"
-    @JsonIgnore
+//    @JsonIgnore
     // @JsonManagedReference means this list is shown in response,
     // and @JsonBackReference (for a single object) means
     // this will not be shown in response (avoid recursive)
@@ -108,4 +109,17 @@ public class Question implements Serializable {
 
     @ElementCollection
     private List<Long> upvotedUserIds;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Question question = (Question) o;
+        return Objects.equals(questionId, question.questionId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(questionId);
+    }
 }

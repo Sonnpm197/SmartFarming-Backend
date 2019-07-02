@@ -28,4 +28,6 @@ public class AppUserTag implements Serializable {
 
     private int reputation;
 
+    private int viewCount;
+
 }

@@ -10,4 +10,6 @@ import java.util.List;
 public interface AppUserTagRepository extends JpaRepository<AppUserTag, Long> {
 
     AppUserTag findAppUserTagByAppUser_UserIdAndTag_TagId(Long appUserId, Long tagId);
+
+    List<AppUserTag> findByTag_TagId(Long tagId);
 }

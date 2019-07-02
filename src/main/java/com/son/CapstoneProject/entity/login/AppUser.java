@@ -62,6 +62,12 @@ public class AppUser {
 
     private boolean anonymous;
 
+    private int viewCount;
+
+    private String profileImageUrl;
+
+    private String userCVUrl;
+
     @Override
     public String toString() {
         return "{" +

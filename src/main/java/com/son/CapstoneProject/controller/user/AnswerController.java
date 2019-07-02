@@ -1,12 +1,16 @@
 package com.son.CapstoneProject.controller.user;
 
+import com.son.CapstoneProject.common.ConstantValue;
 import com.son.CapstoneProject.configuration.HttpRequestResponseUtils;
 import com.son.CapstoneProject.controller.ControllerUtils;
 import com.son.CapstoneProject.entity.Answer;
 import com.son.CapstoneProject.entity.Comment;
+import com.son.CapstoneProject.entity.Question;
 import com.son.CapstoneProject.entity.login.AppUser;
 import com.son.CapstoneProject.repository.AnswerRepository;
 import com.son.CapstoneProject.repository.CommentRepository;
+import com.son.CapstoneProject.repository.QuestionRepository;
+import com.son.CapstoneProject.repository.loginRepository.AppUserRepository;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -26,6 +30,12 @@ public class AnswerController {
 
     @Autowired
     private AnswerRepository answerRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
+
+    @Autowired
+    private AppUserRepository appUserRepository;
 
     @Autowired
     private CommentRepository commentRepository;
@@ -160,5 +170,46 @@ public class AnswerController {
         map.put("answerId", "" + id);
         map.put("deleted", "true");
         return map;
+    }
+
+    /**
+     * Mark this answer is accepted (only used by the author)
+     *
+     * @return
+     * @throws Exception
+     */
+    @PutMapping("/markAcceptedAnswerToQuestion/{questionId}/{answerId}")
+    @Transactional
+    public ResponseEntity<Answer> markAcceptedAnswerToQuestion(@RequestBody AppUser questionAuthor,
+                                                               @PathVariable Long questionId,
+                                                               @PathVariable Long answerId)
+            throws Exception {
+
+        String methodName = "UserController.markAcceptedAnswerToQuestion";
+
+        Answer answer = answerRepository.findById(answerId)
+                .orElseThrow(() -> new Exception(methodName + ": Not found any answers with id: " + answerId));
+
+        Question question = questionRepository.findById(answerId)
+                .orElseThrow(() -> new Exception(methodName + ": Not found any questions with id: " + questionId));
+
+        controllerUtils.validateAppUser(questionAuthor, methodName, true);
+
+        // Check if you are the author
+        if (!questionAuthor.getUserId().equals(question.getAppUser().getUserId())) {
+            String message = methodName + ": You cannot mark accepted answer if you are not the author of the question";
+            logger.info(message);
+            throw new Exception(message);
+        }
+
+        // Increase reputation point for author of the answer
+        AppUser userAnswerQuestion = answer.getAppUser();
+        userAnswerQuestion.setReputation(userAnswerQuestion.getReputation() + ConstantValue.MARK_ACCEPTED_ANSWER_POINT);
+        appUserRepository.save(userAnswerQuestion);
+
+        // Mark this answer as accepted answer
+        answer.setAccepted(true);
+        answer = answerRepository.save(answer);
+        return ResponseEntity.ok(answer);
     }
 }
