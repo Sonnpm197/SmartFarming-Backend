@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import static com.son.CapstoneProject.entity.login.AppRole.ROLE_ADMIN;
 import static com.son.CapstoneProject.entity.login.AppRole.ROLE_USER;
 
 @RestController
@@ -73,10 +74,10 @@ public class UpvoteController {
 
     @PostMapping(value = "/{type}/{id}")
     @Transactional
-    public void upvote(@RequestBody AppUser userUpvote,
-                       @PathVariable String type,
-                       @PathVariable Long id,
-                       HttpServletRequest request) throws Exception {
+    public String upvote(@RequestBody AppUser userUpvote,
+                         @PathVariable String type,
+                         @PathVariable Long id,
+                         HttpServletRequest request) throws Exception {
 
         String methodName = "UpvoteController.upvote";
 
@@ -101,6 +102,7 @@ public class UpvoteController {
                     .orElseThrow(() -> new Exception(methodName + ": Not found article by id: " + id));
             author = article.getAppUser();
             appUserList = article.getUpvotedUserIds();
+            tags = article.getTags();
 
         } else if ("question".equalsIgnoreCase(type)) {
 
@@ -151,7 +153,7 @@ public class UpvoteController {
 
         // You cannot like your own article, question, answer or comment
         if (userUpvote.getUserId().equals(author.getUserId())) {
-            String message = methodName + ": You cannot like our own question";
+            String message = methodName + ": You cannot like our own " + type;
             logger.info(message);
             throw new Exception(message);
         }
@@ -193,18 +195,28 @@ public class UpvoteController {
         }
 
         if ("article".equalsIgnoreCase(type)) {
+
             article.setUpvotedUserIds(appUserList);
             articleRepository.save(article);
+
         } else if ("question".equalsIgnoreCase(type)) {
+
             question.setUpvotedUserIds(appUserList);
             questionRepository.save(question);
+
         } else if ("answer".equalsIgnoreCase(type)) {
+
             answer.setUpvotedUserIds(appUserList);
             answerRepository.save(answer);
+
         } else if ("comment".equalsIgnoreCase(type)) {
+
             comment.setUpvotedUserIds(appUserList);
             commentRepository.save(comment);
+
         }
+
+        return "UpVote " + type + " with id: " + id + " successfully";
     }
 
     /**
@@ -260,13 +272,24 @@ public class UpvoteController {
         if (appUser.getReputation() == 0 && updatedPoint < 0) {
             appUser.setReputation(0);
         } else {
-            UserRole userRole = userRoleRepository.findByAppUser_UserId(appUser.getUserId());
-            if (userRole != null) {
-                // Only increase reputation for users
-                if (userRole.getAppRole().getRoleName().equalsIgnoreCase(ROLE_USER)) {
-                    appUser.setReputation(appUser.getReputation() + updatedPoint);
+            List<UserRole> userRoles = userRoleRepository.findByAppUser_UserId(appUser.getUserId());
+            boolean isAdmin = false;
+
+            // Check if this user is an admin
+            if (userRoles != null && userRoles.size() > 0) {
+                for (UserRole role : userRoles) {
+                    if (role.getAppRole().getRoleName().equalsIgnoreCase(ROLE_ADMIN)) {
+                        isAdmin = true;
+                        break;
+                    }
                 }
             }
+
+            // Only increase reputation for users
+            if (!isAdmin) {
+                appUser.setReputation(appUser.getReputation() + updatedPoint);
+            }
+
             appUserRepository.save(appUser);
 
             // Increase specific tag points of that user
@@ -279,7 +302,10 @@ public class UpvoteController {
                     if (appUserTag.getReputation() == 0 && updatedPoint < 0) {
                         appUserTag.setReputation(0);
                     } else {
-                        appUserTag.setReputation(appUserTag.getReputation() + updatedPoint);
+                        // Only increase reputation for user
+                        if (!isAdmin) {
+                            appUserTag.setReputation(appUserTag.getReputation() + updatedPoint);
+                        }
                     }
                     appUserTagRepository.save(appUserTag);
                 } else {
@@ -287,7 +313,11 @@ public class UpvoteController {
                     AppUserTag newAppUserTag = new AppUserTag();
                     newAppUserTag.setAppUser(appUser);
                     newAppUserTag.setTag(tag);
-                    newAppUserTag.setReputation(1);
+                    // Only increase reputation for user
+                    // By default reputation is 0
+                    if (!isAdmin) {
+                        newAppUserTag.setReputation(1);
+                    }
                     appUserTagRepository.save(newAppUserTag);
                 }
             }

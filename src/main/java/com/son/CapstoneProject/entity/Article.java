@@ -69,4 +69,6 @@ public class Article {
 
     @ElementCollection
     private List<Long> upvotedUserIds;
+
+    private int viewCount;
 }

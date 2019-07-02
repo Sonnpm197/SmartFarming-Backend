@@ -75,11 +75,11 @@ public class Question implements Serializable {
     // One question can have many answers
     // @JsonIgnore to ignore this field when parsing the request body to this class (deserialization)
     // "@JsonIgnore is used to ignore the logical property used IN SERIALIZATION AND DESERIALIZATION"
-//    @JsonIgnore
+    @JsonIgnore
     // @JsonManagedReference means this list is shown in response,
     // and @JsonBackReference (for a single object) means
     // this will not be shown in response (avoid recursive)
-    @JsonManagedReference
+    // @JsonManagedReference
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "question")
     private List<Answer> answers = new ArrayList<>();
 
