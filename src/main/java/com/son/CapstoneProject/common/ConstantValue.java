@@ -3,7 +3,7 @@ package com.son.CapstoneProject.common;
 public class ConstantValue {
 
     // Pagination
-    public static final int QUESTIONS_PER_PAGE = 2;
+    public static final int QUESTIONS_PER_PAGE = 3;
     public static final int ARTICLES_PER_PAGE = 5;
     public static final int USERS_PER_PAGE = 5;
 

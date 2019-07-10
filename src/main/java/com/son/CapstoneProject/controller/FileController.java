@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/file")
-@CrossOrigin(origins = {"${front-end.settings.cross-origin.url}"})
+//@CrossOrigin(origins = {"${front-end.settings.cross-origin.url}"})
 public class FileController {
 
     @Autowired

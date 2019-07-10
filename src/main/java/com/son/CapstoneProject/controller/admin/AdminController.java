@@ -43,9 +43,6 @@ public class AdminController {
     private ReportRepository reportRepository;
 
     @Autowired
-    private ControllerUtils controllerUtils;
-
-    @Autowired
     private AppUserTagRepository appUserTagRepository;
 
     @Autowired
@@ -54,87 +51,6 @@ public class AdminController {
     @GetMapping("/test")
     public String test() {
         return "You only see this if you are an administrator";
-    }
-
-    /**
-     * Admins can add a new article
-     * ** Tag from articles do not count any points to admins
-     *
-     * @param article
-     * @return
-     */
-    @Transactional
-    @PostMapping(value = "/addArticle",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Article> addArticle(@RequestBody Article article) throws Exception {
-        String methodName = "AdminController.addArticle";
-
-        AppUser appUser = article.getAppUser();
-
-        controllerUtils.validateAppUser(appUser, methodName, true);
-
-        article.setUtilTimestamp(new Date());
-
-        // Save tags first (distinctive name)
-        List<Tag> tags = controllerUtils.saveDistinctiveTags(article.getTags());
-        article.setTags(tags);
-
-        return ResponseEntity.ok(articleRepository.save(article));
-    }
-
-    /**
-     * Admins can update an article
-     *
-     * @param updatedArticle
-     * @return
-     * @throws Exception
-     */
-    @PutMapping("/updateArticle/{articleId}")
-    @Transactional
-    public ResponseEntity<Article> updateArticle(
-            @RequestBody Article updatedArticle,
-            @PathVariable Long articleId)
-            throws Exception {
-        String methodName = "AdminController.updateArticle";
-
-        Article oldArticle = articleRepository.findById(articleId)
-                .orElseThrow(() -> new Exception(methodName + ": Not found any article with id: " + articleId));
-
-        // Save tags first
-        List<Tag> tags = controllerUtils.saveDistinctiveTags(updatedArticle.getTags());
-
-        // Update values
-        oldArticle.setTitle(updatedArticle.getTitle());
-        oldArticle.setContent(updatedArticle.getContent());
-        oldArticle.setTags(tags);
-        oldArticle.setFileDownloadUris(updatedArticle.getFileDownloadUris());
-        oldArticle.setUtilTimestamp(new Date());
-
-        // Save to database
-        Article question = articleRepository.save(oldArticle);
-        return ResponseEntity.ok(question);
-    }
-
-    /**
-     * Admins can delete an article
-     *
-     * @param id
-     * @return
-     * @throws Exception
-     */
-    @DeleteMapping("/deleteArticle/{id}")
-    public Map<String, String> deleteArticle(@PathVariable Long id) throws Exception {
-        Article article = articleRepository.findById(id)
-                .orElseThrow(() -> new Exception("AdminController.deleteArticle: Not found any article with id: " + id));
-
-        // Delete article
-        articleRepository.delete(article);
-
-        Map<String, String> map = new HashMap<>();
-        map.put("articleId", ("" + id));
-        map.put("deleted", "true");
-        return map;
     }
 
     @GetMapping("/viewAllReports")

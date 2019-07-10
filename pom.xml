@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.fpt</groupId>
-    <artifactId>CapstoneProject</artifactId>
+    <artifactId>SmartFarming</artifactId>
     <version>0.0.1</version>
     <packaging>war</packaging>
 
