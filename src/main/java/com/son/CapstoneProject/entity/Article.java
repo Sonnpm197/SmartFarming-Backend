@@ -1,5 +1,6 @@
 package com.son.CapstoneProject.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.son.CapstoneProject.entity.login.AppUser;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,6 +27,7 @@ import java.util.Objects;
                 @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class),
         }
 )
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Article {
 
     @Id
@@ -59,8 +61,8 @@ public class Article {
     @Temporal(TemporalType.TIMESTAMP)
     private java.util.Date utilTimestamp;
 
-    @ElementCollection
-    private List<String> fileDownloadUris;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "article")
+    private List<UploadedFile> uploadedFiles;
 
 //    @JsonManagedReference
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "article")
@@ -82,5 +84,17 @@ public class Article {
     @Override
     public int hashCode() {
         return Objects.hash(articleId);
+    }
+
+    @Override
+    public String toString() {
+        return "Article{" +
+                "articleId=" + articleId +
+                ", title='" + title + '\'' +
+                ", content='" + content + '\'' +
+                ", category='" + category + '\'' +
+                ", utilTimestamp=" + utilTimestamp +
+                ", viewCount=" + viewCount +
+                '}';
     }
 }

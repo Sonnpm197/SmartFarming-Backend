@@ -1,5 +1,6 @@
 package com.son.CapstoneProject.controller.user;
 
+import com.son.CapstoneProject.common.ConstantValue;
 import com.son.CapstoneProject.configuration.HttpRequestResponseUtils;
 import com.son.CapstoneProject.controller.ControllerUtils;
 import com.son.CapstoneProject.entity.*;
@@ -45,9 +46,9 @@ public class UpvoteController {
 
     @Autowired
     private AppUserRepository appUserRepository;
-
-    @Autowired
-    private UserRoleRepository userRoleRepository;
+//
+//    @Autowired
+//    private UserRoleRepository userRoleRepository;
 
     @Autowired
     private TagRepository tagRepository;
@@ -260,21 +261,24 @@ public class UpvoteController {
         if (appUser.getReputation() == 0 && updatedPoint < 0) {
             appUser.setReputation(0);
         } else {
-            List<UserRole> userRoles = userRoleRepository.findByAppUser_UserId(appUser.getUserId());
-            boolean isAdmin = false;
+            // Since we dont use Spring Social login => we save role directly to AppUser
+
+//            List<UserRole> userRoles = userRoleRepository.findByAppUser_UserId(appUser.getUserId());
+//            boolean isAdmin = false;
 
             // Check if this user is an admin
-            if (userRoles != null && userRoles.size() > 0) {
-                for (UserRole role : userRoles) {
-                    if (role.getAppRole().getRoleName().equalsIgnoreCase(ROLE_ADMIN)) {
-                        isAdmin = true;
-                        break;
-                    }
-                }
-            }
+//            if (userRoles != null && userRoles.size() > 0) {
+//                for (UserRole role : userRoles) {
+//                    if (role.getAppRole().getRoleName().equalsIgnoreCase(ROLE_ADMIN)) {
+//                        isAdmin = true;
+//                        break;
+//                    }
+//                }
+//            }
 
             // Only increase reputation for users who are not admins and anonymous users
-            if (!isAdmin && !appUser.isAnonymous()) {
+//            if (!isAdmin && !appUser.isAnonymous()) {
+            if (Role.USER.getValue().equalsIgnoreCase(appUser.getRole())) {
                 appUser.setReputation(appUser.getReputation() + updatedPoint);
             }
 
@@ -291,7 +295,8 @@ public class UpvoteController {
                         appUserTag.setReputation(0);
                     } else {
                         // Only increase reputation for user
-                        if (!isAdmin && !appUser.isAnonymous()) {
+//                        if (!isAdmin && !appUser.isAnonymous()) {
+                        if (Role.USER.getValue().equalsIgnoreCase(appUser.getRole())) {
                             appUserTag.setReputation(appUserTag.getReputation() + updatedPoint);
                         }
                     }
@@ -303,7 +308,8 @@ public class UpvoteController {
                     newAppUserTag.setTag(tag);
                     // Only increase reputation for user
                     // By default reputation is 0
-                    if (!isAdmin) {
+//                    if (!isAdmin) {
+                    if (Role.USER.getValue().equalsIgnoreCase(appUser.getRole())) {
                         newAppUserTag.setReputation(1);
                     }
                     appUserTagRepository.save(newAppUserTag);

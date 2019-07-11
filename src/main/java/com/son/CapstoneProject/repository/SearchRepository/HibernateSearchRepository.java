@@ -115,7 +115,8 @@ public class HibernateSearchRepository {
                             .createQuery();
                     queryList.add(phraseQuery);
 
-                    addDistinctValueToList(articles, finalArticles,
+                    addDistinctValueToList(
+                            articles, finalArticles,
                             questions, finalQuestions,
                             tags, finalTags,
                             queryList, className, genericClass, articleCategory);
@@ -141,7 +142,8 @@ public class HibernateSearchRepository {
                         queryList.add(query);
                     }
 
-                    addDistinctValueToList(articles, finalArticles,
+                    addDistinctValueToList(
+                            articles, finalArticles,
                             questions, finalQuestions,
                             tags, finalTags,
                             queryList, className, genericClass, articleCategory);
@@ -149,7 +151,7 @@ public class HibernateSearchRepository {
                 }
 
                 // At the end of the loop return result
-                returnFinalListByClassName(className, finalArticles, finalQuestions, finalTags);
+                return returnFinalListByClassName(className, finalArticles, finalQuestions, finalTags);
             }
         } catch (Exception e) {
             e.printStackTrace();

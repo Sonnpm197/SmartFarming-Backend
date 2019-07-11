@@ -32,4 +32,12 @@ public class ArticleRepositoryTest {
         // Evaluate
         Assert.assertEquals(article, article1);
     }
+
+    @Test
+    public void findAll() {
+    }
+
+    @Test
+    public void getTotalViewCount() {
+    }
 }

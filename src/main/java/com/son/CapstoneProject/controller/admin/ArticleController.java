@@ -5,6 +5,7 @@ import com.son.CapstoneProject.controller.ControllerUtils;
 import com.son.CapstoneProject.entity.Article;
 import com.son.CapstoneProject.entity.Tag;
 import com.son.CapstoneProject.entity.login.AppUser;
+import com.son.CapstoneProject.entity.search.ArticleSearch;
 import com.son.CapstoneProject.entity.search.GenericClass;
 import com.son.CapstoneProject.repository.ArticleRepository;
 import com.son.CapstoneProject.repository.searchRepository.HibernateSearchRepository;
@@ -61,16 +62,16 @@ public class ArticleController {
         // Execute asynchronously
         countingService.countView(id, ipAddress, ARTICLE);
         return articleRepository.findById(id)
-                .orElseThrow(() -> new Exception("Not found"));
+                .orElseThrow(() -> new Exception("ArticleController.viewArticle: Not found any article with id: " + id));
     }
 
-    @GetMapping("/searchArticles/{category}/{textSearch}")
-    public List<Article> searchArticles(@PathVariable String category, @PathVariable String textSearch) {
+    @PostMapping("/searchArticles")
+    public List<Article> searchArticles(@RequestBody ArticleSearch articleSearch) {
         return (List<Article>) hibernateSearchRepository.search2(
-                textSearch,
+                articleSearch.getTextSearch(),
                 ARTICLE,
                 new String[]{"title", "content"},
-                category
+                articleSearch.getCategory()
         );
     }
 
@@ -126,7 +127,7 @@ public class ArticleController {
         oldArticle.setTitle(updatedArticle.getTitle());
         oldArticle.setContent(updatedArticle.getContent());
         oldArticle.setTags(tags);
-        oldArticle.setFileDownloadUris(updatedArticle.getFileDownloadUris());
+        oldArticle.setUploadedFiles(updatedArticle.getUploadedFiles());
         oldArticle.setUtilTimestamp(new Date());
 
         // Save to database

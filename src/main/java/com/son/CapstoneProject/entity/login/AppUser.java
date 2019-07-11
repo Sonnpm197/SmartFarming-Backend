@@ -27,24 +27,31 @@ public class AppUser {
 
     private String ipAddress;
 
-    @Column(name = "User_Name", length = 36)
-    private String userName; // User Id from Facebook or google
+    // Because we dont use Spring Social login => directly use SocialUser from angular
+//    @Column(name = "User_Name", length = 36)
+//    private String userName; // User Id from Facebook or google
 
-    @Column(name = "Email", length = 128)
-    private String email;
+    private boolean anonymous;
 
-    @Column(name = "First_Name", length = 36)
-    private String firstName;
+    @JoinColumn(name = "social_id", foreignKey = @ForeignKey(name = "FK_APPUSER_SOCIALUSERINFORMATION"))
+    @OneToOne(fetch = FetchType.LAZY)
+    private SocialUserInformation socialUserInformation;
 
-    @Column(name = "Last_Name", length = 36)
-    private String lastName;
-
-    @JsonIgnore
-    @Column(name = "Encrypted_Password", length = 128)
-    private String encryptedPassword;
-
-    @Column(name = "Enabled", length = 1)
-    private boolean enabled;
+//    @Column(name = "Email", length = 128)
+//    private String email;
+//
+//    @Column(name = "First_Name", length = 36)
+//    private String firstName;
+//
+//    @Column(name = "Last_Name", length = 36)
+//    private String lastName;
+//
+//    @JsonIgnore
+//    @Column(name = "Encrypted_Password", length = 128)
+//    private String encryptedPassword;
+//
+//    @Column(name = "Enabled", length = 1)
+//    private boolean enabled;
 
     // An user can ask many questions
     @JsonIgnore
@@ -60,22 +67,19 @@ public class AppUser {
 
     private int reputation;
 
-    private boolean anonymous;
-
     private int viewCount;
 
-    private String profileImageUrl;
+//    private String profileImageUrl;
 
-    private String userCVUrl;
+    private String cvUrl;
+
+    // Because we dont use Spring Social login => an user needs only 1 role
+    private String role;
 
     @Override
     public String toString() {
         return "{" +
                     "\"userId\":" + "\"" + userId + "\"" +
-                    ", \"userName\":" + "\"" + userName + '\"' +
-                    ", \"email\":" + "\"" + email + '\"' +
-                    ", \"firstName\":" + "\"" + firstName + '\"' +
-                    ", \"lastName\":" + "\"" + lastName + '\"' +
                     ", \"reputation\":" + "\"" + reputation + "\"" +
                 "}";
     }

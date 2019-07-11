@@ -86,8 +86,8 @@ public class Question implements Serializable {
 
     private int viewCount;
 
-    @ElementCollection
-    private List<String> fileDownloadUris;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "question")
+    private List<UploadedFile> uploadedFiles;
 
 //    @JsonManagedReference
     @ManyToMany(fetch = FetchType.LAZY/*, cascade = CascadeType.ALL*/)

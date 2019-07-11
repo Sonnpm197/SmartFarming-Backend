@@ -47,11 +47,12 @@ public class AppUserController {
     @PostMapping("/editProfile/{userId}")
     public AppUser editProfile(@PathVariable AppUser updatedAppUser, @PathVariable Long userId) {
         AppUser appUser = appUserRepository.findById(userId).get();
-        appUser.setFirstName(updatedAppUser.getFirstName());
-        appUser.setLastName(updatedAppUser.getLastName());
-        appUser.setEmail(updatedAppUser.getEmail());
-        appUser.setUserCVUrl(updatedAppUser.getUserCVUrl());
-        appUser.setProfileImageUrl(updatedAppUser.getProfileImageUrl());
+        // TODO: finish this
+//        appUser.setFirstName(updatedAppUser.getFirstName());
+//        appUser.setLastName(updatedAppUser.getLastName());
+//        appUser.setEmail(updatedAppUser.getEmail());
+//        appUser.setCvUrl(updatedAppUser.getCvUrl());
+//        appUser.setProfileImageUrl(updatedAppUser.getProfileImageUrl());
 
         return appUserRepository.save(appUser);
     }

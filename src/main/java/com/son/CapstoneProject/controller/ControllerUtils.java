@@ -1,5 +1,6 @@
 package com.son.CapstoneProject.controller;
 
+import com.son.CapstoneProject.common.ConstantValue;
 import com.son.CapstoneProject.entity.Tag;
 import com.son.CapstoneProject.entity.login.AppRole;
 import com.son.CapstoneProject.entity.login.AppUser;
@@ -25,8 +26,8 @@ public class ControllerUtils {
     @Autowired
     private AppUserRepository appUserRepository;
 
-    @Autowired
-    private AppUserDAO appUserDAO;
+//    @Autowired
+//    private AppUserDAO appUserDAO;
 
     public List<Tag> saveDistinctiveTags(List<Tag> tags) {
         List<Tag> processedList = new ArrayList<>();
@@ -60,14 +61,23 @@ public class ControllerUtils {
      * @return
      */
     public AppUser saveOrReturnAnonymousUser(String ipAddress) {
-        AppUserForm myForm = new AppUserForm();
-        myForm.setPassword("defaultPassword");
-        myForm.setAnonymous(true);
-        myForm.setIpAddress(ipAddress);
 
-        List<String> roleNames = new ArrayList<>();
-        // By default every user has this role
-        roleNames.add(AppRole.ROLE_USER);
+        if (ipAddress == null) {
+            return null;
+        }
+
+        // === Since we dont use Social Login by Spring, comment this === //
+
+//        AppUserForm myForm = new AppUserForm();
+//        myForm.setPassword("defaultPassword");
+//        myForm.setAnonymous(true);
+//        myForm.setIpAddress(ipAddress);
+//
+//        List<String> roleNames = new ArrayList<>();
+//        // By default every user has this role
+//        roleNames.add(AppRole.ROLE_USER);
+
+        // ==============================================================//
 
         // Check if this anonymous user existed
         AppUser appUserByIpAddress = appUserRepository.findByIpAddress(ipAddress);
@@ -75,8 +85,16 @@ public class ControllerUtils {
             return appUserByIpAddress;
         }
 
+        // Else if we cannot find user by ip address => create new one
+        // ** Anonymous user is automatically a normal user
         try {
-            return appUserDAO.registerNewUserAccount(myForm, roleNames);
+//            return appUserDAO.registerNewUserAccount(myForm, roleNames);
+
+            AppUser newAppUser = new AppUser();
+            newAppUser.setAnonymous(true);
+            newAppUser.setIpAddress(ipAddress);
+            newAppUser.setRole(ConstantValue.Role.ANONYMOUS.getValue());
+            appUserRepository.save(newAppUser);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -84,6 +102,13 @@ public class ControllerUtils {
         return null;
     }
 
+    /**
+     * checkUserId = true => check if appUser inside request has userId or not
+     * @param appUser
+     * @param methodName
+     * @param checkUserId
+     * @throws Exception
+     */
     public void validateAppUser(AppUser appUser, String methodName, boolean checkUserId) throws Exception {
         if (appUser == null) {
             String message = methodName + ": Request body has no appUser";
