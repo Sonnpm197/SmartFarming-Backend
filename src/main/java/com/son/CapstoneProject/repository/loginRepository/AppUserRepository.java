@@ -10,6 +10,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AppUserRepository extends PagingAndSortingRepository<AppUser, Long> {
 
+    AppUser findBySocialUserInformation_SocialUserInformationId(Long id);
+
     Page<AppUser> findAll(Pageable pageable);
 
     AppUser findByIpAddress(String ipAddress);

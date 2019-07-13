@@ -6,4 +6,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SocialUserInformationRepository extends PagingAndSortingRepository<SocialUserInformation, Long> {
+
+    SocialUserInformation findById(String id);
+
 }

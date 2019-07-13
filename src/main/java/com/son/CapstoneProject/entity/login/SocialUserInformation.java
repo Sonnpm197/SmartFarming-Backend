@@ -21,7 +21,7 @@ public class SocialUserInformation {
     @GeneratedValue
     private Long socialUserInformationId;
 
-    private String id;
+    private String id; // social user Id by facebook and google
 
     private String provider;
 

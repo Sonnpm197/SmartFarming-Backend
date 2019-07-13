@@ -51,6 +51,16 @@ public class LoginController {
             throw new Exception(methodName + ": socialUserInformation from request body is null");
         }
 
+        // Check if this social user is existed
+        SocialUserInformation existedSocialUser = socialUserInformationRepository.findById(socialUserInformation.getId());
+
+        // This user has existed => return appUser
+        if (existedSocialUser != null) {
+            Long socialUserInformationId = socialUserInformation.getSocialUserInformationId();
+            AppUser appUser = appUserRepository.findBySocialUserInformation_SocialUserInformationId(socialUserInformationId);
+            return ResponseEntity.ok(appUser);
+        }
+
         // Save socialUser from angular js first
         socialUserInformation = socialUserInformationRepository.save(socialUserInformation);
 
