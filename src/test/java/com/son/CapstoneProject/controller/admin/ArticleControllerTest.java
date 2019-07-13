@@ -75,7 +75,7 @@ public class ArticleControllerTest {
     @Test
     @SqlGroup({
             @Sql("/sql/articleController/insert_article.sql"),
-            @Sql(scripts = "/sql/articleController/clean_up_insert_article.sql", executionPhase = AFTER_TEST_METHOD)
+            @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
     })
     public void viewNumberOfArticles() throws Exception {
         HttpEntity<String> entity = new HttpEntity<>(null, CommonTest.getHeaders("GET", frontEndUrl));
@@ -93,7 +93,7 @@ public class ArticleControllerTest {
     @Test
     @SqlGroup({
             @Sql("/sql/articleController/insert_article.sql"),
-            @Sql(scripts = "/sql/articleController/clean_up_insert_article.sql", executionPhase = AFTER_TEST_METHOD)
+            @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
     })
     public void viewArticlesByPageIndex() {
         String url = createURL("/article/viewArticles/{pageNumber}");
@@ -130,7 +130,7 @@ public class ArticleControllerTest {
     @Test
     @SqlGroup({
             @Sql("/sql/articleController/insert_article.sql"),
-            @Sql(scripts = "/sql/articleController/clean_up_insert_article.sql", executionPhase = AFTER_TEST_METHOD)
+            @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
     })
     public void viewArticleById() {
         String url = createURL("/article/viewArticle/{id}");
@@ -171,7 +171,7 @@ public class ArticleControllerTest {
     @Test
     @SqlGroup({
             @Sql("/sql/articleController/insert_article.sql"),
-            @Sql(scripts = "/sql/articleController/clean_up_insert_article.sql", executionPhase = AFTER_TEST_METHOD)
+            @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
     })
     public void searchArticles() {
         String url = createURL("/article/searchArticles");

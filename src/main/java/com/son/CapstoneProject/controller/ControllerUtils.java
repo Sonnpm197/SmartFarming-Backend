@@ -94,7 +94,7 @@ public class ControllerUtils {
             newAppUser.setAnonymous(true);
             newAppUser.setIpAddress(ipAddress);
             newAppUser.setRole(ConstantValue.Role.ANONYMOUS.getValue());
-            appUserRepository.save(newAppUser);
+            return appUserRepository.save(newAppUser);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

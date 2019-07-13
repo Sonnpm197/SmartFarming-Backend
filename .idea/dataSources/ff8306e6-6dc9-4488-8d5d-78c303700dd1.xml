@@ -90,7 +90,7 @@
     </database>
     <schema id="22" parent="3" name="dbo">
       <ObjectId>1</ObjectId>
-      <IntrospectionTimestamp>2019-07-11.03:33:11.530</IntrospectionTimestamp>
+      <IntrospectionTimestamp>2019-07-14.03:24:15.830</IntrospectionTimestamp>
       <Current>1</Current>
       <Visible>1</Visible>
     </schema>
@@ -144,7 +144,7 @@
     </schema>
     <schema id="35" parent="4" name="dbo">
       <ObjectId>1</ObjectId>
-      <IntrospectionTimestamp>2019-07-03.04:56:11.927</IntrospectionTimestamp>
+      <IntrospectionTimestamp>2019-07-14.02:44:21.733</IntrospectionTimestamp>
       <Current>1</Current>
       <Visible>1</Visible>
     </schema>
@@ -185,94 +185,94 @@
       <ObjectId>16393</ObjectId>
     </schema>
     <table id="48" parent="22" name="answer">
-      <ObjectId>289436105</ObjectId>
-      <CreatedTimestamp>2019-07-11.00:18:47.230</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.307</ModifiedTimestamp>
+      <ObjectId>1313439753</ObjectId>
+      <CreatedTimestamp>2019-07-14.03:22:44.430</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.503</ModifiedTimestamp>
     </table>
     <table id="49" parent="22" name="answer_upvoted_user_ids">
-      <ObjectId>321436219</ObjectId>
-      <CreatedTimestamp>2019-07-11.00:18:47.237</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.290</ModifiedTimestamp>
+      <ObjectId>1345439867</ObjectId>
+      <CreatedTimestamp>2019-07-14.03:22:44.437</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.490</ModifiedTimestamp>
     </table>
     <table id="50" parent="22" name="app_user">
-      <ObjectId>337436276</ObjectId>
-      <CreatedTimestamp>2019-07-11.00:18:47.240</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.337</ModifiedTimestamp>
+      <ObjectId>1361439924</ObjectId>
+      <CreatedTimestamp>2019-07-14.03:22:44.440</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.530</ModifiedTimestamp>
     </table>
     <table id="51" parent="22" name="app_user_tag">
-      <ObjectId>369436390</ObjectId>
-      <CreatedTimestamp>2019-07-11.00:18:47.240</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.297</ModifiedTimestamp>
+      <ObjectId>1393440038</ObjectId>
+      <CreatedTimestamp>2019-07-14.03:22:44.447</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.497</ModifiedTimestamp>
     </table>
     <table id="52" parent="22" name="article">
-      <ObjectId>401436504</ObjectId>
-      <CreatedTimestamp>2019-07-11.00:18:47.243</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.340</ModifiedTimestamp>
+      <ObjectId>1425440152</ObjectId>
+      <CreatedTimestamp>2019-07-14.03:22:44.450</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.533</ModifiedTimestamp>
     </table>
     <table id="53" parent="22" name="article_tags">
-      <ObjectId>433436618</ObjectId>
-      <CreatedTimestamp>2019-07-11.00:18:47.247</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.303</ModifiedTimestamp>
+      <ObjectId>1457440266</ObjectId>
+      <CreatedTimestamp>2019-07-14.03:22:44.453</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.503</ModifiedTimestamp>
     </table>
     <table id="54" parent="22" name="article_upvoted_user_ids">
-      <ObjectId>449436675</ObjectId>
-      <CreatedTimestamp>2019-07-11.00:18:47.247</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.307</ModifiedTimestamp>
+      <ObjectId>1473440323</ObjectId>
+      <CreatedTimestamp>2019-07-14.03:22:44.457</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.503</ModifiedTimestamp>
     </table>
     <table id="55" parent="22" name="comment">
-      <ObjectId>465436732</ObjectId>
-      <CreatedTimestamp>2019-07-11.00:18:47.250</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.320</ModifiedTimestamp>
+      <ObjectId>1489440380</ObjectId>
+      <CreatedTimestamp>2019-07-14.03:22:44.457</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.517</ModifiedTimestamp>
     </table>
     <table id="56" parent="22" name="comment_upvoted_user_ids">
-      <ObjectId>497436846</ObjectId>
-      <CreatedTimestamp>2019-07-11.00:18:47.250</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.317</ModifiedTimestamp>
+      <ObjectId>1521440494</ObjectId>
+      <CreatedTimestamp>2019-07-14.03:22:44.460</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.510</ModifiedTimestamp>
     </table>
     <table id="57" parent="22" name="edited_question">
-      <ObjectId>513436903</ObjectId>
-      <CreatedTimestamp>2019-07-11.00:18:47.253</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.327</ModifiedTimestamp>
+      <ObjectId>1537440551</ObjectId>
+      <CreatedTimestamp>2019-07-14.03:22:44.460</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.520</ModifiedTimestamp>
     </table>
     <table id="58" parent="22" name="edited_question_tags">
-      <ObjectId>545437017</ObjectId>
-      <CreatedTimestamp>2019-07-11.00:18:47.257</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.327</ModifiedTimestamp>
+      <ObjectId>1569440665</ObjectId>
+      <CreatedTimestamp>2019-07-14.03:22:44.463</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.523</ModifiedTimestamp>
     </table>
     <table id="59" parent="22" name="question">
-      <ObjectId>561437074</ObjectId>
-      <CreatedTimestamp>2019-07-11.00:18:47.260</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.343</ModifiedTimestamp>
+      <ObjectId>1585440722</ObjectId>
+      <CreatedTimestamp>2019-07-14.03:22:44.467</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.537</ModifiedTimestamp>
     </table>
     <table id="60" parent="22" name="question_tags">
-      <ObjectId>593437188</ObjectId>
-      <CreatedTimestamp>2019-07-11.00:18:47.263</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.333</ModifiedTimestamp>
+      <ObjectId>1617440836</ObjectId>
+      <CreatedTimestamp>2019-07-14.03:22:44.467</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.527</ModifiedTimestamp>
     </table>
     <table id="61" parent="22" name="question_upvoted_user_ids">
-      <ObjectId>609437245</ObjectId>
-      <CreatedTimestamp>2019-07-11.00:18:47.263</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.333</ModifiedTimestamp>
+      <ObjectId>1633440893</ObjectId>
+      <CreatedTimestamp>2019-07-14.03:22:44.470</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.530</ModifiedTimestamp>
     </table>
     <table id="62" parent="22" name="report">
-      <ObjectId>625437302</ObjectId>
-      <CreatedTimestamp>2019-07-11.00:18:47.270</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.340</ModifiedTimestamp>
+      <ObjectId>1649440950</ObjectId>
+      <CreatedTimestamp>2019-07-14.03:22:44.470</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.533</ModifiedTimestamp>
     </table>
     <table id="63" parent="22" name="social_user_information">
-      <ObjectId>657437416</ObjectId>
-      <CreatedTimestamp>2019-07-11.00:18:47.273</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.290</ModifiedTimestamp>
+      <ObjectId>1681441064</ObjectId>
+      <CreatedTimestamp>2019-07-14.03:22:44.473</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.490</ModifiedTimestamp>
     </table>
     <table id="64" parent="22" name="tag">
-      <ObjectId>689437530</ObjectId>
-      <CreatedTimestamp>2019-07-11.00:18:47.277</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.330</ModifiedTimestamp>
+      <ObjectId>1713441178</ObjectId>
+      <CreatedTimestamp>2019-07-14.03:22:44.477</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.523</ModifiedTimestamp>
     </table>
     <table id="65" parent="22" name="uploaded_file">
-      <ObjectId>721437644</ObjectId>
-      <CreatedTimestamp>2019-07-11.00:18:47.280</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.343</ModifiedTimestamp>
+      <ObjectId>1745441292</ObjectId>
+      <CreatedTimestamp>2019-07-14.03:22:44.480</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.537</ModifiedTimestamp>
     </table>
     <table id="66" parent="35" name="Customer">
       <ObjectId>1365579903</ObjectId>
@@ -411,42 +411,42 @@
       <Position>6</Position>
       <DataType>bigint|0s</DataType>
     </column>
-    <index id="90" parent="48" name="PK__answer__33724318CBD6B7C8">
+    <index id="90" parent="48" name="PK__answer__33724318633AB370">
       <Position>1</Position>
       <NameSurrogate>1</NameSurrogate>
       <ColNames>answer_id</ColNames>
       <Clustering>1</Clustering>
       <Unique>1</Unique>
     </index>
-    <key id="91" parent="48" name="PK__answer__33724318CBD6B7C8">
-      <ObjectId>305436162</ObjectId>
+    <key id="91" parent="48" name="PK__answer__33724318633AB370">
+      <ObjectId>1329439810</ObjectId>
       <NameSurrogate>1</NameSurrogate>
-      <CreatedTimestamp>2019-07-11.00:18:47.233</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.233</ModifiedTimestamp>
+      <CreatedTimestamp>2019-07-14.03:22:44.433</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.433</ModifiedTimestamp>
       <ColNames>answer_id</ColNames>
-      <UnderlyingIndexName>PK__answer__33724318CBD6B7C8</UnderlyingIndexName>
+      <UnderlyingIndexName>PK__answer__33724318633AB370</UnderlyingIndexName>
       <Primary>1</Primary>
     </key>
     <foreign-key id="92" parent="48" name="FK_ANSWER_APPUSER">
-      <ObjectId>753437758</ObjectId>
-      <CreatedTimestamp>2019-07-11.00:18:47.283</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.283</ModifiedTimestamp>
+      <ObjectId>1777441406</ObjectId>
+      <CreatedTimestamp>2019-07-14.03:22:44.483</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.483</ModifiedTimestamp>
       <ColNames>user_id</ColNames>
-      <RefTableId>337436276</RefTableId>
+      <RefTableId>1361439924</RefTableId>
       <RefSchemaName>dbo</RefSchemaName>
       <RefTableName>app_user</RefTableName>
-      <RefKeyName>PK__app_user__B9BE370FC1DDD23E</RefKeyName>
+      <RefKeyName>PK__app_user__B9BE370F170FA875</RefKeyName>
       <RefColNames>user_id</RefColNames>
     </foreign-key>
     <foreign-key id="93" parent="48" name="FK_ANSWER_QUESTION">
-      <ObjectId>769437815</ObjectId>
-      <CreatedTimestamp>2019-07-11.00:18:47.287</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.287</ModifiedTimestamp>
+      <ObjectId>1793441463</ObjectId>
+      <CreatedTimestamp>2019-07-14.03:22:44.487</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.487</ModifiedTimestamp>
       <ColNames>question_id</ColNames>
-      <RefTableId>561437074</RefTableId>
+      <RefTableId>1585440722</RefTableId>
       <RefSchemaName>dbo</RefSchemaName>
       <RefTableName>question</RefTableName>
-      <RefKeyName>PK__question__2EC21549A046C880</RefKeyName>
+      <RefKeyName>PK__question__2EC2154936A4635D</RefKeyName>
       <RefColNames>question_id</RefColNames>
     </foreign-key>
     <column id="94" parent="49" name="answer_answer_id">
@@ -459,14 +459,14 @@
       <DataType>bigint|0s</DataType>
     </column>
     <foreign-key id="96" parent="49" name="FK5hx12ov9jjsbg22ifs3dk0gnn">
-      <ObjectId>785437872</ObjectId>
-      <CreatedTimestamp>2019-07-11.00:18:47.290</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.290</ModifiedTimestamp>
+      <ObjectId>1809441520</ObjectId>
+      <CreatedTimestamp>2019-07-14.03:22:44.490</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.490</ModifiedTimestamp>
       <ColNames>answer_answer_id</ColNames>
-      <RefTableId>289436105</RefTableId>
+      <RefTableId>1313439753</RefTableId>
       <RefSchemaName>dbo</RefSchemaName>
       <RefTableName>answer</RefTableName>
-      <RefKeyName>PK__answer__33724318CBD6B7C8</RefKeyName>
+      <RefKeyName>PK__answer__33724318633AB370</RefKeyName>
       <RefColNames>answer_id</RefColNames>
     </foreign-key>
     <column id="97" parent="50" name="user_id">
@@ -503,34 +503,34 @@
     </column>
     <column id="104" parent="50" name="social_id">
       <Position>8</Position>
-      <DataType>varchar(255 char)|0s</DataType>
+      <DataType>bigint|0s</DataType>
     </column>
-    <index id="105" parent="50" name="PK__app_user__B9BE370FC1DDD23E">
+    <index id="105" parent="50" name="PK__app_user__B9BE370F170FA875">
       <Position>1</Position>
       <NameSurrogate>1</NameSurrogate>
       <ColNames>user_id</ColNames>
       <Clustering>1</Clustering>
       <Unique>1</Unique>
     </index>
-    <key id="106" parent="50" name="PK__app_user__B9BE370FC1DDD23E">
-      <ObjectId>353436333</ObjectId>
+    <key id="106" parent="50" name="PK__app_user__B9BE370F170FA875">
+      <ObjectId>1377439981</ObjectId>
       <NameSurrogate>1</NameSurrogate>
-      <CreatedTimestamp>2019-07-11.00:18:47.240</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.240</ModifiedTimestamp>
+      <CreatedTimestamp>2019-07-14.03:22:44.440</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.440</ModifiedTimestamp>
       <ColNames>user_id</ColNames>
-      <UnderlyingIndexName>PK__app_user__B9BE370FC1DDD23E</UnderlyingIndexName>
+      <UnderlyingIndexName>PK__app_user__B9BE370F170FA875</UnderlyingIndexName>
       <Primary>1</Primary>
     </key>
     <foreign-key id="107" parent="50" name="FK_APPUSER_SOCIALUSERINFORMATION">
-      <ObjectId>801437929</ObjectId>
-      <CreatedTimestamp>2019-07-11.00:18:47.290</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.290</ModifiedTimestamp>
+      <ObjectId>1825441577</ObjectId>
+      <CreatedTimestamp>2019-07-14.03:22:44.490</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.490</ModifiedTimestamp>
       <ColNames>social_id</ColNames>
-      <RefTableId>657437416</RefTableId>
+      <RefTableId>1681441064</RefTableId>
       <RefSchemaName>dbo</RefSchemaName>
       <RefTableName>social_user_information</RefTableName>
-      <RefKeyName>PK__social_u__3213E83F2C141F2D</RefKeyName>
-      <RefColNames>id</RefColNames>
+      <RefKeyName>PK__social_u__430245AF6654EBA4</RefKeyName>
+      <RefColNames>social_user_information_id</RefColNames>
     </foreign-key>
     <column id="108" parent="51" name="app_user_tag_id">
       <Position>1</Position>
@@ -555,42 +555,42 @@
       <Position>5</Position>
       <DataType>bigint|0s</DataType>
     </column>
-    <index id="113" parent="51" name="PK__app_user__D95BC75A94D0DC60">
+    <index id="113" parent="51" name="PK__app_user__D95BC75A90A3668E">
       <Position>1</Position>
       <NameSurrogate>1</NameSurrogate>
       <ColNames>app_user_tag_id</ColNames>
       <Clustering>1</Clustering>
       <Unique>1</Unique>
     </index>
-    <key id="114" parent="51" name="PK__app_user__D95BC75A94D0DC60">
-      <ObjectId>385436447</ObjectId>
+    <key id="114" parent="51" name="PK__app_user__D95BC75A90A3668E">
+      <ObjectId>1409440095</ObjectId>
       <NameSurrogate>1</NameSurrogate>
-      <CreatedTimestamp>2019-07-11.00:18:47.240</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.240</ModifiedTimestamp>
+      <CreatedTimestamp>2019-07-14.03:22:44.450</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.450</ModifiedTimestamp>
       <ColNames>app_user_tag_id</ColNames>
-      <UnderlyingIndexName>PK__app_user__D95BC75A94D0DC60</UnderlyingIndexName>
+      <UnderlyingIndexName>PK__app_user__D95BC75A90A3668E</UnderlyingIndexName>
       <Primary>1</Primary>
     </key>
     <foreign-key id="115" parent="51" name="FKemxqe6adln18rt8oabbkomk7q">
-      <ObjectId>817437986</ObjectId>
-      <CreatedTimestamp>2019-07-11.00:18:47.293</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.293</ModifiedTimestamp>
+      <ObjectId>1841441634</ObjectId>
+      <CreatedTimestamp>2019-07-14.03:22:44.493</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.493</ModifiedTimestamp>
       <ColNames>app_user_user_id</ColNames>
-      <RefTableId>337436276</RefTableId>
+      <RefTableId>1361439924</RefTableId>
       <RefSchemaName>dbo</RefSchemaName>
       <RefTableName>app_user</RefTableName>
-      <RefKeyName>PK__app_user__B9BE370FC1DDD23E</RefKeyName>
+      <RefKeyName>PK__app_user__B9BE370F170FA875</RefKeyName>
       <RefColNames>user_id</RefColNames>
     </foreign-key>
     <foreign-key id="116" parent="51" name="FKiyypovdnsfc4fm1w7ufg0a0ky">
-      <ObjectId>833438043</ObjectId>
-      <CreatedTimestamp>2019-07-11.00:18:47.297</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.297</ModifiedTimestamp>
+      <ObjectId>1857441691</ObjectId>
+      <CreatedTimestamp>2019-07-14.03:22:44.493</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.493</ModifiedTimestamp>
       <ColNames>tag_tag_id</ColNames>
-      <RefTableId>689437530</RefTableId>
+      <RefTableId>1713441178</RefTableId>
       <RefSchemaName>dbo</RefSchemaName>
       <RefTableName>tag</RefTableName>
-      <RefKeyName>PK__tag__4296A2B6652D6E1E</RefKeyName>
+      <RefKeyName>PK__tag__4296A2B62FA3988A</RefKeyName>
       <RefColNames>tag_id</RefColNames>
     </foreign-key>
     <column id="117" parent="52" name="article_id">
@@ -623,31 +623,31 @@
       <Position>7</Position>
       <DataType>bigint|0s</DataType>
     </column>
-    <index id="124" parent="52" name="PK__article__CC36F66027FB3053">
+    <index id="124" parent="52" name="PK__article__CC36F66033222D56">
       <Position>1</Position>
       <NameSurrogate>1</NameSurrogate>
       <ColNames>article_id</ColNames>
       <Clustering>1</Clustering>
       <Unique>1</Unique>
     </index>
-    <key id="125" parent="52" name="PK__article__CC36F66027FB3053">
-      <ObjectId>417436561</ObjectId>
+    <key id="125" parent="52" name="PK__article__CC36F66033222D56">
+      <ObjectId>1441440209</ObjectId>
       <NameSurrogate>1</NameSurrogate>
-      <CreatedTimestamp>2019-07-11.00:18:47.243</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.243</ModifiedTimestamp>
+      <CreatedTimestamp>2019-07-14.03:22:44.450</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.450</ModifiedTimestamp>
       <ColNames>article_id</ColNames>
-      <UnderlyingIndexName>PK__article__CC36F66027FB3053</UnderlyingIndexName>
+      <UnderlyingIndexName>PK__article__CC36F66033222D56</UnderlyingIndexName>
       <Primary>1</Primary>
     </key>
     <foreign-key id="126" parent="52" name="FK_ARTICLE_APPUSER">
-      <ObjectId>849438100</ObjectId>
-      <CreatedTimestamp>2019-07-11.00:18:47.300</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.300</ModifiedTimestamp>
+      <ObjectId>1873441748</ObjectId>
+      <CreatedTimestamp>2019-07-14.03:22:44.497</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.497</ModifiedTimestamp>
       <ColNames>user_id</ColNames>
-      <RefTableId>337436276</RefTableId>
+      <RefTableId>1361439924</RefTableId>
       <RefSchemaName>dbo</RefSchemaName>
       <RefTableName>app_user</RefTableName>
-      <RefKeyName>PK__app_user__B9BE370FC1DDD23E</RefKeyName>
+      <RefKeyName>PK__app_user__B9BE370F170FA875</RefKeyName>
       <RefColNames>user_id</RefColNames>
     </foreign-key>
     <column id="127" parent="53" name="articles_article_id">
@@ -661,25 +661,25 @@
       <NotNull>1</NotNull>
     </column>
     <foreign-key id="129" parent="53" name="FKn7fo71soke0jo0fsiltp44th">
-      <ObjectId>881438214</ObjectId>
-      <CreatedTimestamp>2019-07-11.00:18:47.303</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.303</ModifiedTimestamp>
+      <ObjectId>1905441862</ObjectId>
+      <CreatedTimestamp>2019-07-14.03:22:44.500</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.500</ModifiedTimestamp>
       <ColNames>articles_article_id</ColNames>
-      <RefTableId>401436504</RefTableId>
+      <RefTableId>1425440152</RefTableId>
       <RefSchemaName>dbo</RefSchemaName>
       <RefTableName>article</RefTableName>
-      <RefKeyName>PK__article__CC36F66027FB3053</RefKeyName>
+      <RefKeyName>PK__article__CC36F66033222D56</RefKeyName>
       <RefColNames>article_id</RefColNames>
     </foreign-key>
     <foreign-key id="130" parent="53" name="FK2om0kvekfyqgguq4l6s2u1ifh">
-      <ObjectId>865438157</ObjectId>
-      <CreatedTimestamp>2019-07-11.00:18:47.300</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.300</ModifiedTimestamp>
+      <ObjectId>1889441805</ObjectId>
+      <CreatedTimestamp>2019-07-14.03:22:44.500</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.500</ModifiedTimestamp>
       <ColNames>tags_tag_id</ColNames>
-      <RefTableId>689437530</RefTableId>
+      <RefTableId>1713441178</RefTableId>
       <RefSchemaName>dbo</RefSchemaName>
       <RefTableName>tag</RefTableName>
-      <RefKeyName>PK__tag__4296A2B6652D6E1E</RefKeyName>
+      <RefKeyName>PK__tag__4296A2B62FA3988A</RefKeyName>
       <RefColNames>tag_id</RefColNames>
     </foreign-key>
     <column id="131" parent="54" name="article_article_id">
@@ -692,14 +692,14 @@
       <DataType>bigint|0s</DataType>
     </column>
     <foreign-key id="133" parent="54" name="FKbiwpqck29ifjadmibom2qivia">
-      <ObjectId>897438271</ObjectId>
-      <CreatedTimestamp>2019-07-11.00:18:47.307</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.307</ModifiedTimestamp>
+      <ObjectId>1921441919</ObjectId>
+      <CreatedTimestamp>2019-07-14.03:22:44.503</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.503</ModifiedTimestamp>
       <ColNames>article_article_id</ColNames>
-      <RefTableId>401436504</RefTableId>
+      <RefTableId>1425440152</RefTableId>
       <RefSchemaName>dbo</RefSchemaName>
       <RefTableName>article</RefTableName>
-      <RefKeyName>PK__article__CC36F66027FB3053</RefKeyName>
+      <RefKeyName>PK__article__CC36F66033222D56</RefKeyName>
       <RefColNames>article_id</RefColNames>
     </foreign-key>
     <column id="134" parent="55" name="comment_id">
@@ -731,64 +731,64 @@
       <Position>7</Position>
       <DataType>bigint|0s</DataType>
     </column>
-    <index id="141" parent="55" name="PK__comment__E7957687E274C349">
+    <index id="141" parent="55" name="PK__comment__E7957687DE528454">
       <Position>1</Position>
       <NameSurrogate>1</NameSurrogate>
       <ColNames>comment_id</ColNames>
       <Clustering>1</Clustering>
       <Unique>1</Unique>
     </index>
-    <key id="142" parent="55" name="PK__comment__E7957687E274C349">
-      <ObjectId>481436789</ObjectId>
+    <key id="142" parent="55" name="PK__comment__E7957687DE528454">
+      <ObjectId>1505440437</ObjectId>
       <NameSurrogate>1</NameSurrogate>
-      <CreatedTimestamp>2019-07-11.00:18:47.250</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.250</ModifiedTimestamp>
+      <CreatedTimestamp>2019-07-14.03:22:44.460</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.460</ModifiedTimestamp>
       <ColNames>comment_id</ColNames>
-      <UnderlyingIndexName>PK__comment__E7957687E274C349</UnderlyingIndexName>
+      <UnderlyingIndexName>PK__comment__E7957687DE528454</UnderlyingIndexName>
       <Primary>1</Primary>
     </key>
     <foreign-key id="143" parent="55" name="FK_COMMENT_ANSWER">
-      <ObjectId>913438328</ObjectId>
-      <CreatedTimestamp>2019-07-11.00:18:47.307</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.307</ModifiedTimestamp>
+      <ObjectId>1937441976</ObjectId>
+      <CreatedTimestamp>2019-07-14.03:22:44.503</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.503</ModifiedTimestamp>
       <ColNames>answer_id</ColNames>
-      <RefTableId>289436105</RefTableId>
+      <RefTableId>1313439753</RefTableId>
       <RefSchemaName>dbo</RefSchemaName>
       <RefTableName>answer</RefTableName>
-      <RefKeyName>PK__answer__33724318CBD6B7C8</RefKeyName>
+      <RefKeyName>PK__answer__33724318633AB370</RefKeyName>
       <RefColNames>answer_id</RefColNames>
     </foreign-key>
     <foreign-key id="144" parent="55" name="FK_COMMENT_APPUSER">
-      <ObjectId>929438385</ObjectId>
-      <CreatedTimestamp>2019-07-11.00:18:47.310</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.310</ModifiedTimestamp>
+      <ObjectId>1953442033</ObjectId>
+      <CreatedTimestamp>2019-07-14.03:22:44.507</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.507</ModifiedTimestamp>
       <ColNames>user_id</ColNames>
-      <RefTableId>337436276</RefTableId>
+      <RefTableId>1361439924</RefTableId>
       <RefSchemaName>dbo</RefSchemaName>
       <RefTableName>app_user</RefTableName>
-      <RefKeyName>PK__app_user__B9BE370FC1DDD23E</RefKeyName>
+      <RefKeyName>PK__app_user__B9BE370F170FA875</RefKeyName>
       <RefColNames>user_id</RefColNames>
     </foreign-key>
     <foreign-key id="145" parent="55" name="FK_COMMENT_ARTICLE">
-      <ObjectId>945438442</ObjectId>
-      <CreatedTimestamp>2019-07-11.00:18:47.310</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.310</ModifiedTimestamp>
+      <ObjectId>1969442090</ObjectId>
+      <CreatedTimestamp>2019-07-14.03:22:44.507</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.507</ModifiedTimestamp>
       <ColNames>article_id</ColNames>
-      <RefTableId>401436504</RefTableId>
+      <RefTableId>1425440152</RefTableId>
       <RefSchemaName>dbo</RefSchemaName>
       <RefTableName>article</RefTableName>
-      <RefKeyName>PK__article__CC36F66027FB3053</RefKeyName>
+      <RefKeyName>PK__article__CC36F66033222D56</RefKeyName>
       <RefColNames>article_id</RefColNames>
     </foreign-key>
     <foreign-key id="146" parent="55" name="FK_COMMENT_QUESTION">
-      <ObjectId>961438499</ObjectId>
-      <CreatedTimestamp>2019-07-11.00:18:47.313</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.313</ModifiedTimestamp>
+      <ObjectId>1985442147</ObjectId>
+      <CreatedTimestamp>2019-07-14.03:22:44.510</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.510</ModifiedTimestamp>
       <ColNames>question_id</ColNames>
-      <RefTableId>561437074</RefTableId>
+      <RefTableId>1585440722</RefTableId>
       <RefSchemaName>dbo</RefSchemaName>
       <RefTableName>question</RefTableName>
-      <RefKeyName>PK__question__2EC21549A046C880</RefKeyName>
+      <RefKeyName>PK__question__2EC2154936A4635D</RefKeyName>
       <RefColNames>question_id</RefColNames>
     </foreign-key>
     <column id="147" parent="56" name="comment_comment_id">
@@ -801,14 +801,14 @@
       <DataType>bigint|0s</DataType>
     </column>
     <foreign-key id="149" parent="56" name="FK63ni4x17jfx2dj2fcfwsww17s">
-      <ObjectId>977438556</ObjectId>
-      <CreatedTimestamp>2019-07-11.00:18:47.317</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.317</ModifiedTimestamp>
+      <ObjectId>2001442204</ObjectId>
+      <CreatedTimestamp>2019-07-14.03:22:44.510</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.510</ModifiedTimestamp>
       <ColNames>comment_comment_id</ColNames>
-      <RefTableId>465436732</RefTableId>
+      <RefTableId>1489440380</RefTableId>
       <RefSchemaName>dbo</RefSchemaName>
       <RefTableName>comment</RefTableName>
-      <RefKeyName>PK__comment__E7957687E274C349</RefKeyName>
+      <RefKeyName>PK__comment__E7957687DE528454</RefKeyName>
       <RefColNames>comment_id</RefColNames>
     </foreign-key>
     <column id="150" parent="57" name="edited_question_id">
@@ -841,42 +841,42 @@
       <Position>7</Position>
       <DataType>bigint|0s</DataType>
     </column>
-    <index id="157" parent="57" name="PK__edited_q__57FE4B5A2A59E1DA">
+    <index id="157" parent="57" name="PK__edited_q__57FE4B5A2669C905">
       <Position>1</Position>
       <NameSurrogate>1</NameSurrogate>
       <ColNames>edited_question_id</ColNames>
       <Clustering>1</Clustering>
       <Unique>1</Unique>
     </index>
-    <key id="158" parent="57" name="PK__edited_q__57FE4B5A2A59E1DA">
-      <ObjectId>529436960</ObjectId>
+    <key id="158" parent="57" name="PK__edited_q__57FE4B5A2669C905">
+      <ObjectId>1553440608</ObjectId>
       <NameSurrogate>1</NameSurrogate>
-      <CreatedTimestamp>2019-07-11.00:18:47.253</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.253</ModifiedTimestamp>
+      <CreatedTimestamp>2019-07-14.03:22:44.463</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.463</ModifiedTimestamp>
       <ColNames>edited_question_id</ColNames>
-      <UnderlyingIndexName>PK__edited_q__57FE4B5A2A59E1DA</UnderlyingIndexName>
+      <UnderlyingIndexName>PK__edited_q__57FE4B5A2669C905</UnderlyingIndexName>
       <Primary>1</Primary>
     </key>
     <foreign-key id="159" parent="57" name="FK_EDITEDQUESTION_APPUSER">
-      <ObjectId>993438613</ObjectId>
-      <CreatedTimestamp>2019-07-11.00:18:47.320</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.320</ModifiedTimestamp>
+      <ObjectId>2017442261</ObjectId>
+      <CreatedTimestamp>2019-07-14.03:22:44.513</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.513</ModifiedTimestamp>
       <ColNames>user_id</ColNames>
-      <RefTableId>337436276</RefTableId>
+      <RefTableId>1361439924</RefTableId>
       <RefSchemaName>dbo</RefSchemaName>
       <RefTableName>app_user</RefTableName>
-      <RefKeyName>PK__app_user__B9BE370FC1DDD23E</RefKeyName>
+      <RefKeyName>PK__app_user__B9BE370F170FA875</RefKeyName>
       <RefColNames>user_id</RefColNames>
     </foreign-key>
     <foreign-key id="160" parent="57" name="FK_EDITEDQUESTION_QUESTION">
-      <ObjectId>1009438670</ObjectId>
-      <CreatedTimestamp>2019-07-11.00:18:47.320</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.320</ModifiedTimestamp>
+      <ObjectId>2033442318</ObjectId>
+      <CreatedTimestamp>2019-07-14.03:22:44.517</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.517</ModifiedTimestamp>
       <ColNames>question_id</ColNames>
-      <RefTableId>561437074</RefTableId>
+      <RefTableId>1585440722</RefTableId>
       <RefSchemaName>dbo</RefSchemaName>
       <RefTableName>question</RefTableName>
-      <RefKeyName>PK__question__2EC21549A046C880</RefKeyName>
+      <RefKeyName>PK__question__2EC2154936A4635D</RefKeyName>
       <RefColNames>question_id</RefColNames>
     </foreign-key>
     <column id="161" parent="58" name="edited_question_edited_question_id">
@@ -890,25 +890,25 @@
       <NotNull>1</NotNull>
     </column>
     <foreign-key id="163" parent="58" name="FK9o0118gli6j5y5abr553fhato">
-      <ObjectId>1041438784</ObjectId>
-      <CreatedTimestamp>2019-07-11.00:18:47.323</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.323</ModifiedTimestamp>
+      <ObjectId>2065442432</ObjectId>
+      <CreatedTimestamp>2019-07-14.03:22:44.520</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.520</ModifiedTimestamp>
       <ColNames>edited_question_edited_question_id</ColNames>
-      <RefTableId>513436903</RefTableId>
+      <RefTableId>1537440551</RefTableId>
       <RefSchemaName>dbo</RefSchemaName>
       <RefTableName>edited_question</RefTableName>
-      <RefKeyName>PK__edited_q__57FE4B5A2A59E1DA</RefKeyName>
+      <RefKeyName>PK__edited_q__57FE4B5A2669C905</RefKeyName>
       <RefColNames>edited_question_id</RefColNames>
     </foreign-key>
     <foreign-key id="164" parent="58" name="FKkhavkwpb9py1rtiaqfr7a718e">
-      <ObjectId>1025438727</ObjectId>
-      <CreatedTimestamp>2019-07-11.00:18:47.323</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.323</ModifiedTimestamp>
+      <ObjectId>2049442375</ObjectId>
+      <CreatedTimestamp>2019-07-14.03:22:44.520</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.520</ModifiedTimestamp>
       <ColNames>tags_tag_id</ColNames>
-      <RefTableId>689437530</RefTableId>
+      <RefTableId>1713441178</RefTableId>
       <RefSchemaName>dbo</RefSchemaName>
       <RefTableName>tag</RefTableName>
-      <RefKeyName>PK__tag__4296A2B6652D6E1E</RefKeyName>
+      <RefKeyName>PK__tag__4296A2B62FA3988A</RefKeyName>
       <RefColNames>tag_id</RefColNames>
     </foreign-key>
     <column id="165" parent="59" name="question_id">
@@ -937,31 +937,31 @@
       <Position>6</Position>
       <DataType>bigint|0s</DataType>
     </column>
-    <index id="171" parent="59" name="PK__question__2EC21549A046C880">
+    <index id="171" parent="59" name="PK__question__2EC2154936A4635D">
       <Position>1</Position>
       <NameSurrogate>1</NameSurrogate>
       <ColNames>question_id</ColNames>
       <Clustering>1</Clustering>
       <Unique>1</Unique>
     </index>
-    <key id="172" parent="59" name="PK__question__2EC21549A046C880">
-      <ObjectId>577437131</ObjectId>
+    <key id="172" parent="59" name="PK__question__2EC2154936A4635D">
+      <ObjectId>1601440779</ObjectId>
       <NameSurrogate>1</NameSurrogate>
-      <CreatedTimestamp>2019-07-11.00:18:47.260</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.260</ModifiedTimestamp>
+      <CreatedTimestamp>2019-07-14.03:22:44.467</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.467</ModifiedTimestamp>
       <ColNames>question_id</ColNames>
-      <UnderlyingIndexName>PK__question__2EC21549A046C880</UnderlyingIndexName>
+      <UnderlyingIndexName>PK__question__2EC2154936A4635D</UnderlyingIndexName>
       <Primary>1</Primary>
     </key>
     <foreign-key id="173" parent="59" name="FK_QUESTION_APPUSER">
-      <ObjectId>1057438841</ObjectId>
-      <CreatedTimestamp>2019-07-11.00:18:47.327</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.327</ModifiedTimestamp>
+      <ObjectId>2081442489</ObjectId>
+      <CreatedTimestamp>2019-07-14.03:22:44.523</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.523</ModifiedTimestamp>
       <ColNames>user_id</ColNames>
-      <RefTableId>337436276</RefTableId>
+      <RefTableId>1361439924</RefTableId>
       <RefSchemaName>dbo</RefSchemaName>
       <RefTableName>app_user</RefTableName>
-      <RefKeyName>PK__app_user__B9BE370FC1DDD23E</RefKeyName>
+      <RefKeyName>PK__app_user__B9BE370F170FA875</RefKeyName>
       <RefColNames>user_id</RefColNames>
     </foreign-key>
     <column id="174" parent="60" name="questions_question_id">
@@ -975,25 +975,25 @@
       <NotNull>1</NotNull>
     </column>
     <foreign-key id="176" parent="60" name="FK24dl8hcwxc0gwaf12el4ekuod">
-      <ObjectId>1089438955</ObjectId>
-      <CreatedTimestamp>2019-07-11.00:18:47.333</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.333</ModifiedTimestamp>
+      <ObjectId>2113442603</ObjectId>
+      <CreatedTimestamp>2019-07-14.03:22:44.527</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.527</ModifiedTimestamp>
       <ColNames>questions_question_id</ColNames>
-      <RefTableId>561437074</RefTableId>
+      <RefTableId>1585440722</RefTableId>
       <RefSchemaName>dbo</RefSchemaName>
       <RefTableName>question</RefTableName>
-      <RefKeyName>PK__question__2EC21549A046C880</RefKeyName>
+      <RefKeyName>PK__question__2EC2154936A4635D</RefKeyName>
       <RefColNames>question_id</RefColNames>
     </foreign-key>
     <foreign-key id="177" parent="60" name="FKtbe4eig0v6tfm2ipy5bktevhw">
-      <ObjectId>1073438898</ObjectId>
-      <CreatedTimestamp>2019-07-11.00:18:47.330</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.330</ModifiedTimestamp>
+      <ObjectId>2097442546</ObjectId>
+      <CreatedTimestamp>2019-07-14.03:22:44.523</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.523</ModifiedTimestamp>
       <ColNames>tags_tag_id</ColNames>
-      <RefTableId>689437530</RefTableId>
+      <RefTableId>1713441178</RefTableId>
       <RefSchemaName>dbo</RefSchemaName>
       <RefTableName>tag</RefTableName>
-      <RefKeyName>PK__tag__4296A2B6652D6E1E</RefKeyName>
+      <RefKeyName>PK__tag__4296A2B62FA3988A</RefKeyName>
       <RefColNames>tag_id</RefColNames>
     </foreign-key>
     <column id="178" parent="61" name="question_question_id">
@@ -1006,14 +1006,14 @@
       <DataType>bigint|0s</DataType>
     </column>
     <foreign-key id="180" parent="61" name="FK199r899m6a2n0xgi7dc9b1u8k">
-      <ObjectId>1105439012</ObjectId>
-      <CreatedTimestamp>2019-07-11.00:18:47.333</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.333</ModifiedTimestamp>
+      <ObjectId>2129442660</ObjectId>
+      <CreatedTimestamp>2019-07-14.03:22:44.530</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.530</ModifiedTimestamp>
       <ColNames>question_question_id</ColNames>
-      <RefTableId>561437074</RefTableId>
+      <RefTableId>1585440722</RefTableId>
       <RefSchemaName>dbo</RefSchemaName>
       <RefTableName>question</RefTableName>
-      <RefKeyName>PK__question__2EC21549A046C880</RefKeyName>
+      <RefKeyName>PK__question__2EC2154936A4635D</RefKeyName>
       <RefColNames>question_id</RefColNames>
     </foreign-key>
     <column id="181" parent="62" name="report_id">
@@ -1033,47 +1033,47 @@
       <Position>4</Position>
       <DataType>bigint|0s</DataType>
     </column>
-    <index id="185" parent="62" name="PK__report__779B7C58939F603D">
+    <index id="185" parent="62" name="PK__report__779B7C5851CDE190">
       <Position>1</Position>
       <NameSurrogate>1</NameSurrogate>
       <ColNames>report_id</ColNames>
       <Clustering>1</Clustering>
       <Unique>1</Unique>
     </index>
-    <key id="186" parent="62" name="PK__report__779B7C58939F603D">
-      <ObjectId>641437359</ObjectId>
+    <key id="186" parent="62" name="PK__report__779B7C5851CDE190">
+      <ObjectId>1665441007</ObjectId>
       <NameSurrogate>1</NameSurrogate>
-      <CreatedTimestamp>2019-07-11.00:18:47.270</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.270</ModifiedTimestamp>
+      <CreatedTimestamp>2019-07-14.03:22:44.473</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.473</ModifiedTimestamp>
       <ColNames>report_id</ColNames>
-      <UnderlyingIndexName>PK__report__779B7C58939F603D</UnderlyingIndexName>
+      <UnderlyingIndexName>PK__report__779B7C5851CDE190</UnderlyingIndexName>
       <Primary>1</Primary>
     </key>
     <foreign-key id="187" parent="62" name="FK_REPORT_APPUSER">
-      <ObjectId>1121439069</ObjectId>
-      <CreatedTimestamp>2019-07-11.00:18:47.337</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.337</ModifiedTimestamp>
+      <ObjectId>2145442717</ObjectId>
+      <CreatedTimestamp>2019-07-14.03:22:44.530</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.530</ModifiedTimestamp>
       <ColNames>user_id</ColNames>
-      <RefTableId>337436276</RefTableId>
+      <RefTableId>1361439924</RefTableId>
       <RefSchemaName>dbo</RefSchemaName>
       <RefTableName>app_user</RefTableName>
-      <RefKeyName>PK__app_user__B9BE370FC1DDD23E</RefKeyName>
+      <RefKeyName>PK__app_user__B9BE370F170FA875</RefKeyName>
       <RefColNames>user_id</RefColNames>
     </foreign-key>
     <foreign-key id="188" parent="62" name="FK_REPORT_QUESTION">
-      <ObjectId>1137439126</ObjectId>
-      <CreatedTimestamp>2019-07-11.00:18:47.340</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.340</ModifiedTimestamp>
+      <ObjectId>13959126</ObjectId>
+      <CreatedTimestamp>2019-07-14.03:22:44.533</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.533</ModifiedTimestamp>
       <ColNames>question_id</ColNames>
-      <RefTableId>561437074</RefTableId>
+      <RefTableId>1585440722</RefTableId>
       <RefSchemaName>dbo</RefSchemaName>
       <RefTableName>question</RefTableName>
-      <RefKeyName>PK__question__2EC21549A046C880</RefKeyName>
+      <RefKeyName>PK__question__2EC2154936A4635D</RefKeyName>
       <RefColNames>question_id</RefColNames>
     </foreign-key>
-    <column id="189" parent="63" name="id">
+    <column id="189" parent="63" name="social_user_information_id">
       <Position>1</Position>
-      <DataType>varchar(255 char)|0s</DataType>
+      <DataType>bigint|0s</DataType>
       <NotNull>1</NotNull>
     </column>
     <column id="190" parent="63" name="auth_token">
@@ -1092,177 +1092,181 @@
       <Position>5</Position>
       <DataType>varchar(255 char)|0s</DataType>
     </column>
-    <column id="194" parent="63" name="id_token">
+    <column id="194" parent="63" name="id">
       <Position>6</Position>
-      <DataType>ntext|0s</DataType>
-    </column>
-    <column id="195" parent="63" name="last_name">
-      <Position>7</Position>
       <DataType>varchar(255 char)|0s</DataType>
     </column>
-    <column id="196" parent="63" name="name">
+    <column id="195" parent="63" name="id_token">
+      <Position>7</Position>
+      <DataType>ntext|0s</DataType>
+    </column>
+    <column id="196" parent="63" name="last_name">
       <Position>8</Position>
       <DataType>varchar(255 char)|0s</DataType>
     </column>
-    <column id="197" parent="63" name="photo_url">
+    <column id="197" parent="63" name="name">
       <Position>9</Position>
       <DataType>varchar(255 char)|0s</DataType>
     </column>
-    <column id="198" parent="63" name="provider">
+    <column id="198" parent="63" name="photo_url">
       <Position>10</Position>
       <DataType>varchar(255 char)|0s</DataType>
     </column>
-    <index id="199" parent="63" name="PK__social_u__3213E83F2C141F2D">
+    <column id="199" parent="63" name="provider">
+      <Position>11</Position>
+      <DataType>varchar(255 char)|0s</DataType>
+    </column>
+    <index id="200" parent="63" name="PK__social_u__430245AF6654EBA4">
       <Position>1</Position>
       <NameSurrogate>1</NameSurrogate>
-      <ColNames>id</ColNames>
+      <ColNames>social_user_information_id</ColNames>
       <Clustering>1</Clustering>
       <Unique>1</Unique>
     </index>
-    <key id="200" parent="63" name="PK__social_u__3213E83F2C141F2D">
-      <ObjectId>673437473</ObjectId>
+    <key id="201" parent="63" name="PK__social_u__430245AF6654EBA4">
+      <ObjectId>1697441121</ObjectId>
       <NameSurrogate>1</NameSurrogate>
-      <CreatedTimestamp>2019-07-11.00:18:47.273</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.273</ModifiedTimestamp>
-      <ColNames>id</ColNames>
-      <UnderlyingIndexName>PK__social_u__3213E83F2C141F2D</UnderlyingIndexName>
+      <CreatedTimestamp>2019-07-14.03:22:44.477</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.477</ModifiedTimestamp>
+      <ColNames>social_user_information_id</ColNames>
+      <UnderlyingIndexName>PK__social_u__430245AF6654EBA4</UnderlyingIndexName>
       <Primary>1</Primary>
     </key>
-    <column id="201" parent="64" name="tag_id">
+    <column id="202" parent="64" name="tag_id">
       <Position>1</Position>
       <DataType>bigint|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="202" parent="64" name="description">
+    <column id="203" parent="64" name="description">
       <Position>2</Position>
       <DataType>ntext|0s</DataType>
     </column>
-    <column id="203" parent="64" name="name">
+    <column id="204" parent="64" name="name">
       <Position>3</Position>
       <DataType>nvarchar(20 char)|0s</DataType>
     </column>
-    <column id="204" parent="64" name="reputation">
+    <column id="205" parent="64" name="reputation">
       <Position>4</Position>
       <DataType>int|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="205" parent="64" name="view_count">
+    <column id="206" parent="64" name="view_count">
       <Position>5</Position>
       <DataType>int|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <index id="206" parent="64" name="PK__tag__4296A2B6652D6E1E">
+    <index id="207" parent="64" name="PK__tag__4296A2B62FA3988A">
       <Position>1</Position>
       <NameSurrogate>1</NameSurrogate>
       <ColNames>tag_id</ColNames>
       <Clustering>1</Clustering>
       <Unique>1</Unique>
     </index>
-    <key id="207" parent="64" name="PK__tag__4296A2B6652D6E1E">
-      <ObjectId>705437587</ObjectId>
+    <key id="208" parent="64" name="PK__tag__4296A2B62FA3988A">
+      <ObjectId>1729441235</ObjectId>
       <NameSurrogate>1</NameSurrogate>
-      <CreatedTimestamp>2019-07-11.00:18:47.277</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.277</ModifiedTimestamp>
+      <CreatedTimestamp>2019-07-14.03:22:44.480</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.480</ModifiedTimestamp>
       <ColNames>tag_id</ColNames>
-      <UnderlyingIndexName>PK__tag__4296A2B6652D6E1E</UnderlyingIndexName>
+      <UnderlyingIndexName>PK__tag__4296A2B62FA3988A</UnderlyingIndexName>
       <Primary>1</Primary>
     </key>
-    <column id="208" parent="65" name="id">
+    <column id="209" parent="65" name="id">
       <Position>1</Position>
       <DataType>bigint|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="209" parent="65" name="bucket_name">
+    <column id="210" parent="65" name="bucket_name">
       <Position>2</Position>
-      <DataType>varchar(255 char)|0s</DataType>
+      <DataType>nvarchar(50 char)|0s</DataType>
     </column>
-    <column id="210" parent="65" name="uploaded_file_name">
+    <column id="211" parent="65" name="uploaded_file_name">
       <Position>3</Position>
-      <DataType>varchar(255 char)|0s</DataType>
+      <DataType>ntext|0s</DataType>
     </column>
-    <column id="211" parent="65" name="uploaded_file_url_shown_onui">
+    <column id="212" parent="65" name="uploaded_file_url_shown_onui">
       <Position>4</Position>
-      <DataType>varchar(255 char)|0s</DataType>
+      <DataType>ntext|0s</DataType>
     </column>
-    <column id="212" parent="65" name="article_id">
+    <column id="213" parent="65" name="article_id">
       <Position>5</Position>
       <DataType>bigint|0s</DataType>
     </column>
-    <column id="213" parent="65" name="question_id">
+    <column id="214" parent="65" name="question_id">
       <Position>6</Position>
       <DataType>bigint|0s</DataType>
     </column>
-    <index id="214" parent="65" name="PK__uploaded__3213E83F9AEB9F3D">
+    <index id="215" parent="65" name="PK__uploaded__3213E83F81FD8F78">
       <Position>1</Position>
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Clustering>1</Clustering>
       <Unique>1</Unique>
     </index>
-    <key id="215" parent="65" name="PK__uploaded__3213E83F9AEB9F3D">
-      <ObjectId>737437701</ObjectId>
+    <key id="216" parent="65" name="PK__uploaded__3213E83F81FD8F78">
+      <ObjectId>1761441349</ObjectId>
       <NameSurrogate>1</NameSurrogate>
-      <CreatedTimestamp>2019-07-11.00:18:47.280</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.280</ModifiedTimestamp>
+      <CreatedTimestamp>2019-07-14.03:22:44.480</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.480</ModifiedTimestamp>
       <ColNames>id</ColNames>
-      <UnderlyingIndexName>PK__uploaded__3213E83F9AEB9F3D</UnderlyingIndexName>
+      <UnderlyingIndexName>PK__uploaded__3213E83F81FD8F78</UnderlyingIndexName>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="216" parent="65" name="FK_UPLOADEDFILE_ARTICLE">
-      <ObjectId>1153439183</ObjectId>
-      <CreatedTimestamp>2019-07-11.00:18:47.340</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.340</ModifiedTimestamp>
+    <foreign-key id="217" parent="65" name="FK_UPLOADEDFILE_ARTICLE">
+      <ObjectId>29959183</ObjectId>
+      <CreatedTimestamp>2019-07-14.03:22:44.533</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.533</ModifiedTimestamp>
       <ColNames>article_id</ColNames>
-      <RefTableId>401436504</RefTableId>
+      <RefTableId>1425440152</RefTableId>
       <RefSchemaName>dbo</RefSchemaName>
       <RefTableName>article</RefTableName>
-      <RefKeyName>PK__article__CC36F66027FB3053</RefKeyName>
+      <RefKeyName>PK__article__CC36F66033222D56</RefKeyName>
       <RefColNames>article_id</RefColNames>
     </foreign-key>
-    <foreign-key id="217" parent="65" name="FK_UPLOADEDFILE_QUESTION">
-      <ObjectId>1169439240</ObjectId>
-      <CreatedTimestamp>2019-07-11.00:18:47.343</CreatedTimestamp>
-      <ModifiedTimestamp>2019-07-11.00:18:47.343</ModifiedTimestamp>
+    <foreign-key id="218" parent="65" name="FK_UPLOADEDFILE_QUESTION">
+      <ObjectId>45959240</ObjectId>
+      <CreatedTimestamp>2019-07-14.03:22:44.537</CreatedTimestamp>
+      <ModifiedTimestamp>2019-07-14.03:22:44.537</ModifiedTimestamp>
       <ColNames>question_id</ColNames>
-      <RefTableId>561437074</RefTableId>
+      <RefTableId>1585440722</RefTableId>
       <RefSchemaName>dbo</RefSchemaName>
       <RefTableName>question</RefTableName>
-      <RefKeyName>PK__question__2EC21549A046C880</RefKeyName>
+      <RefKeyName>PK__question__2EC2154936A4635D</RefKeyName>
       <RefColNames>question_id</RefColNames>
     </foreign-key>
-    <column id="218" parent="66" name="customerId">
+    <column id="219" parent="66" name="customerId">
       <Position>1</Position>
       <DataType>varchar(50 char)|0s</DataType>
     </column>
-    <column id="219" parent="66" name="customerName">
+    <column id="220" parent="66" name="customerName">
       <Position>2</Position>
       <DataType>varchar(100 char)|0s</DataType>
     </column>
-    <column id="220" parent="66" name="customerMail">
+    <column id="221" parent="66" name="customerMail">
       <Position>3</Position>
       <DataType>varchar(50 char)|0s</DataType>
     </column>
-    <column id="221" parent="67" name="invoiceId">
+    <column id="222" parent="67" name="invoiceId">
       <Position>1</Position>
       <DataType>varchar(50 char)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="222" parent="67" name="storeId">
+    <column id="223" parent="67" name="storeId">
       <Position>2</Position>
       <DataType>varchar(50 char)|0s</DataType>
     </column>
-    <column id="223" parent="67" name="saleDate">
+    <column id="224" parent="67" name="saleDate">
       <Position>3</Position>
       <DataType>date|0s</DataType>
     </column>
-    <index id="224" parent="67" name="PK__Invoice__1252416C8B4B3702">
+    <index id="225" parent="67" name="PK__Invoice__1252416C8B4B3702">
       <Position>1</Position>
       <NameSurrogate>1</NameSurrogate>
       <ColNames>invoiceId</ColNames>
       <Clustering>1</Clustering>
       <Unique>1</Unique>
     </index>
-    <key id="225" parent="67" name="PK__Invoice__1252416C8B4B3702">
+    <key id="226" parent="67" name="PK__Invoice__1252416C8B4B3702">
       <ObjectId>1285579618</ObjectId>
       <NameSurrogate>1</NameSurrogate>
       <CreatedTimestamp>2019-02-12.08:20:13.333</CreatedTimestamp>
@@ -1271,39 +1275,39 @@
       <UnderlyingIndexName>PK__Invoice__1252416C8B4B3702</UnderlyingIndexName>
       <Primary>1</Primary>
     </key>
-    <column id="226" parent="68" name="invoiceId">
+    <column id="227" parent="68" name="invoiceId">
       <Position>1</Position>
       <DataType>varchar(50 char)|0s</DataType>
     </column>
-    <column id="227" parent="68" name="productId">
+    <column id="228" parent="68" name="productId">
       <Position>2</Position>
       <DataType>varchar(50 char)|0s</DataType>
     </column>
-    <column id="228" parent="68" name="quantity">
+    <column id="229" parent="68" name="quantity">
       <Position>3</Position>
       <DataType>int|0s</DataType>
     </column>
-    <column id="229" parent="69" name="MASV">
+    <column id="230" parent="69" name="MASV">
       <Position>1</Position>
       <DataType>varchar(4 char)|0s</DataType>
     </column>
-    <column id="230" parent="69" name="MAMH">
+    <column id="231" parent="69" name="MAMH">
       <Position>2</Position>
       <DataType>varchar(4 char)|0s</DataType>
     </column>
-    <column id="231" parent="69" name="LANTHI">
+    <column id="232" parent="69" name="LANTHI">
       <Position>3</Position>
       <DataType>tinyint|0s</DataType>
     </column>
-    <column id="232" parent="69" name="DIEM">
+    <column id="233" parent="69" name="DIEM">
       <Position>4</Position>
       <DataType>numeric(4,2)|0s</DataType>
     </column>
-    <column id="233" parent="69" name="KQ">
+    <column id="234" parent="69" name="KQ">
       <Position>5</Position>
       <DataType>varchar(1 char)|0s</DataType>
     </column>
-    <foreign-key id="234" parent="69" name="FK_KETQUA_MASV">
+    <foreign-key id="235" parent="69" name="FK_KETQUA_MASV">
       <ObjectId>373576369</ObjectId>
       <CreatedTimestamp>2018-12-26.16:05:31.480</CreatedTimestamp>
       <ModifiedTimestamp>2018-12-26.16:05:31.480</ModifiedTimestamp>
@@ -1314,7 +1318,7 @@
       <RefKeyName>PK__SINHVIEN__60228A28942CE722</RefKeyName>
       <RefColNames>MASV</RefColNames>
     </foreign-key>
-    <foreign-key id="235" parent="69" name="FK_KETQUA_MAMH">
+    <foreign-key id="236" parent="69" name="FK_KETQUA_MAMH">
       <ObjectId>389576426</ObjectId>
       <CreatedTimestamp>2018-12-26.16:05:31.480</CreatedTimestamp>
       <ModifiedTimestamp>2018-12-26.16:05:31.480</ModifiedTimestamp>
@@ -1325,7 +1329,7 @@
       <RefKeyName>PK__MONHOC__603F69EBC48DCF8D</RefKeyName>
       <RefColNames>MAMH</RefColNames>
     </foreign-key>
-    <trigger id="236" parent="69" name="nhanKetQua">
+    <trigger id="237" parent="69" name="nhanKetQua">
       <ObjectId>917578307</ObjectId>
       <SourceTextLength>2498</SourceTextLength>
       <CreatedTimestamp>2018-12-28.06:31:34.533</CreatedTimestamp>
@@ -1333,27 +1337,27 @@
       <Events>IU</Events>
       <Turn>instead-of</Turn>
     </trigger>
-    <column id="237" parent="70" name="MAKH">
+    <column id="238" parent="70" name="MAKH">
       <Position>1</Position>
       <DataType>varchar(4 char)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="238" parent="70" name="TENKH">
+    <column id="239" parent="70" name="TENKH">
       <Position>2</Position>
       <DataType>nvarchar(50 char)|0s</DataType>
     </column>
-    <column id="239" parent="70" name="SLSV">
+    <column id="240" parent="70" name="SLSV">
       <Position>3</Position>
       <DataType>int|0s</DataType>
     </column>
-    <index id="240" parent="70" name="PK__KHOA__603F592C594E5AD5">
+    <index id="241" parent="70" name="PK__KHOA__603F592C594E5AD5">
       <Position>1</Position>
       <NameSurrogate>1</NameSurrogate>
       <ColNames>MAKH</ColNames>
       <Clustering>1</Clustering>
       <Unique>1</Unique>
     </index>
-    <key id="241" parent="70" name="PK__KHOA__603F592C594E5AD5">
+    <key id="242" parent="70" name="PK__KHOA__603F592C594E5AD5">
       <ObjectId>261575970</ObjectId>
       <NameSurrogate>1</NameSurrogate>
       <CreatedTimestamp>2018-12-26.16:05:18.010</CreatedTimestamp>
@@ -1362,27 +1366,27 @@
       <UnderlyingIndexName>PK__KHOA__603F592C594E5AD5</UnderlyingIndexName>
       <Primary>1</Primary>
     </key>
-    <column id="242" parent="71" name="MAMH">
+    <column id="243" parent="71" name="MAMH">
       <Position>1</Position>
       <DataType>varchar(4 char)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="243" parent="71" name="TENMH">
+    <column id="244" parent="71" name="TENMH">
       <Position>2</Position>
       <DataType>nvarchar(35 char)|0s</DataType>
     </column>
-    <column id="244" parent="71" name="SOTIET">
+    <column id="245" parent="71" name="SOTIET">
       <Position>3</Position>
       <DataType>tinyint|0s</DataType>
     </column>
-    <index id="245" parent="71" name="PK__MONHOC__603F69EBC48DCF8D">
+    <index id="246" parent="71" name="PK__MONHOC__603F69EBC48DCF8D">
       <Position>1</Position>
       <NameSurrogate>1</NameSurrogate>
       <ColNames>MAMH</ColNames>
       <Clustering>1</Clustering>
       <Unique>1</Unique>
     </index>
-    <key id="246" parent="71" name="PK__MONHOC__603F69EBC48DCF8D">
+    <key id="247" parent="71" name="PK__MONHOC__603F69EBC48DCF8D">
       <ObjectId>341576255</ObjectId>
       <NameSurrogate>1</NameSurrogate>
       <CreatedTimestamp>2018-12-26.16:05:25.987</CreatedTimestamp>
@@ -1391,7 +1395,7 @@
       <UnderlyingIndexName>PK__MONHOC__603F69EBC48DCF8D</UnderlyingIndexName>
       <Primary>1</Primary>
     </key>
-    <trigger id="247" parent="71" name="soTietMonHoc">
+    <trigger id="248" parent="71" name="soTietMonHoc">
       <ObjectId>581577110</ObjectId>
       <SourceTextLength>480</SourceTextLength>
       <CreatedTimestamp>2018-12-27.23:36:19.870</CreatedTimestamp>
@@ -1399,43 +1403,43 @@
       <Events>U</Events>
       <Turn>instead-of</Turn>
     </trigger>
-    <column id="248" parent="72" name="productId">
+    <column id="249" parent="72" name="productId">
       <Position>1</Position>
       <DataType>varchar(50 char)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="249" parent="72" name="name">
+    <column id="250" parent="72" name="name">
       <Position>2</Position>
       <DataType>varchar(100 char)|0s</DataType>
     </column>
-    <column id="250" parent="72" name="description">
+    <column id="251" parent="72" name="description">
       <Position>3</Position>
       <DataType>text|0s</DataType>
     </column>
-    <column id="251" parent="72" name="price">
+    <column id="252" parent="72" name="price">
       <Position>4</Position>
       <DataType>money|0s</DataType>
     </column>
-    <column id="252" parent="72" name="producer">
+    <column id="253" parent="72" name="producer">
       <Position>5</Position>
       <DataType>varchar(100 char)|0s</DataType>
     </column>
-    <column id="253" parent="72" name="supplierId">
+    <column id="254" parent="72" name="supplierId">
       <Position>6</Position>
       <DataType>varchar(50 char)|0s</DataType>
     </column>
-    <column id="254" parent="72" name="category">
+    <column id="255" parent="72" name="category">
       <Position>7</Position>
       <DataType>varchar(50 char)|0s</DataType>
     </column>
-    <index id="255" parent="72" name="PK__Product__2D10D16AE1C4075C">
+    <index id="256" parent="72" name="PK__Product__2D10D16AE1C4075C">
       <Position>1</Position>
       <NameSurrogate>1</NameSurrogate>
       <ColNames>productId</ColNames>
       <Clustering>1</Clustering>
       <Unique>1</Unique>
     </index>
-    <key id="256" parent="72" name="PK__Product__2D10D16AE1C4075C">
+    <key id="257" parent="72" name="PK__Product__2D10D16AE1C4075C">
       <ObjectId>1253579504</ObjectId>
       <NameSurrogate>1</NameSurrogate>
       <CreatedTimestamp>2019-02-12.08:20:13.320</CreatedTimestamp>
@@ -1444,51 +1448,51 @@
       <UnderlyingIndexName>PK__Product__2D10D16AE1C4075C</UnderlyingIndexName>
       <Primary>1</Primary>
     </key>
-    <column id="257" parent="73" name="MASV">
+    <column id="258" parent="73" name="MASV">
       <Position>1</Position>
       <DataType>varchar(4 char)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="258" parent="73" name="HOSV">
+    <column id="259" parent="73" name="HOSV">
       <Position>2</Position>
       <DataType>nvarchar(30 char)|0s</DataType>
     </column>
-    <column id="259" parent="73" name="TENSV">
+    <column id="260" parent="73" name="TENSV">
       <Position>3</Position>
       <DataType>nvarchar(10 char)|0s</DataType>
     </column>
-    <column id="260" parent="73" name="PHAI">
+    <column id="261" parent="73" name="PHAI">
       <Position>4</Position>
       <DataType>nvarchar(4 char)|0s</DataType>
     </column>
-    <column id="261" parent="73" name="NGSINH">
+    <column id="262" parent="73" name="NGSINH">
       <Position>5</Position>
       <DataType>datetime|0s</DataType>
     </column>
-    <column id="262" parent="73" name="NOISINH">
+    <column id="263" parent="73" name="NOISINH">
       <Position>6</Position>
       <DataType>nvarchar(30 char)|0s</DataType>
     </column>
-    <column id="263" parent="73" name="MAKH">
+    <column id="264" parent="73" name="MAKH">
       <Position>7</Position>
       <DataType>varchar(4 char)|0s</DataType>
     </column>
-    <column id="264" parent="73" name="HOCBONG">
+    <column id="265" parent="73" name="HOCBONG">
       <Position>8</Position>
       <DataType>money|0s</DataType>
     </column>
-    <column id="265" parent="73" name="DIEMTB">
+    <column id="266" parent="73" name="DIEMTB">
       <Position>9</Position>
       <DataType>numeric(4,2)|0s</DataType>
     </column>
-    <index id="266" parent="73" name="PK__SINHVIEN__60228A28942CE722">
+    <index id="267" parent="73" name="PK__SINHVIEN__60228A28942CE722">
       <Position>1</Position>
       <NameSurrogate>1</NameSurrogate>
       <ColNames>MASV</ColNames>
       <Clustering>1</Clustering>
       <Unique>1</Unique>
     </index>
-    <key id="267" parent="73" name="PK__SINHVIEN__60228A28942CE722">
+    <key id="268" parent="73" name="PK__SINHVIEN__60228A28942CE722">
       <ObjectId>293576084</ObjectId>
       <NameSurrogate>1</NameSurrogate>
       <CreatedTimestamp>2018-12-26.16:05:22.303</CreatedTimestamp>
@@ -1497,7 +1501,7 @@
       <UnderlyingIndexName>PK__SINHVIEN__60228A28942CE722</UnderlyingIndexName>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="268" parent="73" name="FK_MAKH">
+    <foreign-key id="269" parent="73" name="FK_MAKH">
       <ObjectId>309576141</ObjectId>
       <CreatedTimestamp>2018-12-26.16:05:22.303</CreatedTimestamp>
       <ModifiedTimestamp>2018-12-26.16:05:22.303</ModifiedTimestamp>
@@ -1508,7 +1512,7 @@
       <RefKeyName>PK__KHOA__603F592C594E5AD5</RefKeyName>
       <RefColNames>MAKH</RefColNames>
     </foreign-key>
-    <trigger id="269" parent="73" name="hocBongKhoaHTTTVaTuoiSinhVien">
+    <trigger id="270" parent="73" name="hocBongKhoaHTTTVaTuoiSinhVien">
       <ObjectId>981578535</ObjectId>
       <SourceTextLength>1838</SourceTextLength>
       <CreatedTimestamp>2018-12-28.07:24:52.927</CreatedTimestamp>
@@ -1516,35 +1520,35 @@
       <Events>IU</Events>
       <Turn>instead-of</Turn>
     </trigger>
-    <column id="270" parent="74" name="storeId">
+    <column id="271" parent="74" name="storeId">
       <Position>1</Position>
       <DataType>varchar(50 char)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="271" parent="74" name="address">
+    <column id="272" parent="74" name="address">
       <Position>2</Position>
       <DataType>varchar(100 char)|0s</DataType>
     </column>
-    <column id="272" parent="74" name="zipcode">
+    <column id="273" parent="74" name="zipcode">
       <Position>3</Position>
       <DataType>varchar(10 char)|0s</DataType>
     </column>
-    <column id="273" parent="74" name="city">
+    <column id="274" parent="74" name="city">
       <Position>4</Position>
       <DataType>varchar(50 char)|0s</DataType>
     </column>
-    <column id="274" parent="74" name="managerName">
+    <column id="275" parent="74" name="managerName">
       <Position>5</Position>
       <DataType>varchar(50 char)|0s</DataType>
     </column>
-    <index id="275" parent="74" name="PK__Store__1EA71613CEB45F05">
+    <index id="276" parent="74" name="PK__Store__1EA71613CEB45F05">
       <Position>1</Position>
       <NameSurrogate>1</NameSurrogate>
       <ColNames>storeId</ColNames>
       <Clustering>1</Clustering>
       <Unique>1</Unique>
     </index>
-    <key id="276" parent="74" name="PK__Store__1EA71613CEB45F05">
+    <key id="277" parent="74" name="PK__Store__1EA71613CEB45F05">
       <ObjectId>1333579789</ObjectId>
       <NameSurrogate>1</NameSurrogate>
       <CreatedTimestamp>2019-02-12.08:20:13.367</CreatedTimestamp>
@@ -1553,47 +1557,47 @@
       <UnderlyingIndexName>PK__Store__1EA71613CEB45F05</UnderlyingIndexName>
       <Primary>1</Primary>
     </key>
-    <column id="277" parent="75" name="storeId">
+    <column id="278" parent="75" name="storeId">
       <Position>1</Position>
       <DataType>varchar(50 char)|0s</DataType>
     </column>
-    <column id="278" parent="75" name="productId">
+    <column id="279" parent="75" name="productId">
       <Position>2</Position>
       <DataType>varchar(50 char)|0s</DataType>
     </column>
-    <column id="279" parent="75" name="quantity">
+    <column id="280" parent="75" name="quantity">
       <Position>3</Position>
       <DataType>int|0s</DataType>
     </column>
-    <column id="280" parent="76" name="supplierId">
+    <column id="281" parent="76" name="supplierId">
       <Position>1</Position>
       <DataType>varchar(50 char)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="281" parent="76" name="givenName">
+    <column id="282" parent="76" name="givenName">
       <Position>2</Position>
       <DataType>varchar(50 char)|0s</DataType>
     </column>
-    <column id="282" parent="76" name="lastName">
+    <column id="283" parent="76" name="lastName">
       <Position>3</Position>
       <DataType>varchar(50 char)|0s</DataType>
     </column>
-    <column id="283" parent="76" name="address">
+    <column id="284" parent="76" name="address">
       <Position>4</Position>
       <DataType>varchar(100 char)|0s</DataType>
     </column>
-    <column id="284" parent="76" name="phone">
+    <column id="285" parent="76" name="phone">
       <Position>5</Position>
       <DataType>varchar(10 char)|0s</DataType>
     </column>
-    <index id="285" parent="76" name="PK__Supplier__DB8E62EDE0631AEC">
+    <index id="286" parent="76" name="PK__Supplier__DB8E62EDE0631AEC">
       <Position>1</Position>
       <NameSurrogate>1</NameSurrogate>
       <ColNames>supplierId</ColNames>
       <Clustering>1</Clustering>
       <Unique>1</Unique>
     </index>
-    <key id="286" parent="76" name="PK__Supplier__DB8E62EDE0631AEC">
+    <key id="287" parent="76" name="PK__Supplier__DB8E62EDE0631AEC">
       <ObjectId>1221579390</ObjectId>
       <NameSurrogate>1</NameSurrogate>
       <CreatedTimestamp>2019-02-12.08:20:13.300</CreatedTimestamp>
@@ -1602,31 +1606,31 @@
       <UnderlyingIndexName>PK__Supplier__DB8E62EDE0631AEC</UnderlyingIndexName>
       <Primary>1</Primary>
     </key>
-    <argument id="287" parent="77" name="@MASV">
+    <argument id="288" parent="77" name="@MASV">
       <Position>1</Position>
       <DataType>varchar(4 char)|0s</DataType>
     </argument>
-    <argument id="288" parent="78" name="@MASV">
+    <argument id="289" parent="78" name="@MASV">
       <Position>1</Position>
       <DataType>varchar(4 char)|0s</DataType>
     </argument>
-    <argument id="289" parent="79" name="@MAKH">
+    <argument id="290" parent="79" name="@MAKH">
       <Position>1</Position>
       <DataType>varchar(4 char)|0s</DataType>
     </argument>
-    <argument id="290" parent="80" name="@MASV">
+    <argument id="291" parent="80" name="@MASV">
       <Position>1</Position>
       <DataType>varchar(4 char)|0s</DataType>
     </argument>
-    <argument id="291" parent="81" name="@MAKH">
+    <argument id="292" parent="81" name="@MAKH">
       <Position>1</Position>
       <DataType>varchar(4 char)|0s</DataType>
     </argument>
-    <argument id="292" parent="82" name="@MASV">
+    <argument id="293" parent="82" name="@MASV">
       <Position>1</Position>
       <DataType>varchar(4 char)|0s</DataType>
     </argument>
-    <argument id="293" parent="83" name="@MASV">
+    <argument id="294" parent="83" name="@MASV">
       <Position>1</Position>
       <DataType>varchar(4 char)|0s</DataType>
     </argument>

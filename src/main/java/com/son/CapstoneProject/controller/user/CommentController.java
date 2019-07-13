@@ -7,10 +7,12 @@ import com.son.CapstoneProject.entity.login.AppUser;
 import com.son.CapstoneProject.repository.CommentRepository;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
@@ -47,57 +49,66 @@ public class CommentController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
-    public Comment addComment(@RequestBody Comment comment, HttpServletRequest request) throws Exception {
+    public Comment addComment(@RequestBody Comment comment, HttpServletRequest request) {
+        try {
 
-        String methodName = "UserController.addComment";
+            String methodName = "UserController.addComment";
 
-        AppUser appUser = comment.getAppUser();
+            AppUser appUser = comment.getAppUser();
 
-        controllerUtils.validateAppUser(appUser, methodName, false);
+            controllerUtils.validateAppUser(appUser, methodName, false);
 
-        if (appUser.isAnonymous()) {
-            appUser = controllerUtils.saveOrReturnAnonymousUser(HttpRequestResponseUtils.getClientIpAddress(request));
-            comment.setAppUser(appUser);
-        } else {
-            controllerUtils.validateAppUser(appUser, methodName, true);
+            if (appUser.isAnonymous()) {
+                appUser = controllerUtils.saveOrReturnAnonymousUser(HttpRequestResponseUtils.getClientIpAddress(request));
+                comment.setAppUser(appUser);
+            } else {
+                controllerUtils.validateAppUser(appUser, methodName, true);
+            }
+
+            comment.setUtilTimestamp(new Date());
+            return commentRepository.save(comment);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
-
-        comment.setUtilTimestamp(new Date());
-        return commentRepository.save(comment);
     }
 
     @PutMapping("/updateComment/{id}")
     @Transactional
     public ResponseEntity<Comment> updateComment(@RequestBody Comment updatedComment,
                                                  @PathVariable Long id,
-                                                 HttpServletRequest request)
-            throws Exception {
+                                                 HttpServletRequest request) {
 
-        String methodName = "UserController.updateComment";
+        try {
+            String methodName = "UserController.updateComment";
 
-        Comment oldComment = commentRepository.findById(id)
-                .orElseThrow(() -> new Exception(methodName + ": Not found any article with id: " + id));
+            Comment oldComment = commentRepository.findById(id)
+                    .orElseThrow(() -> new Exception(methodName + ": Not found any article with id: " + id));
 
-        AppUser appUser = updatedComment.getAppUser();
+            AppUser appUser = updatedComment.getAppUser();
 
-        controllerUtils.validateAppUser(appUser, methodName, false);
+            controllerUtils.validateAppUser(appUser, methodName, false);
 
-        if (appUser.isAnonymous()) {
-            appUser = controllerUtils.saveOrReturnAnonymousUser(HttpRequestResponseUtils.getClientIpAddress(request));
-            updatedComment.setAppUser(appUser);
-        } else {
-            controllerUtils.validateAppUser(appUser, methodName, true);
+            if (appUser.isAnonymous()) {
+                appUser = controllerUtils.saveOrReturnAnonymousUser(HttpRequestResponseUtils.getClientIpAddress(request));
+                updatedComment.setAppUser(appUser);
+            } else {
+                controllerUtils.validateAppUser(appUser, methodName, true);
+            }
+
+            // Cannot update other comment
+            if (!appUser.getUserId().equals(oldComment.getAppUser().getUserId())) {
+                String message = "UserController.updateComment: You cannot update others' comments";
+                logger.info(message);
+                throw new Exception(message);
+            }
+
+            oldComment.setContent(updatedComment.getContent());
+            return ResponseEntity.ok(commentRepository.save(oldComment));
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
-
-        // Cannot update other comment
-        if (!appUser.getUserId().equals(oldComment.getAppUser().getUserId())) {
-            String message = "UserController.updateComment: You cannot update others' comments";
-            logger.info(message);
-            throw new Exception(message);
-        }
-
-        oldComment.setContent(updatedComment.getContent());
-        return ResponseEntity.ok(commentRepository.save(oldComment));
     }
 
     /**

@@ -1,12 +1,13 @@
-delete from question_tags where questions_question_id = 1;
-delete from app_user_tag where app_user_tag_id in (0, 1);
-delete from question where question_id in (1, 2, 3, 4, 5);
-delete from tag where tag_id in (0, 1);
-delete from app_user where user_id in (1);
+delete from question_tags;
+delete from uploaded_file;
+delete from app_user_tag;
+delete from question;
+delete from tag;
+delete from app_user;
 
 -- Insert user add question
 insert into app_user (user_id, anonymous, cv_url, ip_address, reputation, role, view_count, social_id)
-values (1, 0, null , null, 0, 'USER', 0, null);
+values (1, 0, null , '127.0.0.1', 0, 'USER', 0, null);
 
 -- Insert tags
 insert into tag (tag_id, description, name, reputation, view_count)

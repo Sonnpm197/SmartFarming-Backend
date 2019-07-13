@@ -51,9 +51,10 @@ public class ArticleController {
     }
 
     @GetMapping("/viewArticles/{pageNumber}")
-    public Page<Article> viewArticles(@PathVariable int pageNumber) {
+    public List<Article> viewArticles(@PathVariable int pageNumber) {
         PageRequest pageNumWithElements = PageRequest.of(pageNumber, ARTICLES_PER_PAGE, Sort.by("utilTimestamp").descending());
-        return articleRepository.findAll(pageNumWithElements);
+        Page<Article> articlePage = articleRepository.findAll(pageNumWithElements);
+        return articlePage.getContent();
     }
 
     @GetMapping("/viewArticle/{id}")

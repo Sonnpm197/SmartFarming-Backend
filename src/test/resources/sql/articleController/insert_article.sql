@@ -1,6 +1,14 @@
-delete from article_tags where articles_article_id = 1;
-delete from article where article_id in (1, 2, 3, 4, 5, 6, 7, 8);
-delete from tag where tag_id in (0, 1);
+delete from article_tags;
+delete from question_tags;
+delete from uploaded_file;
+delete from app_user_tag;
+delete from comment_upvoted_user_ids;
+delete from comment;
+delete from article;
+delete from answer;
+delete from question;
+delete from tag;
+delete from app_user;
 
 -- Insert tags
 insert into tag (tag_id, description, name, reputation, view_count)

@@ -38,6 +38,9 @@ public class QuestionController {
     private QuestionRepository questionRepository;
 
     @Autowired
+    private UploadedFileRepository uploadedFileRepository;
+
+    @Autowired
     private EditedQuestionRepository editedQuestionRepository;
 
     @Autowired
@@ -82,9 +85,10 @@ public class QuestionController {
     }
 
     @GetMapping("/viewQuestions/{pageNumber}")
-    public Page<Question> viewQuestionsByPageIndex(@PathVariable int pageNumber) {
+    public List<Question> viewQuestionsByPageIndex(@PathVariable int pageNumber) {
         PageRequest pageNumWithElements = PageRequest.of(pageNumber, QUESTIONS_PER_PAGE, Sort.by("utilTimestamp"));
-        return questionRepository.findAll(pageNumWithElements);
+        Page<Question> questionPage = questionRepository.findAll(pageNumWithElements);
+        return questionPage.getContent();
     }
 
     @GetMapping("/viewQuestion/{id}")
@@ -143,7 +147,19 @@ public class QuestionController {
 
         // add date
         question.setUtilTimestamp(new Date());
-        return questionRepository.save(question);
+        question = questionRepository.save(question);
+
+        // This requested question will have UploadedFile objects => save info of this question to that UploadedFile
+        List<UploadedFile> uploadedFiles = question.getUploadedFiles();
+
+        if (uploadedFiles != null) {
+            for (UploadedFile uploadedFile : uploadedFiles) {
+                uploadedFile.setQuestion(question);
+                uploadedFileRepository.save(uploadedFile);
+            }
+        }
+
+        return question;
     }
 
     /**
@@ -186,8 +202,19 @@ public class QuestionController {
         oldQuestion.setContent(updatedQuestion.getContent());
         oldQuestion.setTags(tags);
 
-        Question question = questionRepository.save(oldQuestion);
-        return ResponseEntity.ok(question);
+        Question resultQuestion = questionRepository.save(oldQuestion);
+
+        // This requested question will have UploadedFile objects => save info of this question to that UploadedFile
+        List<UploadedFile> uploadedFiles = updatedQuestion.getUploadedFiles();
+
+        if (uploadedFiles != null) {
+            for (UploadedFile uploadedFile : uploadedFiles) {
+                uploadedFile.setQuestion(resultQuestion);
+                uploadedFileRepository.save(uploadedFile);
+            }
+        }
+
+        return ResponseEntity.ok(resultQuestion);
     }
 
     /**

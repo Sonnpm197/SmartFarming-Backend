@@ -19,10 +19,13 @@ public class UploadedFile {
     @GeneratedValue
     private Long id;
 
+    @Column(columnDefinition = "ntext")
     private String uploadedFileUrlShownOnUI;
 
-    private String uploadedFileName;
+    @Column(columnDefinition = "ntext")
+    private String uploadedFileName; // need this field to update or detele files
 
+    @Column(columnDefinition = "nvarchar(50)")
     private String bucketName;
 
     @JsonBackReference(value = "uploadedFile_article")
