@@ -52,7 +52,7 @@ public class LoginController {
         }
 
         // Save socialUser from angular js first
-        socialUserInformationRepository.save(socialUserInformation);
+        socialUserInformation = socialUserInformationRepository.save(socialUserInformation);
 
         // Then create an appUser
         AppUser appUser = new AppUser();
