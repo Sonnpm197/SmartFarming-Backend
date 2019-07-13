@@ -167,6 +167,7 @@ public class HibernateSearchRepository {
                                         List<Query> queryList, String className, GenericClass genericClass, String articleCategory) {
 
         // Search in category of article
+        // Only search with not null article
         if (articleCategory != null && articleCategory.trim().length() > 0) {
             org.apache.lucene.search.Query querySearchForArticleCategory = getQueryBuilder(genericClass)
                     .keyword()

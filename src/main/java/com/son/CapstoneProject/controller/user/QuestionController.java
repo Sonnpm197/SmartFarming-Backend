@@ -70,6 +70,16 @@ public class QuestionController {
         return questionRepository.count();
     }
 
+    @GetMapping("/viewNumberOfPages")
+    public long viewNumberOfPages() {
+        Long numberOfQuestion = questionRepository.count();
+        if (numberOfQuestion % QUESTIONS_PER_PAGE == 0) {
+            return numberOfQuestion / QUESTIONS_PER_PAGE;
+        } else {
+            return (numberOfQuestion / QUESTIONS_PER_PAGE) + 1;
+        }
+    }
+
     @GetMapping("/viewQuestions/{pageNumber}")
     public Page<Question> viewQuestions(@PathVariable int pageNumber) {
         PageRequest pageNumWithElements = PageRequest.of(pageNumber, QUESTIONS_PER_PAGE, Sort.by("utilTimestamp"));
@@ -349,9 +359,9 @@ public class QuestionController {
 
     /**
      * View all previous edited versions from other users (on your question only)
-     *
+     * <p>
      * Delete this edited version
-     *
+     * <p>
      * Count point for the one who edited your post
      *
      * @return

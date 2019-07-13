@@ -37,7 +37,8 @@ public class ConstantValue {
 
     public static List<String> listAdmin = new ArrayList<>(Arrays.asList(
             "sonnpmse04810@fpt.edu.vn",
-            "sonnpm197@gmail.com"
+            "sonnpm197@gmail.com",
+            "hienndse05142@fpt.edu.vn"
     ));
 
     // Pagination
