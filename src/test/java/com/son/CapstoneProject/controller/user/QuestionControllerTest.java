@@ -1,25 +1,216 @@
 package com.son.CapstoneProject.controller.user;
 
+import com.son.CapstoneProject.Application;
+import com.son.CapstoneProject.controller.CommonTest;
+import com.son.CapstoneProject.entity.*;
+import com.son.CapstoneProject.entity.login.AppUser;
+import com.son.CapstoneProject.repository.AppUserTagRepository;
+import com.son.CapstoneProject.repository.ArticleRepository;
+import com.son.CapstoneProject.repository.QuestionRepository;
+import com.son.CapstoneProject.repository.TagRepository;
+import com.son.CapstoneProject.repository.loginRepository.AppUserRepository;
+import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.*;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlGroup;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import static org.junit.Assert.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = Application.class)
 public class QuestionControllerTest {
 
+    @LocalServerPort
+    private int port;
+
+    @Value("${front-end.settings.cross-origin.url}")
+    private String frontEndUrl;
+
+    @Autowired
+    private QuestionRepository questionRepository;
+
+    @Autowired
+    private AppUserRepository appUserRepository;
+
+    @Autowired
+    private AppUserTagRepository appUserTagRepository;
+
+    @Autowired
+    private TagRepository tagRepository;
+
+    private String createURL(String path) {
+        return "http://localhost:" + port + path;
+    }
+
     @Test
+    @SqlGroup({
+            @Sql("/sql/questionController/insert_question.sql"),
+            @Sql(scripts = "/sql/questionController/clean_up_insert_question.sql", executionPhase = AFTER_TEST_METHOD)
+    })
     public void viewNumberOfQuestions() {
+        HttpEntity<String> entity = new HttpEntity<>(null, CommonTest.getHeaders("GET", frontEndUrl));
+        ResponseEntity<String> response = CommonTest.getRestTemplate().exchange(
+                createURL("/question/viewNumberOfQuestions"),
+                HttpMethod.GET,
+                entity,
+                String.class);
+        String expected = "5"; // 5 questions
+        System.out.println(">> Result: " + response.getBody());
+        Assert.assertEquals(expected, response.getBody());
     }
 
     @Test
-    public void viewQuestions() {
+    @SqlGroup({
+            @Sql("/sql/questionController/insert_question.sql"),
+            @Sql(scripts = "/sql/questionController/clean_up_insert_question.sql", executionPhase = AFTER_TEST_METHOD)
+    })
+    public void viewNumberOfPages() {
+        HttpEntity<String> entity = new HttpEntity<>(null, CommonTest.getHeaders("GET", frontEndUrl));
+        ResponseEntity<String> response = CommonTest.getRestTemplate().exchange(
+                createURL("/question/viewNumberOfPages"),
+                HttpMethod.GET,
+                entity,
+                String.class);
+        String expected = "2"; // 5 questions, 3 questions per page => 2 pages
+        System.out.println(">> Result: " + response.getBody());
+        Assert.assertEquals(expected, response.getBody());
     }
 
     @Test
-    public void viewQuestion() {
+    @SqlGroup({
+            @Sql("/sql/questionController/insert_question.sql"),
+            @Sql(scripts = "/sql/questionController/clean_up_insert_question.sql", executionPhase = AFTER_TEST_METHOD)
+    })
+    public void viewQuestionsByPageIndex() {
+        String url = createURL("/question/viewQuestions/{pageNumber}");
+
+        // URI (URL) parameters
+        Map<String, Integer> uriParams = new HashMap<>();
+        uriParams.put("pageNumber", 0);
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
+
+        System.out.println(">>> Testing URI: " + builder.buildAndExpand(uriParams).toUri());
+
+        HttpEntity<String> entity = new HttpEntity<>(null, CommonTest.getHeaders("GET", frontEndUrl));
+        ResponseEntity<RestResponsePage<Question>> response = CommonTest.getRestTemplate().exchange(
+                builder.buildAndExpand(uriParams).toUri(),
+                HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<RestResponsePage<Question>>() {
+                });
+
+        List<Question> questionList = response.getBody().getContent();
+        System.out.println(">> Result: " + questionList);
+        for (int i = 0; i < questionList.size(); i++) {
+            Question question = questionList.get(i);
+            // Assert if the higher article has higher date
+            // 5 > 4 > 3 > 2 > 1
+            if (i - 1 < 0) {
+                break;
+            }
+            Assert.assertTrue(question.getUtilTimestamp().compareTo(questionList.get(i - 1).getUtilTimestamp()) >= 0);
+        }
     }
 
+    @Test
+    @SqlGroup({
+            @Sql("/sql/questionController/insert_question.sql"),
+            @Sql(scripts = "/sql/questionController/clean_up_insert_question.sql", executionPhase = AFTER_TEST_METHOD)
+    })
+    public void viewQuestionById() {
+        String url = createURL("/question/viewQuestion/{id}");
+
+        // URI (URL) parameters
+        Map<String, Integer> uriParams = new HashMap<>();
+        uriParams.put("id", 1);
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
+
+        System.out.println(">>> Testing URI: " + builder.buildAndExpand(uriParams).toUri());
+
+        HttpEntity<String> entity = new HttpEntity<>(null, CommonTest.getHeaders("GET", frontEndUrl));
+        ResponseEntity<Question> response = CommonTest.getRestTemplate().exchange(
+                builder.buildAndExpand(uriParams).toUri(),
+                HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<Question>() {
+                });
+
+        System.out.println(">> Result: " + response.getBody());
+
+        // Increase view of question
+        Question question = questionRepository.findById(1L).get();
+        Assert.assertEquals(1, question.getViewCount());
+
+        // Increase view of author
+        AppUser appUser = appUserRepository.findById(1L).get();
+        Assert.assertEquals(1, appUser.getViewCount());
+
+        // Increase AppUserTag
+        // Trong trot
+        AppUserTag appUserTagTrongTrot = appUserTagRepository
+                .findAppUserTagByAppUser_UserIdAndTag_TagId(appUser.getUserId(), 0L);
+        // Chan nuoi
+        AppUserTag appUserTagChanNuoi = appUserTagRepository
+                .findAppUserTagByAppUser_UserIdAndTag_TagId(appUser.getUserId(), 1L);
+
+        Assert.assertEquals(1, appUserTagTrongTrot.getViewCount());
+        Assert.assertEquals(1, appUserTagChanNuoi.getViewCount());
+
+        // Increase view of tags
+        Tag trongTrot = tagRepository.findById(0L).get();
+        Tag chanNuoi = tagRepository.findById(1L).get();
+        Assert.assertEquals(1, trongTrot.getViewCount());
+        Assert.assertEquals(1, chanNuoi.getViewCount());
+
+    }
+
+    /**
+     * Note*: this method only test with indexed items
+     */
     @Test
     public void searchQuestions() {
+
+        String url = createURL("/question/searchQuestions");
+
+        String requestBody = "{"
+                + "\"textSearch\" : " + "\"hà nội chán\""
+                + "}";
+
+        // URI (URL) parameters
+        Map<String, String> uriParams = new HashMap<>();
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
+
+        System.out.println(">>> Testing URI: " + builder.buildAndExpand(uriParams).toUri());
+
+        HttpEntity<String> entity = new HttpEntity<>(requestBody, CommonTest.getHeaders("POST", frontEndUrl));
+        ResponseEntity<List<Question>> response = CommonTest.getRestTemplate().exchange(
+                builder.buildAndExpand(uriParams).toUri(),
+                HttpMethod.POST,
+                entity,
+                new ParameterizedTypeReference<List<Question>>() {
+                });
+
+        System.out.println(">> Result: " + response.getBody());
+        Assert.assertEquals("người miền Nam sinh sống ở HN", response.getBody().get(0).getTitle());
+
     }
 
     @Test

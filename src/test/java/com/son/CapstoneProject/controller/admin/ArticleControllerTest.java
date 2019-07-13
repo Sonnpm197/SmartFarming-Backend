@@ -1,6 +1,7 @@
 package com.son.CapstoneProject.controller.admin;
 
 import com.son.CapstoneProject.Application;
+import com.son.CapstoneProject.controller.CommonTest;
 import com.son.CapstoneProject.entity.Article;
 import com.son.CapstoneProject.entity.RestResponsePage;
 import com.son.CapstoneProject.entity.Tag;
@@ -19,12 +20,10 @@ import org.springframework.http.*;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,8 +59,6 @@ public class ArticleControllerTest {
     @LocalServerPort
     private int port;
 
-    private RestTemplate restTemplate = new RestTemplate();
-
     @Autowired
     private ArticleRepository articleRepository;
 
@@ -75,23 +72,14 @@ public class ArticleControllerTest {
         return "http://localhost:" + port + path;
     }
 
-    private HttpHeaders getHeaders(String method) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Access-Control-Request-Method", method);
-        headers.add("Origin", frontEndUrl);
-        headers.add("Content-Type", "application/json;charset=UTF-8");
-        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-        return headers;
-    }
-
     @Test
     @SqlGroup({
-            @Sql("/test-sql/insert_article.sql"),
-            @Sql(scripts = "/test-sql/clean_up_insert_article.sql", executionPhase = AFTER_TEST_METHOD)
+            @Sql("/sql/articleController/insert_article.sql"),
+            @Sql(scripts = "/sql/articleController/clean_up_insert_article.sql", executionPhase = AFTER_TEST_METHOD)
     })
     public void viewNumberOfArticles() throws Exception {
-        HttpEntity<String> entity = new HttpEntity<>(null, getHeaders("GET"));
-        ResponseEntity<String> response = restTemplate.exchange(
+        HttpEntity<String> entity = new HttpEntity<>(null, CommonTest.getHeaders("GET", frontEndUrl));
+        ResponseEntity<String> response = CommonTest.getRestTemplate().exchange(
                 createURL("/article/viewNumberOfArticles"),
                 HttpMethod.GET,
                 entity,
@@ -104,8 +92,8 @@ public class ArticleControllerTest {
 
     @Test
     @SqlGroup({
-            @Sql("/test-sql/insert_article.sql"),
-            @Sql(scripts = "/test-sql/clean_up_insert_article.sql", executionPhase = AFTER_TEST_METHOD)
+            @Sql("/sql/articleController/insert_article.sql"),
+            @Sql(scripts = "/sql/articleController/clean_up_insert_article.sql", executionPhase = AFTER_TEST_METHOD)
     })
     public void viewArticlesByPageIndex() {
         String url = createURL("/article/viewArticles/{pageNumber}");
@@ -118,8 +106,8 @@ public class ArticleControllerTest {
 
         System.out.println(">>> Testing URI: " + builder.buildAndExpand(uriParams).toUri());
 
-        HttpEntity<String> entity = new HttpEntity<>(null, getHeaders("GET"));
-        ResponseEntity<RestResponsePage<Article>> response = restTemplate.exchange(
+        HttpEntity<String> entity = new HttpEntity<>(null, CommonTest.getHeaders("GET", frontEndUrl));
+        ResponseEntity<RestResponsePage<Article>> response = CommonTest.getRestTemplate().exchange(
                 builder.buildAndExpand(uriParams).toUri(),
                 HttpMethod.GET,
                 entity,
@@ -141,8 +129,8 @@ public class ArticleControllerTest {
 
     @Test
     @SqlGroup({
-            @Sql("/test-sql/insert_article.sql"),
-            @Sql(scripts = "/test-sql/clean_up_insert_article.sql", executionPhase = AFTER_TEST_METHOD)
+            @Sql("/sql/articleController/insert_article.sql"),
+            @Sql(scripts = "/sql/articleController/clean_up_insert_article.sql", executionPhase = AFTER_TEST_METHOD)
     })
     public void viewArticleById() {
         String url = createURL("/article/viewArticle/{id}");
@@ -155,8 +143,8 @@ public class ArticleControllerTest {
 
         System.out.println(">>> Testing URI: " + builder.buildAndExpand(uriParams).toUri());
 
-        HttpEntity<String> entity = new HttpEntity<>(null, getHeaders("GET"));
-        ResponseEntity<Article> response = restTemplate.exchange(
+        HttpEntity<String> entity = new HttpEntity<>(null, CommonTest.getHeaders("GET", frontEndUrl));
+        ResponseEntity<Article> response = CommonTest.getRestTemplate().exchange(
                 builder.buildAndExpand(uriParams).toUri(),
                 HttpMethod.GET,
                 entity,
@@ -165,16 +153,16 @@ public class ArticleControllerTest {
 
         System.out.println(">> Result: " + response.getBody());
 
+        // Assert view count of this article
+        Article article = articleRepository.findById(1L).get();
+        Assert.assertEquals(1, article.getViewCount());
+
         // Assert view count of tags
         // Article 1 has 2 tags id 0 & 1: trồng trọt & chăn nuôi
         Tag trongTrot = tagRepository.findById(0L).get();
         Tag chanNuoi = tagRepository.findById(1L).get();
         Assert.assertEquals(1, trongTrot.getViewCount());
         Assert.assertEquals(1, chanNuoi.getViewCount());
-
-        // Assert view count of this article
-        Article article = articleRepository.findById(1L).get();
-        Assert.assertEquals(1, article.getViewCount());
     }
 
     /**
@@ -182,8 +170,8 @@ public class ArticleControllerTest {
      */
     @Test
     @SqlGroup({
-            @Sql("/test-sql/insert_article.sql"),
-            @Sql(scripts = "/test-sql/clean_up_insert_article.sql", executionPhase = AFTER_TEST_METHOD)
+            @Sql("/sql/articleController/insert_article.sql"),
+            @Sql(scripts = "/sql/articleController/clean_up_insert_article.sql", executionPhase = AFTER_TEST_METHOD)
     })
     public void searchArticles() {
         String url = createURL("/article/searchArticles");
@@ -200,8 +188,8 @@ public class ArticleControllerTest {
 
         System.out.println(">>> Testing URI: " + builder.buildAndExpand(uriParams).toUri());
 
-        HttpEntity<String> entity = new HttpEntity<>(requestBody, getHeaders("POST"));
-        ResponseEntity<List<Article>> response = restTemplate.exchange(
+        HttpEntity<String> entity = new HttpEntity<>(requestBody, CommonTest.getHeaders("POST", frontEndUrl));
+        ResponseEntity<List<Article>> response = CommonTest.getRestTemplate().exchange(
                 builder.buildAndExpand(uriParams).toUri(),
                 HttpMethod.POST,
                 entity,

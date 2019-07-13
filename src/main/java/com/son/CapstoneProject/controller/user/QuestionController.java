@@ -5,6 +5,7 @@ import com.son.CapstoneProject.controller.ControllerUtils;
 import com.son.CapstoneProject.entity.*;
 import com.son.CapstoneProject.entity.login.AppUser;
 import com.son.CapstoneProject.entity.search.GenericClass;
+import com.son.CapstoneProject.entity.search.QuestionSearch;
 import com.son.CapstoneProject.repository.*;
 import com.son.CapstoneProject.repository.loginRepository.AppUserRepository;
 import com.son.CapstoneProject.repository.searchRepository.HibernateSearchRepository;
@@ -81,13 +82,13 @@ public class QuestionController {
     }
 
     @GetMapping("/viewQuestions/{pageNumber}")
-    public Page<Question> viewQuestions(@PathVariable int pageNumber) {
+    public Page<Question> viewQuestionsByPageIndex(@PathVariable int pageNumber) {
         PageRequest pageNumWithElements = PageRequest.of(pageNumber, QUESTIONS_PER_PAGE, Sort.by("utilTimestamp"));
         return questionRepository.findAll(pageNumWithElements);
     }
 
     @GetMapping("/viewQuestion/{id}")
-    public Question viewQuestion(@PathVariable Long id, HttpServletRequest request) throws Exception {
+    public Question viewQuestionById(@PathVariable Long id, HttpServletRequest request) throws Exception {
         String ipAddress = HttpRequestResponseUtils.getClientIpAddress(request);
         // Execute asynchronously
         countingService.countView(id, ipAddress, QUESTION);
@@ -95,10 +96,10 @@ public class QuestionController {
                 .orElseThrow(() -> new Exception("Not found"));
     }
 
-    @GetMapping("/searchQuestions/{textSearch}")
-    public List<Question> searchQuestions(@PathVariable String textSearch) {
+    @PostMapping("/searchQuestions")
+    public List<Question> searchQuestions(@RequestBody QuestionSearch questionSearch) {
         return (List<Question>) hibernateSearchRepository.search2(
-                textSearch,
+                questionSearch.getTextSearch(),
                 QUESTION,
                 new String[]{"title", "content"}, //  fields
                 null
