@@ -19,6 +19,7 @@ import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static com.son.CapstoneProject.common.ConstantValue.GOOGLE_ACCESS_FILE_PREFIX_URL;
 
@@ -98,17 +99,23 @@ public class FileController {
      * This method is to update file on UI
      * It needs fileName on UI (without the full link) to find the blob on gg cloud to delete
      *
-     * @param file
-     * @param uploadedFileOnUI
      * @return
      * @throws Exception
      */
-    @PutMapping("/updateFile")
-    public UploadedFile updateFile(@RequestParam("file") MultipartFile file, UploadedFile uploadedFileOnUI) throws Exception {
+    @PutMapping("/updateFile/{uploadedFileId}")
+    public UploadedFile updateFile(@RequestParam("file") MultipartFile updatedFile, @PathVariable Long uploadedFileId) throws Exception {
 
         String methodName = "FileController.changeFile: ";
 
-        validateFile(file, methodName);
+        validateFile(updatedFile, methodName);
+
+        Optional<UploadedFile> uploadedFileOnUIOptional = uploadedFileRepository.findById(uploadedFileId);
+
+        if (!uploadedFileOnUIOptional.isPresent()) {
+            return null;
+        }
+
+        UploadedFile uploadedFileOnUI = uploadedFileOnUIOptional.get();
 
         String bucketName = uploadedFileOnUI.getBucketName();
 
@@ -116,12 +123,13 @@ public class FileController {
 
         // Upload file using google cloud storage
         try {
-            Blob blob = BlobHandler.getInstance().updateBlob(bucketName, fileName, file.getBytes(), file.getContentType());
+            Blob blob = BlobHandler.getInstance().updateBlob(bucketName, fileName, updatedFile.getBytes(), updatedFile.getContentType());
             BlobId blobId = blob.getBlobId();
             String uploadedBucketName = blobId.getBucket();
             String uploadedFileName = blobId.getName();
 
             UploadedFile uploadedFile = new UploadedFile();
+            uploadedFile.setBucketName(bucketName);
             uploadedFile.setUploadedFileName(uploadedFileName);
             uploadedFile.setUploadedFileUrlShownOnUI(GOOGLE_ACCESS_FILE_PREFIX_URL + "/" + uploadedBucketName + "/" + uploadedFileName);
 
@@ -137,7 +145,7 @@ public class FileController {
     }
 
     @DeleteMapping("/deleteFile")
-    public String deleteFile(UploadedFile uploadedFileOnUI) {
+    public String deleteFile(@RequestBody UploadedFile uploadedFileOnUI) {
 
         String bucketName = uploadedFileOnUI.getBucketName();
 
@@ -158,9 +166,6 @@ public class FileController {
     /**
      * This method is to download a file from URI
      * *Note: to use regular expression we need a format like: varName:regex
-     *
-     * @param fileName
-     * @param request
      * @return
      */
 //    @GetMapping("/downloadFile/{fileName:.+}")

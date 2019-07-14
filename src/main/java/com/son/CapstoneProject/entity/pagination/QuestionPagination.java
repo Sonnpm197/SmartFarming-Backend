@@ -10,7 +10,7 @@ import java.util.List;
 @Setter
 public class QuestionPagination {
 
-    private List<Question> questionsByPageIndex;
-    private int numberOfPage;
+    private List<Question> Qa;
+    private int numberOfPages;
 
 }
