@@ -4,6 +4,7 @@ import com.son.CapstoneProject.configuration.HttpRequestResponseUtils;
 import com.son.CapstoneProject.controller.ControllerUtils;
 import com.son.CapstoneProject.entity.*;
 import com.son.CapstoneProject.entity.login.AppUser;
+import com.son.CapstoneProject.entity.pagination.QuestionPagination;
 import com.son.CapstoneProject.entity.search.GenericClass;
 import com.son.CapstoneProject.entity.search.QuestionSearch;
 import com.son.CapstoneProject.repository.*;
@@ -85,10 +86,13 @@ public class QuestionController {
     }
 
     @GetMapping("/viewQuestions/{pageNumber}")
-    public List<Question> viewQuestionsByPageIndex(@PathVariable int pageNumber) {
+    public QuestionPagination viewQuestionsByPageIndex(@PathVariable int pageNumber) {
         PageRequest pageNumWithElements = PageRequest.of(pageNumber, QUESTIONS_PER_PAGE, Sort.by("utilTimestamp"));
         Page<Question> questionPage = questionRepository.findAll(pageNumWithElements);
-        return questionPage.getContent();
+        QuestionPagination questionPagination = new QuestionPagination();
+        questionPagination.setQuestionsByPageIndex(questionPage.getContent());
+        questionPagination.setNumberOfPage(Integer.parseInt("" + viewNumberOfPages()));
+        return questionPagination;
     }
 
     @GetMapping("/viewQuestion/{id}")

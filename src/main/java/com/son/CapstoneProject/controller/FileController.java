@@ -189,19 +189,13 @@ public class FileController {
     private String getBucketNameByContentType(MultipartFile file) throws Exception {
         byte[] input = file.getBytes();
         if (isImage(input)) {
-            // It's an image.
             return ConstantValue.FILE_IMAGE_BUCKET;
-        } else {
-            // It's not an image.
-            // Check for PDF + WORD
-            if (isPDF(input)) {
-                return ConstantValue.FILE_PDF_BUCKET;
-            }
-
-            if (isMSWord(input)) {
-                return ConstantValue.FILE_WORD_BUCKET;
-            }
+        } else if (isPDF(input)) {
+            return ConstantValue.FILE_PDF_BUCKET;
+        } else if (isMSWord(input)) {
+            return ConstantValue.FILE_WORD_BUCKET;
         }
+
         return ConstantValue.UNKNOWN_FILE_BUCKET;
     }
 

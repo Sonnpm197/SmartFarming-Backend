@@ -1,13 +1,12 @@
 package com.son.CapstoneProject.service.googleStorage;
 
-import com.google.api.gax.paging.Page;
-import com.google.cloud.storage.*;
+import com.google.cloud.storage.Acl;
+import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.BlobId;
+import com.google.cloud.storage.BlobInfo;
+import com.son.CapstoneProject.common.StringUtils;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class BlobHandler {
 
@@ -24,9 +23,12 @@ public class BlobHandler {
     // [VARIABLE "my_unique_bucket"]
     // [VARIABLE "my_blob_name"]
     public Blob getBlobFromId(String bucketName, String blobName) {
-        BlobId blobId = BlobId.of(bucketName, blobName);
-        Blob blob = GoogleCloudStorage.getStorage().get(blobId);
-        return blob;
+        if (!StringUtils.isNullOrEmpty(bucketName) && !StringUtils.isNullOrEmpty(blobName)) {
+            BlobId blobId = BlobId.of(bucketName, blobName);
+            Blob blob = GoogleCloudStorage.getStorage().get(blobId);
+            return blob;
+        }
+        return null;
     }
 
     /**
@@ -60,12 +62,9 @@ public class BlobHandler {
     // [VARIABLE "my_blob_name"]
     public Blob updateBlob(String bucketName, String blobName, byte[] byteArray, String contentType) {
         BlobId blobId = BlobId.of(bucketName, blobName);
-        Blob newBlob = null;
-
         // Delete then create new
         deleteBlob(bucketName, blobName);
-        newBlob = createBlobFromByteArray(bucketName, blobName, byteArray, contentType);
-        return newBlob;
+        return createBlobFromByteArray(bucketName, blobName, byteArray, contentType);
     }
 
     /**
@@ -75,9 +74,12 @@ public class BlobHandler {
     // [VARIABLE "my_unique_bucket"]
     // [VARIABLE "my_blob_name"]
     public boolean deleteBlob(String bucketName, String blobName) {
-        BlobId blobId = BlobId.of(bucketName, blobName);
-        boolean deleted = GoogleCloudStorage.getStorage().delete(blobId);
-        return deleted;
+        if (!StringUtils.isNullOrEmpty(bucketName) && !StringUtils.isNullOrEmpty(blobName)) {
+            BlobId blobId = BlobId.of(bucketName, blobName);
+            // true = deleted / false = not deleted
+            return GoogleCloudStorage.getStorage().delete(blobId);
+        }
+        return false;
     }
 
 }
