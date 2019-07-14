@@ -46,8 +46,9 @@ public class ControllerUtils {
                 }
 
                 // Do not save if that tag existed
-                if (tagRepository.findByName(tag.getName()) != null) {
-                    processedList.add(tagRepository.findByName(tag.getName()));
+                Tag tagByName = tagRepository.findByName(tag.getName());
+                if (tagByName != null) {
+                    processedList.add(tagByName);
                     continue;
                 }
 

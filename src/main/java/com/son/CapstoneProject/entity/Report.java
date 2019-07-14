@@ -1,5 +1,6 @@
 package com.son.CapstoneProject.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.son.CapstoneProject.entity.login.AppUser;
 import lombok.Getter;
@@ -30,7 +31,8 @@ public class Report {
     @Column(columnDefinition = "ntext")
     private String message;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @JsonBackReference
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "questionId", foreignKey = @ForeignKey(name = "FK_REPORT_QUESTION"))
     private Question question;
 }

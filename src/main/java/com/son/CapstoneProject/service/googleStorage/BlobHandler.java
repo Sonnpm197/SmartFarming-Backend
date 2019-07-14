@@ -25,8 +25,7 @@ public class BlobHandler {
     public Blob getBlobFromId(String bucketName, String blobName) {
         if (!StringUtils.isNullOrEmpty(bucketName) && !StringUtils.isNullOrEmpty(blobName)) {
             BlobId blobId = BlobId.of(bucketName, blobName);
-            Blob blob = GoogleCloudStorage.getStorage().get(blobId);
-            return blob;
+            return GoogleCloudStorage.getStorage().get(blobId);
         }
         return null;
     }

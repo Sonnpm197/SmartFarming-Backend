@@ -110,6 +110,9 @@ public class Question implements Serializable {
     @ElementCollection
     private List<Long> upvotedUserIds;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "question")
+    private List<Report> reports;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

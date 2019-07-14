@@ -5,6 +5,7 @@ import com.son.CapstoneProject.controller.ControllerUtils;
 import com.son.CapstoneProject.entity.Article;
 import com.son.CapstoneProject.entity.Tag;
 import com.son.CapstoneProject.entity.login.AppUser;
+import com.son.CapstoneProject.entity.pagination.ArticlePagination;
 import com.son.CapstoneProject.entity.search.ArticleSearch;
 import com.son.CapstoneProject.entity.search.GenericClass;
 import com.son.CapstoneProject.repository.ArticleRepository;
@@ -50,11 +51,24 @@ public class ArticleController {
         return articleRepository.count();
     }
 
+    @GetMapping("/viewNumberOfPages")
+    public long viewNumberOfPages() {
+        long numberOfArticle = articleRepository.count();
+        if (numberOfArticle % ARTICLES_PER_PAGE == 0) {
+            return numberOfArticle / ARTICLES_PER_PAGE;
+        } else {
+            return (numberOfArticle / ARTICLES_PER_PAGE) + 1;
+        }
+    }
+
     @GetMapping("/viewArticles/{pageNumber}")
-    public List<Article> viewArticles(@PathVariable int pageNumber) {
+    public ArticlePagination viewArticles(@PathVariable int pageNumber) {
         PageRequest pageNumWithElements = PageRequest.of(pageNumber, ARTICLES_PER_PAGE, Sort.by("utilTimestamp").descending());
         Page<Article> articlePage = articleRepository.findAll(pageNumWithElements);
-        return articlePage.getContent();
+        ArticlePagination articlePagination = new ArticlePagination();
+        articlePagination.setArticlesByPageIndex(articlePage.getContent());
+        articlePagination.setNumberOfPages(Integer.parseInt("" + viewNumberOfPages()));
+        return articlePagination;
     }
 
     @GetMapping("/viewArticle/{id}")
@@ -66,17 +80,15 @@ public class ArticleController {
                 .orElseThrow(() -> new Exception("ArticleController.viewArticle: Not found any article with id: " + id));
     }
 
-    @PostMapping("/searchArticles")
-    public List<Article> searchArticles(@RequestBody ArticleSearch articleSearch) {
-//        return (List<Article>) hibernateSearchRepository.search2(
-//                articleSearch.getTextSearch(),
-//                ARTICLE,
-//                new String[]{"title", "content"},
-//                articleSearch.getCategory()
-//        );
-
-        // TODO: finish this
-        return null;
+    @PostMapping("/searchArticles/{pageNumber}")
+    public ArticlePagination searchArticles(@RequestBody ArticleSearch articleSearch, @PathVariable int pageNumber) {
+        return (ArticlePagination) hibernateSearchRepository.search2(
+                articleSearch.getTextSearch(),
+                ARTICLE,
+                new String[]{"title", "content"},
+                articleSearch.getCategory(),
+                pageNumber
+        );
     }
 
     /**

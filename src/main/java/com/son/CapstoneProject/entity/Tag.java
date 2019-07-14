@@ -36,7 +36,7 @@ public class Tag {
 
     @Analyzer(definition = "TagCustomAnalyzer")
     @Field(store = Store.YES)
-    @Column(columnDefinition = "nvarchar(20)")
+    @Column(columnDefinition = "nvarchar(255)")
     private String name;
 
     @Analyzer(definition = "TagCustomAnalyzer")

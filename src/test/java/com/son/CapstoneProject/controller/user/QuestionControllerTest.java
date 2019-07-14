@@ -4,12 +4,11 @@ import com.son.CapstoneProject.Application;
 import com.son.CapstoneProject.controller.CommonTest;
 import com.son.CapstoneProject.entity.*;
 import com.son.CapstoneProject.entity.login.AppUser;
+import com.son.CapstoneProject.entity.pagination.Pagination;
 import com.son.CapstoneProject.entity.pagination.QuestionPagination;
-import com.son.CapstoneProject.repository.AppUserTagRepository;
-import com.son.CapstoneProject.repository.QuestionRepository;
-import com.son.CapstoneProject.repository.TagRepository;
-import com.son.CapstoneProject.repository.UploadedFileRepository;
+import com.son.CapstoneProject.repository.*;
 import com.son.CapstoneProject.repository.loginRepository.AppUserRepository;
+import io.opencensus.tags.Tags;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,6 +47,9 @@ public class QuestionControllerTest {
     private QuestionRepository questionRepository;
 
     @Autowired
+    private EditedQuestionRepository editedQuestionRepository;
+
+    @Autowired
     private AppUserRepository appUserRepository;
 
     @Autowired
@@ -57,7 +59,16 @@ public class QuestionControllerTest {
     private UploadedFileRepository uploadedFileRepository;
 
     @Autowired
+    private CommentRepository commentRepository;
+
+    @Autowired
     private TagRepository tagRepository;
+
+    @Autowired
+    private AnswerRepository answerRepository;
+
+    @Autowired
+    private ReportRepository reportRepository;
 
     @Test
     @SqlGroup({
@@ -189,7 +200,7 @@ public class QuestionControllerTest {
     @Test
     public void searchQuestions() {
 
-        String url = createURL(port, "/question/searchQuestions");
+        String url = createURL(port, "/question/searchQuestions/0");
 
         String requestBody = "{"
                 + "\"textSearch\" : " + "\"hà nội chán\""
@@ -203,17 +214,18 @@ public class QuestionControllerTest {
         System.out.println(">>> Testing URI: " + builder.buildAndExpand(uriParams).toUri());
 
         HttpEntity<String> entity = new HttpEntity<>(requestBody, CommonTest.getHeaders("POST", frontEndUrl));
-        ResponseEntity<List<Question>> response = CommonTest.getRestTemplate().exchange(
+        ResponseEntity<QuestionPagination> response = CommonTest.getRestTemplate().exchange(
                 builder.buildAndExpand(uriParams).toUri(),
                 HttpMethod.POST,
                 entity,
-                new ParameterizedTypeReference<List<Question>>() {
+                new ParameterizedTypeReference<QuestionPagination>() {
                 });
 
-        System.out.println(">> Result: " + response.getBody());
+        QuestionPagination pagination = response.getBody();
+        System.out.println(">> Result: " + pagination);
 
         // TODO: assert only with indexed items
-        // Assert.assertEquals("người miền Nam sinh sống ở HN", response.getBody().get(0).getTitle());
+//         Assert.assertEquals("người miền Nam sinh sống ở HN", response.getBody().getQa().get(0).getTitle());
 
     }
 
@@ -302,9 +314,10 @@ public class QuestionControllerTest {
         Assert.assertEquals("Năm nay mình 28 tuổi, đang làm cùng chỗ với crush.", question.getContent());
 
         // Check saved tags
+        // We already had "trong trot" & "chan nuoi" tags in DB, so json body would not affect
         List<Tag> tags = question.getTags();
-        Assert.assertEquals("trồng trọt description", tags.get(0).getDescription());
-        Assert.assertEquals("chăn nuôi description", tags.get(1).getDescription());
+        Assert.assertEquals("tagDescription 0", tags.get(0).getDescription());
+        Assert.assertEquals("tagDescription 1", tags.get(1).getDescription());
 
         // Check saved user whether he is anonymous
         // AppUser is not represented in response but still saved in DB because JsonBackReference
@@ -324,21 +337,195 @@ public class QuestionControllerTest {
             @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
     })
     public void deleteQuestion() {
+
+        String url = createURL(port, "/question/deleteQuestion/{id}");
+
+        String requestBody = CommonTest.readStringFromFile("src\\test\\resources\\json\\questionController\\deleteQuestion.json");
+
+        // URI (URL) parameters
+        Map<String, Integer> uriParams = new HashMap<>();
+        uriParams.put("id", 1);
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
+
+        System.out.println(">>> Testing URI: " + builder.buildAndExpand(uriParams).toUri());
+
+        HttpEntity<String> entity = new HttpEntity<>(requestBody, CommonTest.getHeaders("DELETE", frontEndUrl));
+        ResponseEntity<Question> response = CommonTest.getRestTemplate().exchange(
+                builder.buildAndExpand(uriParams).toUri(),
+                HttpMethod.DELETE,
+                entity,
+                new ParameterizedTypeReference<Question>() {
+                });
+
+        System.out.println(">> Result: " + response.getBody());
+
+        // Assert comment of this question
+
+        Assert.assertFalse(commentRepository.findById(13L).isPresent());
+        Assert.assertFalse(commentRepository.findById(14L).isPresent());
+        Assert.assertFalse(commentRepository.findById(15L).isPresent());
+
+        // Assert answers of this question
+        Assert.assertFalse(answerRepository.findById(1L).isPresent());
+        Assert.assertFalse(answerRepository.findById(2L).isPresent());
+
+        // Assert comment of answer1
+        Assert.assertFalse(commentRepository.findById(10L).isPresent());
+        Assert.assertFalse(commentRepository.findById(11L).isPresent());
+        Assert.assertFalse(commentRepository.findById(12L).isPresent());
+
+        // Assert uploadedFile
+        List<UploadedFile> uploadedFiles = uploadedFileRepository.findByQuestion_QuestionId(1L);
+
+        Assert.assertEquals(0, uploadedFiles.size());
+
+        // Assert report
+        Assert.assertFalse(reportRepository.findById(1L).isPresent());
+        Assert.assertFalse(reportRepository.findById(2L).isPresent());
+
+        // Assert editedQuestion
+        Assert.assertFalse(editedQuestionRepository.findById(1L).isPresent());
+        Assert.assertFalse(editedQuestionRepository.findById(2L).isPresent());
+
+        // Tags must be kept
+        Assert.assertTrue(tagRepository.findById(0L).isPresent());
+        Assert.assertTrue(tagRepository.findById(1L).isPresent());
+        Assert.assertTrue(tagRepository.findById(2L).isPresent());
+        Assert.assertTrue(tagRepository.findById(3L).isPresent());
     }
 
     @Test
+    @SqlGroup({
+            @Sql("/sql/questionController/insert_question.sql"),
+            @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
+    })
     public void editOtherUserQuestion() {
+        String url = createURL(port, "/question/editOtherUserQuestion/{originalQuestionId}");
+
+        String requestBody = CommonTest.readStringFromFile("src\\test\\resources\\json\\questionController\\editedOtherUserQuestion.json");
+
+        // URI (URL) parameters
+        Map<String, Integer> uriParams = new HashMap<>();
+        uriParams.put("originalQuestionId", 1);
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
+
+        System.out.println(">>> Testing URI: " + builder.buildAndExpand(uriParams).toUri());
+
+        HttpEntity<String> entity = new HttpEntity<>(requestBody, CommonTest.getHeaders("PUT", frontEndUrl));
+        ResponseEntity<EditedQuestion> response = CommonTest.getRestTemplate().exchange(
+                builder.buildAndExpand(uriParams).toUri(),
+                HttpMethod.PUT,
+                entity,
+                new ParameterizedTypeReference<EditedQuestion>() {
+                });
+
+        EditedQuestion editedQuestion = response.getBody();
+        System.out.println(">> Result: " + editedQuestion);
+        Assert.assertNotNull(editedQuestion);
+        Assert.assertTrue(editedQuestionRepository.findById(editedQuestion.getEditedQuestionId()).isPresent());
     }
 
     @Test
+    @SqlGroup({
+            @Sql("/sql/questionController/insert_question.sql"),
+            @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
+    })
     public void viewEditedVersions() {
+
+        String url = createURL(port, "/question/viewEditedVersions/{originalQuestionId}");
+
+        String requestBody = CommonTest.readStringFromFile("src\\test\\resources\\json\\questionController\\viewEditedVersions.json");
+
+        // URI (URL) parameters
+        Map<String, Integer> uriParams = new HashMap<>();
+        uriParams.put("originalQuestionId", 1);
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
+
+        System.out.println(">>> Testing URI: " + builder.buildAndExpand(uriParams).toUri());
+
+        HttpEntity<String> entity = new HttpEntity<>(requestBody, CommonTest.getHeaders("POST", frontEndUrl));
+        ResponseEntity<List<EditedQuestion>> response = CommonTest.getRestTemplate().exchange(
+                builder.buildAndExpand(uriParams).toUri(),
+                HttpMethod.POST,
+                entity,
+                new ParameterizedTypeReference<List<EditedQuestion>>() {
+                });
+
+        List<EditedQuestion> editedQuestions = response.getBody();
+        Assert.assertEquals(2, editedQuestions.size());
+
     }
 
     @Test
+    @SqlGroup({
+            @Sql("/sql/questionController/insert_question.sql"),
+            @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
+    })
     public void approveEditedVersion() {
+
+        String url = createURL(port, "/question/approveEditedVersion/{originalQuestionId}");
+
+        String requestBody = CommonTest.readStringFromFile("src\\test\\resources\\json\\questionController\\approveEditedVersion.json");
+
+        // URI (URL) parameters
+        Map<String, Integer> uriParams = new HashMap<>();
+        uriParams.put("originalQuestionId", 1);
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
+
+        System.out.println(">>> Testing URI: " + builder.buildAndExpand(uriParams).toUri());
+
+        HttpEntity<String> entity = new HttpEntity<>(requestBody, CommonTest.getHeaders("POST", frontEndUrl));
+        ResponseEntity<Question> response = CommonTest.getRestTemplate().exchange(
+                builder.buildAndExpand(uriParams).toUri(),
+                HttpMethod.POST,
+                entity,
+                new ParameterizedTypeReference<Question>() {
+                });
+
+        Question question = response.getBody();
+        Assert.assertEquals("Yêu đơn phương", question.getTitle());
+        Assert.assertEquals("Năm nay mình 28 tuổi, đang làm cùng chỗ với crush.", question.getContent());
+        // Assert new tags
+        Assert.assertEquals("trồng trọt    edited 3.6", question.getTags().get(0).getName());
+        Assert.assertEquals("chăn nuôi        edited 3.0", question.getTags().get(1).getName());
+
+        Assert.assertFalse(editedQuestionRepository.findById(1L).isPresent());
+        Assert.assertTrue(editedQuestionRepository.findById(2L).isPresent());
+
     }
 
     @Test
+    @SqlGroup({
+            @Sql("/sql/questionController/insert_question.sql"),
+            @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
+    })
     public void reportQuestion() {
+
+        String url = createURL(port, "/question/reportQuestion/{questionId}");
+
+        String requestBody = CommonTest.readStringFromFile("src\\test\\resources\\json\\questionController\\reportQuestion.json");
+
+        // URI (URL) parameters
+        Map<String, Integer> uriParams = new HashMap<>();
+        uriParams.put("questionId", 1);
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
+
+        System.out.println(">>> Testing URI: " + builder.buildAndExpand(uriParams).toUri());
+
+        HttpEntity<String> entity = new HttpEntity<>(requestBody, CommonTest.getHeaders("POST", frontEndUrl));
+        ResponseEntity<Report> response = CommonTest.getRestTemplate().exchange(
+                builder.buildAndExpand(uriParams).toUri(),
+                HttpMethod.POST,
+                entity,
+                new ParameterizedTypeReference<Report>() {
+                });
+
+        Report report = response.getBody();
+        Assert.assertTrue(reportRepository.findById(report.getReportId()).isPresent());
     }
 }

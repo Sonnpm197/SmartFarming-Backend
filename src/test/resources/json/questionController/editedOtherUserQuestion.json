@@ -1,0 +1,20 @@
+{
+  "question": {
+    "questionId": 1
+  },
+  "title": "Yêu đơn phương",
+  "content": "Năm nay mình 28 tuổi, đang làm cùng chỗ với crush.",
+  "appUser": {
+    "userId": 2
+  },
+  "tags": [
+    {
+      "name": "trồng trọt    edited 3.6",
+      "description": "trồng trọt description"
+    },
+    {
+      "name": "chăn nuôi        edited 3.0             ",
+      "description": "chăn nuôi description"
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 package com.son.CapstoneProject.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.cloud.storage.Blob;
 import com.son.CapstoneProject.Application;
 import com.son.CapstoneProject.common.ConstantValue;
 import com.son.CapstoneProject.entity.Comment;
@@ -38,7 +39,9 @@ import java.util.Map;
 
 import static com.son.CapstoneProject.controller.CommonTest.createURL;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.fileUpload;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -108,6 +111,11 @@ public class FileControllerTest {
         Assert.assertNotNull(uploadedFile);
     }
 
+    /**
+     * TODO: change root method FileControllers.updateFile to PostMapping
+     *
+     * @throws Exception
+     */
     @Test
     @Sql(scripts = "/sql/fileController/clearUploadedFile.sql", executionPhase = AFTER_TEST_METHOD)
     public void updateFile() throws Exception {
@@ -124,19 +132,22 @@ public class FileControllerTest {
         String uploadedJson = result.getResponse().getContentAsString();
         System.out.println(">> Result from upload: " + uploadedJson);
 
+        UploadedFile uploadedFileResponse = new ObjectMapper().readValue(uploadedJson, UploadedFile.class);
+
         multipartFile = new MockMultipartFile(
                 "file", "newword.docx",
                 "text/plain", Files.readAllBytes(Paths.get("C:\\IntelliJ Projects\\CapstoneProject\\src\\test\\resources\\file\\newword.docx")));
 
         // Update file which has been uploaded
-        result = this.mvc.perform(fileUpload(url).file(multipartFile))
+        result = this.mvc.perform(fileUpload(createURL(8080, "/file/updateFile") + "/" + uploadedFileResponse.getId())
+                .file(multipartFile))
                 .andExpect(status().isOk())
                 .andReturn();
 
         uploadedJson = result.getResponse().getContentAsString();
         System.out.println(">> Result from upload: " + uploadedJson);
 
-        UploadedFile uploadedFileResponse = new ObjectMapper().readValue(uploadedJson, UploadedFile.class);
+        uploadedFileResponse = new ObjectMapper().readValue(uploadedJson, UploadedFile.class);
 
         // Delete from cloud
         BlobHandler.getInstance().deleteBlob(uploadedFileResponse.getBucketName(), uploadedFileResponse.getUploadedFileName());
@@ -144,5 +155,59 @@ public class FileControllerTest {
         UploadedFile uploadedFileSavedToDB = uploadedFileRepository.findByUploadedFileName(uploadedFileResponse.getUploadedFileName());
 
         Assert.assertNotNull(uploadedFileSavedToDB);
+    }
+
+    /**
+     * TODO: change root method FileControllers.deleteFile to PostMapping
+     *
+     * @throws Exception
+     */
+    @Test
+    @Sql(scripts = "/sql/fileController/clearUploadedFile.sql", executionPhase = AFTER_TEST_METHOD)
+    public void deleteFile() throws Exception {
+        // Upload file to delete
+        MockMultipartFile multipartFile = new MockMultipartFile(
+                "file", "word.docx",
+                "text/plain", Files.readAllBytes(Paths.get("C:\\IntelliJ Projects\\CapstoneProject\\src\\test\\resources\\file\\word.docx")));
+
+        String url = createURL(8080, "/file/uploadFile");
+
+        MvcResult result = this.mvc.perform(fileUpload(url).file(multipartFile))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String uploadedJson = result.getResponse().getContentAsString();
+        System.out.println(">> Result from upload: " + uploadedJson);
+
+        UploadedFile uploadedFileResponse = new ObjectMapper().readValue(uploadedJson, UploadedFile.class);
+
+        // Then delete
+
+        url = createURL(8080, "/file/deleteFile");
+
+        String bucketName = uploadedFileResponse.getBucketName();
+        String uploadedFileName = uploadedFileResponse.getUploadedFileName();
+
+        String requestBody = "{"
+                + "\"bucketName\" : " + "\"" + bucketName + "\","
+                + "\"uploadedFileName\" : " + "\"" + uploadedFileName + "\""
+                + "}";
+
+        result = this.mvc.perform(delete(url)
+                .contentType(APPLICATION_JSON_UTF8)
+                .content(requestBody))
+                .andReturn();
+
+        uploadedJson = result.getResponse().getContentAsString();
+        System.out.println(">> Result from upload: " + uploadedJson);
+
+        // Assert from cloud
+        Blob blob = BlobHandler.getInstance().getBlobFromId(bucketName, uploadedFileName);
+        Assert.assertNull(blob);
+
+        // Assert from DB
+        UploadedFile uploadedFileFromDB = uploadedFileRepository.findByBucketNameAndUploadedFileName(uploadedFileName, uploadedFileName);
+        Assert.assertNull(uploadedFileFromDB);
+
     }
 }

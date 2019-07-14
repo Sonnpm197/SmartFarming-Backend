@@ -13,4 +13,6 @@ public interface UploadedFileRepository extends JpaRepository<UploadedFile, Long
 
     UploadedFile findByUploadedFileName(String fileName);
 
+    UploadedFile findByBucketNameAndUploadedFileName(String bucketName, String uploadedFileName);
+
 }

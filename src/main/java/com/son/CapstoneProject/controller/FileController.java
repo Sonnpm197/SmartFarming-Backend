@@ -10,7 +10,9 @@ import net.sf.jmimemagic.Magic;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.jboss.logging.annotations.Pos;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,6 +37,7 @@ public class FileController {
     private UploadedFileRepository uploadedFileRepository;
 
     @PostMapping("/uploadFile")
+    @Transactional
     public UploadedFile uploadFile(@RequestParam("file") MultipartFile file) throws Exception {
 //        String fileName = fileStorageService.storeFile(file);
 //        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
@@ -69,9 +72,7 @@ public class FileController {
             uploadedFile.setUploadedFileUrlShownOnUI(GOOGLE_ACCESS_FILE_PREFIX_URL + "/" + uploadedBucketName + "/" + uploadedFileName);
 
             // Save to UploadedFile table
-            uploadedFileRepository.save(uploadedFile);
-
-            return uploadedFile;
+            return uploadedFileRepository.save(uploadedFile);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -103,6 +104,7 @@ public class FileController {
      * @throws Exception
      */
     @PutMapping("/updateFile/{uploadedFileId}")
+    @Transactional
     public UploadedFile updateFile(@RequestParam("file") MultipartFile updatedFile, @PathVariable Long uploadedFileId) throws Exception {
 
         String methodName = "FileController.changeFile: ";
@@ -128,15 +130,16 @@ public class FileController {
             String uploadedBucketName = blobId.getBucket();
             String uploadedFileName = blobId.getName();
 
-            UploadedFile uploadedFile = new UploadedFile();
-            uploadedFile.setBucketName(bucketName);
-            uploadedFile.setUploadedFileName(uploadedFileName);
-            uploadedFile.setUploadedFileUrlShownOnUI(GOOGLE_ACCESS_FILE_PREFIX_URL + "/" + uploadedBucketName + "/" + uploadedFileName);
+            UploadedFile returedUpdatedFile = new UploadedFile();
+            returedUpdatedFile.setBucketName(bucketName);
+            returedUpdatedFile.setUploadedFileName(uploadedFileName);
+            returedUpdatedFile.setUploadedFileUrlShownOnUI(GOOGLE_ACCESS_FILE_PREFIX_URL + "/" + uploadedBucketName + "/" + uploadedFileName);
+
+            // Delete old uploaded file first
+            uploadedFileRepository.delete(uploadedFileOnUI);
 
             // Save to UploadedFile table
-            uploadedFileRepository.save(uploadedFile);
-
-            return uploadedFile;
+            return uploadedFileRepository.save(returedUpdatedFile);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -145,11 +148,21 @@ public class FileController {
     }
 
     @DeleteMapping("/deleteFile")
+    @Transactional
     public String deleteFile(@RequestBody UploadedFile uploadedFileOnUI) {
 
         String bucketName = uploadedFileOnUI.getBucketName();
 
         String fileName = uploadedFileOnUI.getUploadedFileName();
+
+        UploadedFile uploadedFile = uploadedFileRepository.findByBucketNameAndUploadedFileName(bucketName, fileName);
+
+        if (uploadedFile == null) {
+            return null;
+        }
+
+        // Delete data from DB
+        uploadedFileRepository.delete(uploadedFile);
 
         // Upload file using google cloud storage
         try {
@@ -166,6 +179,7 @@ public class FileController {
     /**
      * This method is to download a file from URI
      * *Note: to use regular expression we need a format like: varName:regex
+     *
      * @return
      */
 //    @GetMapping("/downloadFile/{fileName:.+}")

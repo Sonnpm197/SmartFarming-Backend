@@ -4,13 +4,13 @@ import com.son.CapstoneProject.entity.Question;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
-public class QuestionPagination {
+public class QuestionPagination extends Pagination {
 
-    private List<Question> Qa;
-    private int numberOfPages;
+    private List<Question> Qa = new ArrayList<>();
 
 }

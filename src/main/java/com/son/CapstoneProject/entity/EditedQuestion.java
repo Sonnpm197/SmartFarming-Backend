@@ -47,6 +47,6 @@ public class EditedQuestion implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private java.util.Date utilTimestamp;
 
-    boolean isApproved;
+//    boolean isApproved;
 }
 

@@ -19,11 +19,11 @@ public class UploadedFile {
     @GeneratedValue
     private Long id;
 
-    @Column(columnDefinition = "varchar(255)")
+    @Column(columnDefinition = "nvarchar(255)")
     // long uri: http:........./a.png
     private String uploadedFileUrlShownOnUI;
 
-    @Column(columnDefinition = "varchar(255)")
+    @Column(columnDefinition = "nvarchar(255)")
     // Short name such as a.png
     private String uploadedFileName; // need this field to update or detele files
 

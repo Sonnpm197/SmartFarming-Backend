@@ -2,6 +2,7 @@ package com.son.CapstoneProject.controller.user;
 
 import com.son.CapstoneProject.configuration.HttpRequestResponseUtils;
 import com.son.CapstoneProject.controller.ControllerUtils;
+import com.son.CapstoneProject.controller.FileController;
 import com.son.CapstoneProject.entity.*;
 import com.son.CapstoneProject.entity.login.AppUser;
 import com.son.CapstoneProject.entity.pagination.QuestionPagination;
@@ -34,6 +35,9 @@ import static com.son.CapstoneProject.common.ConstantValue.QUESTIONS_PER_PAGE;
 public class QuestionController {
 
     private Logger logger = Logger.getLogger(QuestionController.class.getSimpleName());
+
+    @Autowired
+    private FileController fileController;
 
     @Autowired
     private QuestionRepository questionRepository;
@@ -77,7 +81,7 @@ public class QuestionController {
 
     @GetMapping("/viewNumberOfPages")
     public long viewNumberOfPages() {
-        Long numberOfQuestion = questionRepository.count();
+        long numberOfQuestion = questionRepository.count();
         if (numberOfQuestion % QUESTIONS_PER_PAGE == 0) {
             return numberOfQuestion / QUESTIONS_PER_PAGE;
         } else {
@@ -104,17 +108,13 @@ public class QuestionController {
                 .orElseThrow(() -> new Exception("Not found"));
     }
 
-    @PostMapping("/searchQuestions")
-    public List<Question> searchQuestions(@RequestBody QuestionSearch questionSearch) {
-//        return (List<Question>) hibernateSearchRepository.search2(
-//                questionSearch.getTextSearch(),
-//                QUESTION,
-//                new String[]{"title", "content"}, //  fields
-//                null
-//        );
-
-        // TODO: finish this
-        return null;
+    @PostMapping("/searchQuestions/{pageNumber}")
+    public QuestionPagination searchQuestions(@RequestBody QuestionSearch questionSearch, @PathVariable int pageNumber) {
+        return (QuestionPagination) hibernateSearchRepository.search2(questionSearch.getTextSearch(),
+                QUESTION,
+                new String[]{"title", "content"},
+                null,
+                pageNumber);
     }
 
     /**
@@ -156,13 +156,13 @@ public class QuestionController {
         question.setUtilTimestamp(new Date());
         question = questionRepository.save(question);
 
-        // TODO: upload to google could
-
+        // Note: this uploaded file are already saved on GG Cloud
         // This requested question will have UploadedFile objects => save info of this question to that UploadedFile
         List<UploadedFile> uploadedFiles = question.getUploadedFiles();
 
         if (uploadedFiles != null) {
             for (UploadedFile uploadedFile : uploadedFiles) {
+                // We still need to save question for this uploaded file
                 uploadedFile.setQuestion(question);
                 uploadedFileRepository.save(uploadedFile);
             }
@@ -213,8 +213,6 @@ public class QuestionController {
 
         Question resultQuestion = questionRepository.save(oldQuestion);
 
-        // TODO: update to google could
-
         // This requested question will have UploadedFile objects => save info of this question to that UploadedFile
         List<UploadedFile> uploadedFiles = updatedQuestion.getUploadedFiles();
 
@@ -231,14 +229,13 @@ public class QuestionController {
     /**
      * Delete a question
      *
-     * @param id
      * @return
      * @throws Exception
      */
-    @DeleteMapping("/deleteQuestion/{id}")
+    @DeleteMapping("/deleteQuestion/{questionId}")
     @Transactional
     public Map<String, String> deleteQuestion(@RequestBody AppUser appUser,
-                                              @PathVariable Long id,
+                                              @PathVariable Long questionId,
                                               HttpServletRequest request) throws Exception {
 
         String methodName = "UserController.deleteQuestion";
@@ -251,8 +248,8 @@ public class QuestionController {
             controllerUtils.validateAppUser(appUser, methodName, true);
         }
 
-        Question question = questionRepository.findById(id)
-                .orElseThrow(() -> new Exception(methodName + ": Not found question with id: " + id));
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new Exception(methodName + ": Not found question with id: " + questionId));
 
         // Cannot delete other questions
         if (!appUser.getUserId().equals(question.getAppUser().getUserId())) {
@@ -285,16 +282,34 @@ public class QuestionController {
 
         while (answerIterator.hasNext()) {
             Answer answer = answerIterator.next();
+
+            // Remove the comment of the answer first
+            List<Comment> commentsOfAnswer = commentRepository.findByAnswer_AnswerId(answer.getAnswerId());
+            for (Comment comment: commentsOfAnswer) {
+                commentRepository.delete(comment);
+            }
+
+            // Then delete the answer
             answerRepository.delete(answer);
+        }
+
+        // Delete UploadedFile both from GG cloud and DB
+        List<UploadedFile> uploadedFiles = question.getUploadedFiles();
+        for (UploadedFile uploadedFile: uploadedFiles) {
+            fileController.deleteFile(uploadedFile);
+        }
+
+        // Delete the reports of this question
+        List<Report> reports = question.getReports();
+        for (Report report: reports) {
+            reportRepository.delete(report);
         }
 
         // Then remove the question
         questionRepository.delete(question);
 
-        // TODO: delete file from google cloud
-
         Map<String, String> map = new HashMap<>();
-        map.put("questionId", "" + id);
+        map.put("questionId", "" + questionId);
         map.put("deleted", "true");
         return map;
     }
@@ -444,10 +459,13 @@ public class QuestionController {
         userEditedQuestion.setReputation(userEditedQuestion.getReputation() + EDITED_APPROVE_POINT);
         appUserRepository.save(userEditedQuestion);
 
+        // Save tags first (distinct name)
+        List<Tag> tags = controllerUtils.saveDistinctiveTags(editedQuestion.getTags());
+
         // Update original question
         question.setTitle(editedQuestion.getTitle());
         question.setContent(editedQuestion.getContent());
-        question.setTags(editedQuestion.getTags());
+        question.setTags(tags);
         question.setUtilTimestamp(new Date());
         return questionRepository.save(question);
     }
@@ -489,8 +507,6 @@ public class QuestionController {
         }
 
         report.setQuestion(question);
-        reportRepository.save(report);
-
-        return report;
+        return reportRepository.save(report);
     }
 }

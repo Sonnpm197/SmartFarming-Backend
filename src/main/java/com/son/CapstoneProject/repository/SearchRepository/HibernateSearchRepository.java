@@ -3,6 +3,9 @@ package com.son.CapstoneProject.repository.searchRepository;
 import com.son.CapstoneProject.entity.Article;
 import com.son.CapstoneProject.entity.Question;
 import com.son.CapstoneProject.entity.Tag;
+import com.son.CapstoneProject.entity.pagination.ArticlePagination;
+import com.son.CapstoneProject.entity.pagination.Pagination;
+import com.son.CapstoneProject.entity.pagination.QuestionPagination;
 import com.son.CapstoneProject.entity.search.GenericClass;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
@@ -83,7 +86,7 @@ public class HibernateSearchRepository {
      * @return
      */
 
-    public List search2(String searchedText, String className, String[] fields, String articleCategory, int pageIndex) {
+    public Pagination search2(String searchedText, String className, String[] fields, String articleCategory, int pageIndex) {
         GenericClass genericClass = null;
 
         if (ARTICLE.equalsIgnoreCase(className)) {
@@ -151,7 +154,7 @@ public class HibernateSearchRepository {
             e.printStackTrace();
         }
 
-        return new ArrayList<>();
+        return new Pagination();
     }
 
 
@@ -204,7 +207,7 @@ public class HibernateSearchRepository {
         }
     }
 
-    private List returnFinalListByClassName(String className,
+    private Pagination returnFinalListByClassName(String className,
                                             List<Article> finalArticles,
                                             List<Question> finalQuestions,
                                             List<Tag> finalTags,
@@ -237,7 +240,7 @@ public class HibernateSearchRepository {
             // If start = 5 or 6
             // Array has 0, 1, 2, 3, 4 => error
             if (totalSize <= start) {
-                return new ArrayList();
+                return new ArticlePagination();
             } else {
                 for (int i = start; i < end; i++) {
                     try {
@@ -248,7 +251,11 @@ public class HibernateSearchRepository {
                 }
             }
 
-            return articlesByPageIndex;
+            ArticlePagination articlePagination = new ArticlePagination();
+            articlePagination.setArticlesByPageIndex(articlesByPageIndex);
+            articlePagination.setNumberOfPages(finalArticles.size());
+            return articlePagination;
+
         } else if (QUESTION.equalsIgnoreCase(className)) {
             Collections.sort(finalQuestions, (question1, question2) -> {
                 if (question1.getUtilTimestamp() != null && question2.getUtilTimestamp() != null) {
@@ -275,7 +282,7 @@ public class HibernateSearchRepository {
             // If start = 5 or 6
             // Array has 0, 1, 2, 3, 4 => error
             if (totalSize <= start) {
-                return new ArrayList();
+                return new QuestionPagination();
             } else {
                 for (int i = start; i < end; i++) {
                     try {
@@ -286,11 +293,15 @@ public class HibernateSearchRepository {
                 }
             }
 
-            return questionsByPageIndex;
+            QuestionPagination questionPagination = new QuestionPagination();
+            questionPagination.setQa(questionsByPageIndex);
+            questionPagination.setNumberOfPages(finalQuestions.size());
+
+            return questionPagination;
         } else if (TAG.equalsIgnoreCase(className)) {
-            return finalTags;
+            // return finalTags;
         }
-        return new ArrayList();
+        return new Pagination();
     }
 
 }

@@ -4,13 +4,13 @@ import com.son.CapstoneProject.entity.Article;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
-public class ArticlePagination extends Pagination {
+public class TagPagination extends Pagination {
 
-    private List<Article> articlesByPageIndex = new ArrayList<>();
+    private List<Article> articlesByPageIndex;
+    private int numberOfPage;
 
 }
