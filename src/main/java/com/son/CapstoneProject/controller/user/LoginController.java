@@ -56,7 +56,7 @@ public class LoginController {
 
         // This user has existed => return appUser
         if (existedSocialUser != null) {
-            Long socialUserInformationId = socialUserInformation.getSocialUserInformationId();
+            Long socialUserInformationId = existedSocialUser.getSocialUserInformationId();
             AppUser appUser = appUserRepository.findBySocialUserInformation_SocialUserInformationId(socialUserInformationId);
             return ResponseEntity.ok(appUser);
         }

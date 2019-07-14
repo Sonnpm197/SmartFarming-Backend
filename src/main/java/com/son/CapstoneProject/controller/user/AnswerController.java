@@ -3,11 +3,10 @@ package com.son.CapstoneProject.controller.user;
 import com.son.CapstoneProject.common.ConstantValue;
 import com.son.CapstoneProject.configuration.HttpRequestResponseUtils;
 import com.son.CapstoneProject.controller.ControllerUtils;
-import com.son.CapstoneProject.entity.Answer;
-import com.son.CapstoneProject.entity.Comment;
-import com.son.CapstoneProject.entity.Question;
+import com.son.CapstoneProject.entity.*;
 import com.son.CapstoneProject.entity.login.AppUser;
 import com.son.CapstoneProject.repository.AnswerRepository;
+import com.son.CapstoneProject.repository.AppUserTagRepository;
 import com.son.CapstoneProject.repository.CommentRepository;
 import com.son.CapstoneProject.repository.QuestionRepository;
 import com.son.CapstoneProject.repository.loginRepository.AppUserRepository;
@@ -20,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
+
+import static com.son.CapstoneProject.common.ConstantValue.MARK_ACCEPTED_ANSWER_POINT;
 
 @RestController
 @RequestMapping("/answer")
@@ -42,6 +43,9 @@ public class AnswerController {
 
     @Autowired
     private ControllerUtils controllerUtils;
+
+    @Autowired
+    private AppUserTagRepository appUserTagRepository;
 
     @GetMapping("/test")
     public String test() {
@@ -82,21 +86,21 @@ public class AnswerController {
      * Update answer
      *
      * @param updatedAnswer
-     * @param id
+     * @param answerId
      * @return
      * @throws Exception
      */
-    @PutMapping("/updateAnswerToQuestion/{id}")
+    @PutMapping("/updateAnswerToQuestion/{answerId}")
     @Transactional
     public ResponseEntity<Answer> updateAnswerToQuestion(@RequestBody Answer updatedAnswer,
-                                                         @PathVariable Long id,
+                                                         @PathVariable Long answerId,
                                                          HttpServletRequest request)
             throws Exception {
 
         String methodName = "UserController.updateAnswerToQuestion";
 
-        Answer oldAnswer = answerRepository.findById(id)
-                .orElseThrow(() -> new Exception(methodName + ": Not found any answers with id: " + id));
+        Answer oldAnswer = answerRepository.findById(answerId)
+                .orElseThrow(() -> new Exception(methodName + ": Not found any answers with id: " + answerId));
 
         AppUser appUser = updatedAnswer.getAppUser();
 
@@ -124,14 +128,14 @@ public class AnswerController {
     /**
      * Delete answer
      *
-     * @param id
+     * @param answerId
      * @return
      * @throws Exception
      */
-    @DeleteMapping("/deleteAnswerToQuestion/{id}")
+    @DeleteMapping("/deleteAnswerToQuestion/{answerId}")
     @Transactional
     public Map<String, String> deleteAnswerToQuestion(@RequestBody AppUser appUser,
-                                                      @PathVariable Long id,
+                                                      @PathVariable Long answerId,
                                                       HttpServletRequest request) throws Exception {
 
         String methodName = "UserController.deleteAnswerToQuestion";
@@ -144,8 +148,8 @@ public class AnswerController {
             controllerUtils.validateAppUser(appUser, methodName, true);
         }
 
-        Answer answer = answerRepository.findById(id)
-                .orElseThrow(() -> new Exception(methodName + ": Found no answer with id: " + id));
+        Answer answer = answerRepository.findById(answerId)
+                .orElseThrow(() -> new Exception(methodName + ": Found no answer with id: " + answerId));
 
         // Cannot delete other questions
         if (!appUser.getUserId().equals(answer.getAppUser().getUserId())) {
@@ -167,7 +171,7 @@ public class AnswerController {
         answerRepository.delete(answer);
 
         Map<String, String> map = new HashMap<>();
-        map.put("answerId", "" + id);
+        map.put("answerId", "" + answerId);
         map.put("deleted", "true");
         return map;
     }
@@ -190,13 +194,13 @@ public class AnswerController {
         Answer answer = answerRepository.findById(answerId)
                 .orElseThrow(() -> new Exception(methodName + ": Not found any answers with id: " + answerId));
 
-        Question question = questionRepository.findById(answerId)
+        Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new Exception(methodName + ": Not found any questions with id: " + questionId));
 
         controllerUtils.validateAppUser(questionAuthor, methodName, true);
 
         // Check if you are the author
-        if (!questionAuthor.getUserId().equals(question.getAppUser().getUserId())) {
+        if (questionAuthor.getUserId().equals(answer.getAppUser().getUserId())) {
             String message = methodName + ": You cannot mark accepted answer if you are not the author of the question";
             logger.info(message);
             throw new Exception(message);
@@ -204,11 +208,94 @@ public class AnswerController {
 
         // Increase reputation point for author of the answer
         AppUser userAnswerQuestion = answer.getAppUser();
-        userAnswerQuestion.setReputation(userAnswerQuestion.getReputation() + ConstantValue.MARK_ACCEPTED_ANSWER_POINT);
+        userAnswerQuestion.setReputation(userAnswerQuestion.getReputation() + MARK_ACCEPTED_ANSWER_POINT);
         appUserRepository.save(userAnswerQuestion);
+
+        // Increase AppUserTag of the user who answers the question and gets accepted
+        List<Tag> questionTags = question.getTags();
+        for (Tag tag : questionTags) {
+            AppUserTag appUserTag = appUserTagRepository.findAppUserTagByAppUser_UserIdAndTag_TagId(userAnswerQuestion.getUserId(), tag.getTagId());
+            if (appUserTag == null) {
+                appUserTag = new AppUserTag();
+                appUserTag.setTag(tag);
+                appUserTag.setAppUser(userAnswerQuestion);
+            }
+
+            // Increase point of that tag for user who gets accepted answer
+            appUserTag.setReputation(appUserTag.getReputation() + MARK_ACCEPTED_ANSWER_POINT);
+
+            // Save to databse
+            appUserTagRepository.save(appUserTag);
+        }
 
         // Mark this answer as accepted answer
         answer.setAccepted(true);
+        answer = answerRepository.save(answer);
+        return ResponseEntity.ok(answer);
+    }
+
+    /**
+     * Unmark this answer is accepted (only used by the author)
+     *
+     * @return
+     * @throws Exception
+     */
+    @PutMapping("/unmarkAcceptedAnswerToQuestion/{questionId}/{answerId}")
+    @Transactional
+    public ResponseEntity<Answer> unmarkAcceptedAnswerToQuestion(@RequestBody AppUser questionAuthor,
+                                                                 @PathVariable Long questionId,
+                                                                 @PathVariable Long answerId)
+            throws Exception {
+
+        String methodName = "UserController.unmarkAcceptedAnswerToQuestion";
+
+        Answer answer = answerRepository.findById(answerId)
+                .orElseThrow(() -> new Exception(methodName + ": Not found any answers with id: " + answerId));
+
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new Exception(methodName + ": Not found any questions with id: " + questionId));
+
+        controllerUtils.validateAppUser(questionAuthor, methodName, true);
+
+        // Check if you are the author
+        if (questionAuthor.getUserId().equals(answer.getAppUser().getUserId())) {
+            String message = methodName + ": You cannot mark accepted answer if you are not the author of the question";
+            logger.info(message);
+            throw new Exception(message);
+        }
+
+        if (!answer.isAccepted()) {
+            return null;
+        }
+
+        // Increase reputation point for author of the answer
+        AppUser userAnswerQuestion = answer.getAppUser();
+        if (userAnswerQuestion.getReputation() > 0) {
+            userAnswerQuestion.setReputation(userAnswerQuestion.getReputation() - MARK_ACCEPTED_ANSWER_POINT);
+        }
+        appUserRepository.save(userAnswerQuestion);
+
+        // Increase AppUserTag of the user who answers the question and gets accepted
+        List<Tag> questionTags = question.getTags();
+        for (Tag tag : questionTags) {
+            AppUserTag appUserTag = appUserTagRepository.findAppUserTagByAppUser_UserIdAndTag_TagId(userAnswerQuestion.getUserId(), tag.getTagId());
+
+            // Must continue since these AppUserTag have been saved
+            if (appUserTag == null) {
+                continue;
+            }
+
+            // If found AppUserTag reputation
+            if (appUserTag.getReputation() > 0) {
+                appUserTag.setReputation(appUserTag.getReputation() - MARK_ACCEPTED_ANSWER_POINT);
+            }
+
+            // Save to database
+            appUserTagRepository.save(appUserTag);
+        }
+
+        // Mark this answer as accepted answer
+        answer.setAccepted(false);
         answer = answerRepository.save(answer);
         return ResponseEntity.ok(answer);
     }

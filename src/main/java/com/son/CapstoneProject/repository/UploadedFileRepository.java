@@ -11,4 +11,6 @@ public interface UploadedFileRepository extends JpaRepository<UploadedFile, Long
 
     List<UploadedFile> findByQuestion_QuestionId(Long questionId);
 
+    UploadedFile findByUploadedFileName(String fileName);
+
 }

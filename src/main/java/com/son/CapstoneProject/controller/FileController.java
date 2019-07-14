@@ -7,11 +7,16 @@ import com.son.CapstoneProject.entity.UploadedFile;
 import com.son.CapstoneProject.repository.UploadedFileRepository;
 import com.son.CapstoneProject.service.googleStorage.BlobHandler;
 import net.sf.jmimemagic.Magic;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,36 +32,6 @@ public class FileController {
 
     @Autowired
     private UploadedFileRepository uploadedFileRepository;
-
-    private String getBucketNameByContentType(MultipartFile file) throws Exception {
-        byte[] input = file.getBytes();
-        String mimeType = Magic.getMagicMatch(input, false).getMimeType();
-        if (mimeType.startsWith("image/")) {
-            // It's an image.
-            return ConstantValue.FILE_IMAGE_BUCKET;
-        } else {
-            // It's not an image.
-            // Check for PDF + WORD
-            if (file.getContentType().contains("pdf")) {
-                return ConstantValue.FILE_PDF_BUCKET;
-            }
-
-            if (file.getContentType().contains("word")) {
-                return ConstantValue.FILE_WORD_BUCKET;
-            }
-        }
-        return ConstantValue.UNKNOWN_FILE_BUCKET;
-    }
-
-    private void validateFile(MultipartFile file, String methodName) throws Exception {
-        if (file == null) {
-            throw new Exception(methodName + "File not found");
-        }
-
-        if (file.getOriginalFilename() == null) {
-            throw new Exception(methodName + "File name is null");
-        }
-    }
 
     @PostMapping("/uploadFile")
     public UploadedFile uploadFile(@RequestParam("file") MultipartFile file) throws Exception {
@@ -88,6 +63,7 @@ public class FileController {
             String uploadedFileName = blobId.getName();
 
             UploadedFile uploadedFile = new UploadedFile();
+            uploadedFile.setBucketName(uploadedBucketName);
             uploadedFile.setUploadedFileName(uploadedFileName);
             uploadedFile.setUploadedFileUrlShownOnUI(GOOGLE_ACCESS_FILE_PREFIX_URL + "/" + uploadedBucketName + "/" + uploadedFileName);
 
@@ -121,6 +97,7 @@ public class FileController {
     /**
      * This method is to update file on UI
      * It needs fileName on UI (without the full link) to find the blob on gg cloud to delete
+     *
      * @param file
      * @param uploadedFileOnUI
      * @return
@@ -147,6 +124,9 @@ public class FileController {
             UploadedFile uploadedFile = new UploadedFile();
             uploadedFile.setUploadedFileName(uploadedFileName);
             uploadedFile.setUploadedFileUrlShownOnUI(GOOGLE_ACCESS_FILE_PREFIX_URL + "/" + uploadedBucketName + "/" + uploadedFileName);
+
+            // Save to UploadedFile table
+            uploadedFileRepository.save(uploadedFile);
 
             return uploadedFile;
         } catch (Exception e) {
@@ -206,5 +186,62 @@ public class FileController {
 //                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
 //                .body(resource);
 //    }
+    private String getBucketNameByContentType(MultipartFile file) throws Exception {
+        byte[] input = file.getBytes();
+        if (isImage(input)) {
+            // It's an image.
+            return ConstantValue.FILE_IMAGE_BUCKET;
+        } else {
+            // It's not an image.
+            // Check for PDF + WORD
+            if (isPDF(input)) {
+                return ConstantValue.FILE_PDF_BUCKET;
+            }
 
+            if (isMSWord(input)) {
+                return ConstantValue.FILE_WORD_BUCKET;
+            }
+        }
+        return ConstantValue.UNKNOWN_FILE_BUCKET;
+    }
+
+    private void validateFile(MultipartFile file, String methodName) throws Exception {
+        if (file == null) {
+            throw new Exception(methodName + "File not found");
+        }
+
+        if (file.getOriginalFilename() == null) {
+            throw new Exception(methodName + "File name is null");
+        }
+    }
+
+    private boolean isImage(byte[] array) {
+        try {
+            String mimeType = Magic.getMagicMatch(array, false).getMimeType();
+            if (mimeType.startsWith("image/")) {
+                return true;
+            }
+        } catch (Exception e) {
+            return false;
+        }
+        return false;
+    }
+
+    private boolean isPDF(byte[] array) {
+        try {
+            PDDocument.load(array);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isMSWord(byte[] array) {
+        try {
+            XWPFDocument xdoc = new XWPFDocument(new ByteArrayInputStream(array));
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
 }

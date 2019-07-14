@@ -9,6 +9,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/userDetail")
 @CrossOrigin(origins = {"${front-end.settings.cross-origin.url}"})
@@ -28,12 +30,12 @@ public class AppUserController {
     }
 
     @GetMapping("/viewUsers/{pageNumber}")
-    public Page<AppUser> viewUsers(@PathVariable int pageNumber) {
+    public List<AppUser> viewUsers(@PathVariable int pageNumber) {
         PageRequest pageNumWithElements = PageRequest.of(
                 pageNumber,
                 ConstantValue.USERS_PER_PAGE,
                 Sort.by("userId"));
-        return appUserRepository.findAll(pageNumWithElements);
+        return appUserRepository.findAll(pageNumWithElements).getContent();
     }
 
     /**
@@ -47,13 +49,7 @@ public class AppUserController {
     @PostMapping("/editProfile/{userId}")
     public AppUser editProfile(@PathVariable AppUser updatedAppUser, @PathVariable Long userId) {
         AppUser appUser = appUserRepository.findById(userId).get();
-        // TODO: finish this
-//        appUser.setFirstName(updatedAppUser.getFirstName());
-//        appUser.setLastName(updatedAppUser.getLastName());
-//        appUser.setEmail(updatedAppUser.getEmail());
-//        appUser.setCvUrl(updatedAppUser.getCvUrl());
-//        appUser.setProfileImageUrl(updatedAppUser.getProfileImageUrl());
-
+        appUser.setSocialUserInformation(updatedAppUser.getSocialUserInformation());
         return appUserRepository.save(appUser);
     }
 }

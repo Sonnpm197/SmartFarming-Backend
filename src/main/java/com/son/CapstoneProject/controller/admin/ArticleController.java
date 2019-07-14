@@ -68,12 +68,15 @@ public class ArticleController {
 
     @PostMapping("/searchArticles")
     public List<Article> searchArticles(@RequestBody ArticleSearch articleSearch) {
-        return (List<Article>) hibernateSearchRepository.search2(
-                articleSearch.getTextSearch(),
-                ARTICLE,
-                new String[]{"title", "content"},
-                articleSearch.getCategory()
-        );
+//        return (List<Article>) hibernateSearchRepository.search2(
+//                articleSearch.getTextSearch(),
+//                ARTICLE,
+//                new String[]{"title", "content"},
+//                articleSearch.getCategory()
+//        );
+
+        // TODO: finish this
+        return null;
     }
 
     /**

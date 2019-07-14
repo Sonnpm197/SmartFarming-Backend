@@ -102,12 +102,15 @@ public class QuestionController {
 
     @PostMapping("/searchQuestions")
     public List<Question> searchQuestions(@RequestBody QuestionSearch questionSearch) {
-        return (List<Question>) hibernateSearchRepository.search2(
-                questionSearch.getTextSearch(),
-                QUESTION,
-                new String[]{"title", "content"}, //  fields
-                null
-        );
+//        return (List<Question>) hibernateSearchRepository.search2(
+//                questionSearch.getTextSearch(),
+//                QUESTION,
+//                new String[]{"title", "content"}, //  fields
+//                null
+//        );
+
+        // TODO: finish this
+        return null;
     }
 
     /**
@@ -148,6 +151,8 @@ public class QuestionController {
         // add date
         question.setUtilTimestamp(new Date());
         question = questionRepository.save(question);
+
+        // TODO: upload to google could
 
         // This requested question will have UploadedFile objects => save info of this question to that UploadedFile
         List<UploadedFile> uploadedFiles = question.getUploadedFiles();
@@ -203,6 +208,8 @@ public class QuestionController {
         oldQuestion.setTags(tags);
 
         Question resultQuestion = questionRepository.save(oldQuestion);
+
+        // TODO: update to google could
 
         // This requested question will have UploadedFile objects => save info of this question to that UploadedFile
         List<UploadedFile> uploadedFiles = updatedQuestion.getUploadedFiles();
@@ -279,6 +286,8 @@ public class QuestionController {
 
         // Then remove the question
         questionRepository.delete(question);
+
+        // TODO: delete file from google cloud
 
         Map<String, String> map = new HashMap<>();
         map.put("questionId", "" + id);

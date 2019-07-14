@@ -7,21 +7,22 @@ import com.son.CapstoneProject.entity.search.GenericClass;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
+import org.hibernate.Cache;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.FullTextQuery;
 import org.hibernate.search.jpa.Search;
 import org.hibernate.search.query.dsl.QueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Index;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
-import static com.son.CapstoneProject.common.ConstantValue.ARTICLE;
-import static com.son.CapstoneProject.common.ConstantValue.QUESTION;
-import static com.son.CapstoneProject.common.ConstantValue.TAG;
+import static com.son.CapstoneProject.common.ConstantValue.*;
 
 @Repository
 public class HibernateSearchRepository {
@@ -53,24 +54,24 @@ public class HibernateSearchRepository {
      * But if you use @transactional on your method then al those DAO calls will be wrapped in a single begin()-
      * commit() cycle. Of course in case you use @transactional the DAOs must not use the begin() and commit() methods
      * */
-    @Transactional
-    public List search(String searchedText, GenericClass genericClass, String[] fields) {
-        try {
-            org.apache.lucene.search.Query luceneQuery = getQueryBuilder(genericClass)
-                    .keyword()
-                    .onFields(fields) // list to vararg
-                    .matching(searchedText)
-                    .createQuery();
-
-            FullTextQuery jpaFullTextQuery = getJpaQuery(luceneQuery, genericClass);
-
-            return jpaFullTextQuery.getResultList();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return new ArrayList<>();
-    }
+//    @Transactional
+//    public List search(String searchedText, GenericClass genericClass, String[] fields) {
+//        try {
+//            org.apache.lucene.search.Query luceneQuery = getQueryBuilder(genericClass)
+//                    .keyword()
+//                    .onFields(fields) // list to vararg
+//                    .matching(searchedText)
+//                    .createQuery();
+//
+//            FullTextQuery jpaFullTextQuery = getJpaQuery(luceneQuery, genericClass);
+//
+//            return jpaFullTextQuery.getResultList();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        return new ArrayList<>();
+//    }
 
     /**
      * This method is used to search for title or content
@@ -82,7 +83,7 @@ public class HibernateSearchRepository {
      * @return
      */
 
-    public List search2(String searchedText, String className, String[] fields, String articleCategory) {
+    public List search2(String searchedText, String className, String[] fields, String articleCategory, int pageIndex) {
         GenericClass genericClass = null;
 
         if (ARTICLE.equalsIgnoreCase(className)) {
@@ -93,11 +94,8 @@ public class HibernateSearchRepository {
             genericClass = new GenericClass(Tag.class);
         }
 
-        List<Article> articles = null;
         List<Article> finalArticles = new ArrayList<>();
-        List<Question> questions = null;
         List<Question> finalQuestions = new ArrayList<>();
-        List<Tag> tags = null;
         List<Tag> finalTags = new ArrayList<>();
 
         try {
@@ -116,15 +114,13 @@ public class HibernateSearchRepository {
                     queryList.add(phraseQuery);
 
                     addDistinctValueToList(
-                            articles, finalArticles,
-                            questions, finalQuestions,
-                            tags, finalTags,
+                            finalArticles, finalQuestions, finalTags,
                             queryList, className, genericClass, articleCategory);
 
                 }
 
                 // At the end of the loop return result
-                returnFinalListByClassName(className, finalArticles, finalQuestions, finalTags);
+                return returnFinalListByClassName(className, finalArticles, finalQuestions, finalTags, pageIndex);
 
             }
             // Else search with 'AND' operator
@@ -143,15 +139,13 @@ public class HibernateSearchRepository {
                     }
 
                     addDistinctValueToList(
-                            articles, finalArticles,
-                            questions, finalQuestions,
-                            tags, finalTags,
+                            finalArticles, finalQuestions, finalTags,
                             queryList, className, genericClass, articleCategory);
 
                 }
 
                 // At the end of the loop return result
-                return returnFinalListByClassName(className, finalArticles, finalQuestions, finalTags);
+                return returnFinalListByClassName(className, finalArticles, finalQuestions, finalTags, pageIndex);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -161,9 +155,9 @@ public class HibernateSearchRepository {
     }
 
 
-    private void addDistinctValueToList(List<Article> articles, List<Article> finalArticles,
-                                        List<Question> questions, List<Question> finalQuestions,
-                                        List<Tag> tags, List<Tag> finalTags,
+    private void addDistinctValueToList(List<Article> finalArticles,
+                                        List<Question> finalQuestions,
+                                        List<Tag> finalTags,
                                         List<Query> queryList, String className, GenericClass genericClass, String articleCategory) {
 
         // Search in category of article
@@ -187,21 +181,21 @@ public class HibernateSearchRepository {
         FullTextQuery fullTextQuery = getJpaQuery(finalQueryBuilder.build(), genericClass);
 
         if (ARTICLE.equalsIgnoreCase(className)) {
-            articles = (List<Article>) fullTextQuery.getResultList();
+            List<Article> articles = (List<Article>) fullTextQuery.getResultList();
             for (Article article : articles) {
                 if (!finalArticles.contains(article)) {
                     finalArticles.add(article);
                 }
             }
         } else if (QUESTION.equalsIgnoreCase(className)) {
-            questions = (List<Question>) fullTextQuery.getResultList();
+            List<Question> questions = (List<Question>) fullTextQuery.getResultList();
             for (Question question : questions) {
                 if (!finalQuestions.contains(question)) {
                     finalQuestions.add(question);
                 }
             }
         } else if (TAG.equalsIgnoreCase(className)) {
-            tags = (List<Tag>) fullTextQuery.getResultList();
+            List<Tag> tags = (List<Tag>) fullTextQuery.getResultList();
             for (Tag tag : tags) {
                 if (!finalTags.contains(tag)) {
                     finalTags.add(tag);
@@ -210,15 +204,93 @@ public class HibernateSearchRepository {
         }
     }
 
-    private List returnFinalListByClassName(String className, List<Article> finalArticles, List<Question> finalQuestions, List<Tag> finalTags) {
+    private List returnFinalListByClassName(String className,
+                                            List<Article> finalArticles,
+                                            List<Question> finalQuestions,
+                                            List<Tag> finalTags,
+                                            int pageIndex) {
         // At the end of the loop return result
         if (ARTICLE.equalsIgnoreCase(className)) {
-            return finalArticles;
+            // Sort article by date
+            Collections.sort(finalArticles, (article1, article2) -> {
+                if (article1.getUtilTimestamp() != null && article2.getUtilTimestamp() != null) {
+                    if (article1.getUtilTimestamp().after(article2.getUtilTimestamp())) {
+                        return 1;
+                    } else if (article1.getUtilTimestamp().before(article2.getUtilTimestamp())) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
+                }
+
+                return 0;
+            });
+
+            // Return by page index
+            int start = pageIndex * ARTICLES_PER_PAGE;
+            int end = start + ARTICLES_PER_PAGE;
+
+            List<Article> articlesByPageIndex = new ArrayList<>();
+
+            int totalSize = finalArticles.size();
+
+            // If start = 5 or 6
+            // Array has 0, 1, 2, 3, 4 => error
+            if (totalSize <= start) {
+                return new ArrayList();
+            } else {
+                for (int i = start; i < end; i++) {
+                    try {
+                        articlesByPageIndex.add(finalArticles.get(i));
+                    } catch (IndexOutOfBoundsException e) {
+                        break;
+                    }
+                }
+            }
+
+            return articlesByPageIndex;
         } else if (QUESTION.equalsIgnoreCase(className)) {
-            return finalQuestions;
+            Collections.sort(finalQuestions, (question1, question2) -> {
+                if (question1.getUtilTimestamp() != null && question2.getUtilTimestamp() != null) {
+                    if (question1.getUtilTimestamp().after(question2.getUtilTimestamp())) {
+                        return 1;
+                    } else if (question1.getUtilTimestamp().before(question2.getUtilTimestamp())) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
+                }
+
+                return 0;
+            });
+
+            // Return by page index
+            int start = pageIndex * QUESTIONS_PER_PAGE;
+            int end = start + QUESTIONS_PER_PAGE;
+
+            List<Question> questionsByPageIndex = new ArrayList<>();
+
+            int totalSize = finalQuestions.size();
+
+            // If start = 5 or 6
+            // Array has 0, 1, 2, 3, 4 => error
+            if (totalSize <= start) {
+                return new ArrayList();
+            } else {
+                for (int i = start; i < end; i++) {
+                    try {
+                        questionsByPageIndex.add(finalQuestions.get(i));
+                    } catch (IndexOutOfBoundsException e) {
+                        break;
+                    }
+                }
+            }
+
+            return questionsByPageIndex;
         } else if (TAG.equalsIgnoreCase(className)) {
             return finalTags;
         }
-        return null;
+        return new ArrayList();
     }
+
 }

@@ -29,6 +29,11 @@ public class ControllerUtils {
 //    @Autowired
 //    private AppUserDAO appUserDAO;
 
+    /**
+     * Only save tags which don't exist but still return all tags of the questions
+     * @param tags
+     * @return
+     */
     public List<Tag> saveDistinctiveTags(List<Tag> tags) {
         List<Tag> processedList = new ArrayList<>();
         if (tags != null) {
@@ -63,6 +68,7 @@ public class ControllerUtils {
     public AppUser saveOrReturnAnonymousUser(String ipAddress) {
 
         if (ipAddress == null) {
+            // TODO: logger
             return null;
         }
 

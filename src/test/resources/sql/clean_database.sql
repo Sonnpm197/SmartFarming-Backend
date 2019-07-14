@@ -9,3 +9,4 @@ delete from answer;
 delete from question;
 delete from tag;
 delete from app_user;
+delete from social_user_information;

@@ -10,12 +10,9 @@ delete from question;
 delete from tag;
 delete from app_user;
 
-insert into social_user_information (social_user_information_id, auth_token, authorization_code, email, first_name, id, id_token, last_name, name, photo_url, provider)
-values (1, 'sdadsa','sadsa', 'sdadsa','sadsa', 'socialId','sadsa', 'sdadsa','sadsa', 'sdadsa','sadsa');
-
 -- Insert user add question
 insert into app_user (user_id, anonymous, cv_url, ip_address, reputation, role, view_count, social_id)
-values (1, 0, null , '127.0.0.1', 0, 'USER', 0, 1);
+values (1, 0, null , '127.0.0.1', 0, 'USER', 0, null);
 insert into app_user (user_id, anonymous, cv_url, ip_address, reputation, role, view_count, social_id)
 values (2, 0, null , '127.0.0.2', 0, 'USER', 0, null);
 
@@ -52,11 +49,18 @@ values (0, 0, 0, 1, 0);
 insert into app_user_tag (app_user_tag_id, reputation, view_count, app_user_user_id, tag_tag_id)
 values (1, 0, 0, 1, 1);
 
+-- User 2 has 1 accepted answer in a question
+insert into app_user_tag (app_user_tag_id, reputation, view_count, app_user_user_id, tag_tag_id)
+values (2, 1, 0, 2, 0);
+insert into app_user_tag (app_user_tag_id, reputation, view_count, app_user_user_id, tag_tag_id)
+values (3, 1, 0, 2, 1);
+-----------------------------------
+
 insert into answer (answer_id, content, is_accepted, util_timestamp, user_id, question_id)
 values (1, N'Câu trả lời đó là của người số 1 cho câu hỏi 1', 0, null, 1, 1);
 
 insert into answer (answer_id, content, is_accepted, util_timestamp, user_id, question_id)
-values (2, N'Câu trả lời đó là của người số 2 cho câu hỏi 1', 0, null, 2, 1);
+values (2, N'Câu trả lời đó là của người số 2 cho câu hỏi 1', 1, null, 2, 1);
 
 insert into comment (comment_id, content, util_timestamp, answer_id, user_id, article_id, question_id)
 values (10, N'Câu bình luận đó là 10', null , 1, 1, null, null);

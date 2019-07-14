@@ -230,4 +230,38 @@ public class CommentControllerTest {
         System.out.println(">> Result: " + response.getBody());
         Assert.assertEquals(0, commentRepository.count());
     }
+
+    @Test
+    @SqlGroup({
+            @Sql("/sql/answerController/insert_answer.sql"),
+            @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
+    })
+    public void deleteOtherUserComment() {
+        try {
+            String url = createURL(port, "/comment/deleteComment/{id}");
+
+            String requestBody = CommonTest.readStringFromFile("src\\test\\resources\\json\\commentController\\deleteOtherUserComment.json");
+
+            // URI (URL) parameters
+            Map<String, Integer> uriParams = new HashMap<>();
+            uriParams.put("id", 1);
+
+            UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
+
+            System.out.println(">>> Testing URI: " + builder.buildAndExpand(uriParams).toUri());
+
+            HttpEntity<String> entity = new HttpEntity<>(requestBody, CommonTest.getHeaders("DELETE", frontEndUrl));
+            ResponseEntity<Comment> response = CommonTest.getRestTemplate().exchange(
+                    builder.buildAndExpand(uriParams).toUri(),
+                    HttpMethod.DELETE,
+                    entity,
+                    new ParameterizedTypeReference<Comment>() {
+                    });
+
+            System.out.println(">> Result: " + response.getBody());
+            Assert.assertEquals(0, commentRepository.count());
+        } catch (Exception e) {
+            Assert.assertEquals("500 null", e.getMessage());
+        }
+    }
 }

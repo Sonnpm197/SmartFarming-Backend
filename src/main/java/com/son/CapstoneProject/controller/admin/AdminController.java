@@ -81,12 +81,15 @@ public class AdminController {
     public List<AppUserTag> searchTopUserByKeyword(@PathVariable String keyword) {
 
         // Admin search tags first
-        List<Tag> tags = (List<Tag>) hibernateSearchRepository.search2(
-                keyword,
-                TAG,
-                new String[]{"name", "description"},
-                null
-        );
+//        List<Tag> tags = (List<Tag>) hibernateSearchRepository.search2(
+//                keyword,
+//                TAG,
+//                new String[]{"name", "description"},
+//                null
+//        );
+
+        // TODO: finish this
+        List<Tag> tags = null;
 
         List<AppUserTag> finalAppUserTags = new ArrayList<>();
 
