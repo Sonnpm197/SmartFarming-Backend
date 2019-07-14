@@ -90,8 +90,8 @@ public class QuestionController {
         PageRequest pageNumWithElements = PageRequest.of(pageNumber, QUESTIONS_PER_PAGE, Sort.by("utilTimestamp"));
         Page<Question> questionPage = questionRepository.findAll(pageNumWithElements);
         QuestionPagination questionPagination = new QuestionPagination();
-        questionPagination.setQuestionsByPageIndex(questionPage.getContent());
-        questionPagination.setNumberOfPage(Integer.parseInt("" + viewNumberOfPages()));
+        questionPagination.setQa(questionPage.getContent());
+        questionPagination.setNumberOfPages(Integer.parseInt("" + viewNumberOfPages()));
         return questionPagination;
     }
 
