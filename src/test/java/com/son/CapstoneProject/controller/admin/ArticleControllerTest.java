@@ -7,6 +7,7 @@ import com.son.CapstoneProject.entity.RestResponsePage;
 import com.son.CapstoneProject.entity.Tag;
 import com.son.CapstoneProject.entity.pagination.ArticlePagination;
 import com.son.CapstoneProject.repository.ArticleRepository;
+import com.son.CapstoneProject.repository.CommentRepository;
 import com.son.CapstoneProject.repository.TagRepository;
 import com.son.CapstoneProject.repository.UploadedFileRepository;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -45,6 +46,9 @@ public class ArticleControllerTest {
 
     @Autowired
     private TagRepository tagRepository;
+
+    @Autowired
+    private CommentRepository commentRepository;
 
     @Autowired
     private UploadedFileRepository uploadedFileRepository;
@@ -230,12 +234,13 @@ public class ArticleControllerTest {
             @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
     })
     public void updateArticle() {
-        String url = createURL("/article/updateArticle");
+        String url = createURL("/article/updateArticle/{articleId}");
 
-        String requestBody = CommonTest.readStringFromFile("src\\test\\resources\\json\\articleController\\addArticle.json");
+        String requestBody = CommonTest.readStringFromFile("src\\test\\resources\\json\\articleController\\updateArticle.json");
 
         // URI (URL) parameters
-        Map<String, String> uriParams = new HashMap<>();
+        Map<String, Long> uriParams = new HashMap<>();
+        uriParams.put("articleId", 1L);
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
         // Add query parameter
@@ -244,10 +249,10 @@ public class ArticleControllerTest {
 
         System.out.println(">>> Testing URI: " + builder.buildAndExpand(uriParams).toUri());
 
-        HttpEntity<String> entity = new HttpEntity<>(requestBody, CommonTest.getHeaders("POST", frontEndUrl));
+        HttpEntity<String> entity = new HttpEntity<>(requestBody, CommonTest.getHeaders("PUT", frontEndUrl));
         ResponseEntity<Article> response = CommonTest.getRestTemplate().exchange(
                 builder.buildAndExpand(uriParams).toUri(),
-                HttpMethod.POST,
+                HttpMethod.PUT,
                 entity,
                 new ParameterizedTypeReference<Article>() {
                 });
@@ -260,11 +265,47 @@ public class ArticleControllerTest {
         Assert.assertNotNull(tagRepository.findByName("sen bị cá ăn"));
 
         // Assert uploaded file in db
-        Assert.assertNotNull(uploadedFileRepository.findByBucketNameAndUploadedFileName("bucket1", "sadsdsadadasd article"));
-        Assert.assertNotNull(uploadedFileRepository.findByBucketNameAndUploadedFileName("bucket2", "sadsdsadadasd article2"));
+        Assert.assertEquals(2, uploadedFileRepository.count());
+        Assert.assertNotNull(uploadedFileRepository.findByBucketNameAndUploadedFileName("bucket_name", "updated_uploaded_file_name"));
+        Assert.assertNotNull(uploadedFileRepository.findByBucketNameAndUploadedFileName("bucket_name", "updated_uploaded_file_name_2"));
     }
 
-    private Article loadArticle(String filePath) throws IOException {
-        return new ObjectMapper().readValue(new File(filePath), Article.class);
+    @Test
+    @SqlGroup({
+            @Sql("/sql/articleController/insert_article.sql"),
+            @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
+    })
+    public void deleteArticle() {
+        String url = createURL("/article/deleteArticle/{articleId}");
+
+        // URI (URL) parameters
+        Map<String, Long> uriParams = new HashMap<>();
+        uriParams.put("articleId", 1L);
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
+        // Add query parameter
+//            .queryParam("firstName", "Mark")
+//            .queryParam("lastName", "Watney");
+
+        System.out.println(">>> Testing URI: " + builder.buildAndExpand(uriParams).toUri());
+
+        HttpEntity<String> entity = new HttpEntity<>(null, CommonTest.getHeaders("DELETE", frontEndUrl));
+        ResponseEntity<String> response = CommonTest.getRestTemplate().exchange(
+                builder.buildAndExpand(uriParams).toUri(),
+                HttpMethod.DELETE,
+                entity,
+                new ParameterizedTypeReference<String>() {
+                });
+
+        System.out.println(">> Result: " + response.getBody());
+
+        // Assert article
+        Assert.assertFalse(articleRepository.findById(1L).isPresent());
+
+        // Assert comments
+        Assert.assertEquals(0, commentRepository.findByArticle_ArticleId(1L).size());
+
+        // Assert updated file
+        Assert.assertEquals(0, uploadedFileRepository.findByArticle_ArticleId(1L).size());
     }
 }

@@ -17,6 +17,8 @@ public interface CommentRepository extends PagingAndSortingRepository<Comment, L
 
     List<Comment> findByAnswer_AnswerId(Long answerId);
 
+    List<Comment> findByArticle_ArticleId(Long articleId);
+
     @Query("select q from Comment q where q.utilTimestamp >= :startDateTime and q.utilTimestamp <= :endDateTime")
     List<Comment> findAllByUtilTimestampBetween(@Param("startDateTime") Date startDateTime, @Param("endDateTime") Date endDateTime);
 

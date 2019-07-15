@@ -9,6 +9,8 @@ import java.util.List;
 @Repository
 public interface UploadedFileRepository extends JpaRepository<UploadedFile, Long> {
 
+    List<UploadedFile> findByArticle_ArticleId(Long articleId);
+
     List<UploadedFile> findByQuestion_QuestionId(Long questionId);
 
     UploadedFile findByUploadedFileName(String fileName);

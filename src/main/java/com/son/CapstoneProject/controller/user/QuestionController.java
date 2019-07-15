@@ -175,21 +175,20 @@ public class QuestionController {
      * Update a question
      *
      * @param updatedQuestion
-     * @param id
      * @return
      * @throws Exception
      */
-    @PutMapping("/updateQuestion/{id}")
+    @PutMapping("/updateQuestion/{questionId}")
     @Transactional
     public ResponseEntity<Question> updateQuestion(
             @RequestBody Question updatedQuestion,
-            @PathVariable Long id)
+            @PathVariable Long questionId)
             throws Exception {
 
         String methodName = "UserController.updateQuestion";
 
-        Question oldQuestion = questionRepository.findById(id)
-                .orElseThrow(() -> new Exception(methodName + ": Not found any question with id: " + id));
+        Question oldQuestion = questionRepository.findById(questionId)
+                .orElseThrow(() -> new Exception(methodName + ": Not found any question with id: " + questionId));
 
         AppUser appUser = updatedQuestion.getAppUser();
 
@@ -211,13 +210,22 @@ public class QuestionController {
         oldQuestion.setContent(updatedQuestion.getContent());
         oldQuestion.setTags(tags);
 
-        Question resultQuestion = questionRepository.save(oldQuestion);
+        // Delete old images from DB and delete file on google cloud storage
+        List<UploadedFile> oldUploadedFiles = oldQuestion.getUploadedFiles();
+        for (UploadedFile oldUploadedFile: oldUploadedFiles) {
+            fileController.deleteFile(oldUploadedFile);
+        }
 
         // This requested question will have UploadedFile objects => save info of this question to that UploadedFile
-        List<UploadedFile> uploadedFiles = updatedQuestion.getUploadedFiles();
+        List<UploadedFile> newUploadedFiles = updatedQuestion.getUploadedFiles();
 
-        if (uploadedFiles != null) {
-            for (UploadedFile uploadedFile : uploadedFiles) {
+        // Set new uploaded file
+        oldQuestion.setUploadedFiles(newUploadedFiles);
+        Question resultQuestion = questionRepository.save(oldQuestion);
+
+        // Set question_id for these new uploaded files
+        if (newUploadedFiles != null) {
+            for (UploadedFile uploadedFile : newUploadedFiles) {
                 uploadedFile.setQuestion(resultQuestion);
                 uploadedFileRepository.save(uploadedFile);
             }

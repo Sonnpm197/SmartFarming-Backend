@@ -44,3 +44,15 @@ values (null, null,null, null, '2012-02-21T18:10:00', 0, 8);
 -- Insert into article_tags
 insert into article_tags (articles_article_id, tags_tag_id) values (1, 0);
 insert into article_tags (articles_article_id, tags_tag_id) values (1, 1);
+
+-- Uploaded file for question 1
+insert into uploaded_file (id, bucket_name, uploaded_file_name, uploaded_file_url_shown_onui, article_id, question_id)
+values (1, 'bucket_name', 'uploaded_file_name', 'uploaded_file_url_shown_onui', 1, null);
+insert into uploaded_file (id, bucket_name, uploaded_file_name, uploaded_file_url_shown_onui, article_id, question_id)
+values (2, 'bucket_name', 'uploaded_file_name 2 ', 'uploaded_file_url_shown_onui 2', 1, null);
+
+-- Updated uploaded file for question 1 (question_id = null because at this moment these 2 are not assigned to question1 yet)
+insert into uploaded_file (id, bucket_name, uploaded_file_name, uploaded_file_url_shown_onui, article_id, question_id)
+values (3, 'bucket_name', 'updated_uploaded_file_name', 'uploaded_file_url_shown_onui', null, null );
+insert into uploaded_file (id, bucket_name, uploaded_file_name, uploaded_file_url_shown_onui, article_id, question_id)
+values (4, 'bucket_name', 'updated_uploaded_file_name_2 ', 'uploaded_file_url_shown_onui_2', null, null);

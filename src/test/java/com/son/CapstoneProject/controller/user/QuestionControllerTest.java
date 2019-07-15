@@ -326,8 +326,9 @@ public class QuestionControllerTest {
 
         // Check UploadedFiles
         List<UploadedFile> uploadedFiles = uploadedFileRepository.findByQuestion_QuestionId(question.getQuestionId());
-        Assert.assertEquals("trồng trọt", uploadedFiles.get(0).getUploadedFileUrlShownOnUI());
-        Assert.assertEquals("trồng trọt", uploadedFiles.get(1).getUploadedFileUrlShownOnUI());
+        Assert.assertEquals(2, uploadedFiles.size()); // To test deleting old files on GG cloud and on DB
+        Assert.assertEquals("uploaded_file_url_shown_onui", uploadedFiles.get(0).getUploadedFileUrlShownOnUI());
+        Assert.assertEquals("uploaded_file_url_shown_onui_2", uploadedFiles.get(1).getUploadedFileUrlShownOnUI());
 
     }
 

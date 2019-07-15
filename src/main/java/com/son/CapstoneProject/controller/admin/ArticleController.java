@@ -2,7 +2,9 @@ package com.son.CapstoneProject.controller.admin;
 
 import com.son.CapstoneProject.configuration.HttpRequestResponseUtils;
 import com.son.CapstoneProject.controller.ControllerUtils;
+import com.son.CapstoneProject.controller.FileController;
 import com.son.CapstoneProject.entity.Article;
+import com.son.CapstoneProject.entity.Comment;
 import com.son.CapstoneProject.entity.Tag;
 import com.son.CapstoneProject.entity.UploadedFile;
 import com.son.CapstoneProject.entity.login.AppUser;
@@ -10,6 +12,7 @@ import com.son.CapstoneProject.entity.pagination.ArticlePagination;
 import com.son.CapstoneProject.entity.search.ArticleSearch;
 import com.son.CapstoneProject.entity.search.GenericClass;
 import com.son.CapstoneProject.repository.ArticleRepository;
+import com.son.CapstoneProject.repository.CommentRepository;
 import com.son.CapstoneProject.repository.UploadedFileRepository;
 import com.son.CapstoneProject.repository.searchRepository.HibernateSearchRepository;
 import com.son.CapstoneProject.service.ViewCountingService;
@@ -23,10 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.son.CapstoneProject.common.ConstantValue.ARTICLE;
 import static com.son.CapstoneProject.common.ConstantValue.ARTICLES_PER_PAGE;
@@ -50,6 +50,12 @@ public class ArticleController {
 
     @Autowired
     private ControllerUtils controllerUtils;
+
+    @Autowired
+    private FileController fileController;
+
+    @Autowired
+    private CommentRepository commentRepository;
 
     @GetMapping("/viewNumberOfArticles")
     public long viewNumberOfArticles() {
@@ -162,31 +168,63 @@ public class ArticleController {
         oldArticle.setTitle(updatedArticle.getTitle());
         oldArticle.setContent(updatedArticle.getContent());
         oldArticle.setTags(tags);
-        oldArticle.setUploadedFiles(updatedArticle.getUploadedFiles());
         oldArticle.setUtilTimestamp(new Date());
 
+        // Delete old images from DB and delete file on google cloud storage
+        List<UploadedFile> oldUploadedFiles = oldArticle.getUploadedFiles();
+        for (UploadedFile oldUploadedFile: oldUploadedFiles) {
+            fileController.deleteFile(oldUploadedFile);
+        }
+
+        // This requested article will have UploadedFile objects => save info of this question to that UploadedFile
+        List<UploadedFile> newUploadedFiles = updatedArticle.getUploadedFiles();
+        oldArticle.setUploadedFiles(newUploadedFiles);
+
         // Save to database
-        Article question = articleRepository.save(oldArticle);
-        return ResponseEntity.ok(question);
+        Article resultArticle = articleRepository.save(oldArticle);
+
+        // Set article_id for these new uploaded files
+        if (newUploadedFiles != null) {
+            for (UploadedFile uploadedFile : newUploadedFiles) {
+                uploadedFile.setArticle(resultArticle);
+                uploadedFileRepository.save(uploadedFile);
+            }
+        }
+
+        return ResponseEntity.ok(resultArticle);
     }
 
     /**
      * Admins can delete an article
      *
-     * @param id
      * @return
      * @throws Exception
      */
-    @DeleteMapping("/deleteArticle/{id}")
-    public Map<String, String> deleteArticle(@PathVariable Long id) throws Exception {
-        Article article = articleRepository.findById(id)
-                .orElseThrow(() -> new Exception("ArticleController.deleteArticle: Not found any article with id: " + id));
+    @DeleteMapping("/deleteArticle/{articleId}")
+    public Map<String, String> deleteArticle(@PathVariable Long articleId) throws Exception {
+        Article article = articleRepository.findById(articleId)
+                .orElseThrow(() -> new Exception("ArticleController.deleteArticle: Not found any article with id: " + articleId));
+
+        // Remove the comments
+        List<Comment> comments = article.getComments();
+        Iterator<Comment> commentIterator = comments.iterator();
+
+        while (commentIterator.hasNext()) {
+            Comment comment = commentIterator.next();
+            commentRepository.delete(comment);
+        }
+
+        // Delete UploadedFile both from GG cloud and DB
+        List<UploadedFile> uploadedFiles = article.getUploadedFiles();
+        for (UploadedFile uploadedFile: uploadedFiles) {
+            fileController.deleteFile(uploadedFile);
+        }
 
         // Delete article
         articleRepository.delete(article);
 
         Map<String, String> map = new HashMap<>();
-        map.put("articleId", ("" + id));
+        map.put("articleId", ("" + articleId));
         map.put("deleted", "true");
         return map;
     }

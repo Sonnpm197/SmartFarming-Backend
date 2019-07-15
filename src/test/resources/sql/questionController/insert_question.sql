@@ -85,11 +85,17 @@ values (14, N'Câu bình luận đó là 11 cho câu hỏi số 1', null , null,
 insert into comment (comment_id, content, util_timestamp, answer_id, user_id, article_id, question_id)
 values (15, N'Câu bình luận đó là 12 cho câu hỏi số 1', null , null, 1, null, 1);
 
--- Uploaded file for question 1
+-- Uploaded file for article 1
 insert into uploaded_file (id, bucket_name, uploaded_file_name, uploaded_file_url_shown_onui, article_id, question_id)
-values (1, 'bucket_name', 'uploaded_file_name', 'uploaded_file_url_shown_onui', null, 1);
+values (1, 'bucket_name', 'uploaded_file_name', 'uploaded_file_url_shown_onui', 1, null);
 insert into uploaded_file (id, bucket_name, uploaded_file_name, uploaded_file_url_shown_onui, article_id, question_id)
-values (2, 'bucket_name', 'uploaded_file_name 2 ', 'uploaded_file_url_shown_onui 2', null, 1);
+values (2, 'bucket_name', 'uploaded_file_name 2 ', 'uploaded_file_url_shown_onui 2', 1, null);
+
+-- Updated uploaded file for article 1 (article_id = null because at this moment these 2 are not assigned to article1 yet)
+insert into uploaded_file (id, bucket_name, uploaded_file_name, uploaded_file_url_shown_onui, article_id, question_id)
+values (3, 'bucket_name', 'updated_uploaded_file_name', 'uploaded_file_url_shown_onui', null, null);
+insert into uploaded_file (id, bucket_name, uploaded_file_name, uploaded_file_url_shown_onui, article_id, question_id)
+values (4, 'bucket_name', 'updated_uploaded_file_name_2 ', 'uploaded_file_url_shown_onui_2', null, null);
 
 -- Report for question 1 from user 2
 insert into report(report_id, message, user_id, question_id)

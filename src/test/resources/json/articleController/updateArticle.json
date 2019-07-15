@@ -15,16 +15,16 @@
   },
   "uploadedFiles": [
     {
-      "id": "1",
-      "uploadedFileUrlShownOnUI": "trồng trọt article",
-      "uploadedFileName": "sadsdsadadasd article",
-      "bucketName": "bucket1"
+      "id": "3",
+      "uploadedFileUrlShownOnUI": "uploaded_file_url_shown_onui",
+      "uploadedFileName": "updated_uploaded_file_name",
+      "bucketName": "bucket_name"
     },
     {
-      "id": "2",
-      "uploadedFileUrlShownOnUI": "trồng trọt article2",
-      "uploadedFileName": "sadsdsadadasd article2",
-      "bucketName": "bucket2"
+      "id": "4",
+      "uploadedFileUrlShownOnUI": "uploaded_file_url_shown_onui_2",
+      "uploadedFileName": "updated_uploaded_file_name_2",
+      "bucketName": "bucket_name"
     }
   ]
 }

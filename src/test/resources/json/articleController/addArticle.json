@@ -17,14 +17,14 @@
     {
       "id": "1",
       "uploadedFileUrlShownOnUI": "trồng trọt article",
-      "uploadedFileName": "sadsdsadadasd article",
-      "bucketName": "bucket1"
+      "uploadedFileName": "updated_uploaded_file_name",
+      "bucketName": "bucket_name"
     },
     {
       "id": "2",
       "uploadedFileUrlShownOnUI": "trồng trọt article2",
       "uploadedFileName": "sadsdsadadasd article2",
-      "bucketName": "bucket2"
+      "bucketName": "bucket_name"
     }
   ]
 }
