@@ -6,6 +6,7 @@ import com.son.CapstoneProject.entity.Answer;
 import com.son.CapstoneProject.entity.AppUserTag;
 import com.son.CapstoneProject.entity.Comment;
 import com.son.CapstoneProject.entity.login.AppUser;
+import com.son.CapstoneProject.repository.AnswerRepository;
 import com.son.CapstoneProject.repository.AppUserTagRepository;
 import com.son.CapstoneProject.repository.CommentRepository;
 import com.son.CapstoneProject.repository.loginRepository.AppUserRepository;
@@ -43,6 +44,9 @@ public class AnswerControllerTest {
 
     @Autowired
     private CommentRepository commentRepository;
+
+    @Autowired
+    private AnswerRepository answerRepository;
 
     @Autowired
     private AppUserTagRepository appUserTagRepository;
@@ -172,7 +176,7 @@ public class AnswerControllerTest {
                 });
 
         System.out.println(">> Result: " + response.getBody());
-        Assert.assertTrue(commentRepository.count() == 0);
+        Assert.assertFalse(answerRepository.findById(1L).isPresent());
     }
 
     /**

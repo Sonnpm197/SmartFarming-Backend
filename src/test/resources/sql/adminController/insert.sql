@@ -80,7 +80,7 @@ values (0, 0, 0, 1, 0);
 insert into app_user_tag (app_user_tag_id, reputation, view_count, app_user_user_id, tag_tag_id)
 values (1, 0, 0, 2, 0);
 insert into app_user_tag (app_user_tag_id, reputation, view_count, app_user_user_id, tag_tag_id)
-values (1, 0, 0, 2, 1);
+values (2, 0, 0, 2, 1);
 
 -- Answer id = 1 & 2 for question 1
 insert into answer (answer_id, content, is_accepted, util_timestamp, user_id, question_id)

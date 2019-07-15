@@ -141,6 +141,9 @@ public class QuestionControllerTest {
 //        }
     }
 
+    /**
+     * Comment async run to pass this or press run directly
+     */
     @Test
     @SqlGroup({
             @Sql("/sql/questionController/insert_question.sql"),
@@ -202,9 +205,7 @@ public class QuestionControllerTest {
 
         String url = createURL(port, "/question/searchQuestions/0");
 
-        String requestBody = "{"
-                + "\"textSearch\" : " + "\"hà nội chán\""
-                + "}";
+        String requestBody = CommonTest.readStringFromFile("src\\test\\resources\\json\\questionController\\searchQuestion.json");
 
         // URI (URL) parameters
         Map<String, String> uriParams = new HashMap<>();

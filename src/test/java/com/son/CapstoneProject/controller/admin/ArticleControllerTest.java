@@ -164,10 +164,7 @@ public class ArticleControllerTest {
     public void searchArticles() {
         String url = createURL("/article/searchArticles/0");
 
-        String requestBody = "{"
-                + "\"category\" : " + "\"trồng trọt\","
-                + "\"textSearch\" : " + "\"hà nội chán\""
-                + "}";
+        String requestBody = CommonTest.readStringFromFile("src\\test\\resources\\json\\articleController\\searchArticle.json");
 
         // URI (URL) parameters
         Map<String, String> uriParams = new HashMap<>();
@@ -224,8 +221,8 @@ public class ArticleControllerTest {
         Assert.assertNotNull(tagRepository.findByName("sen bị cá ăn"));
 
         // Assert uploaded file in db
-        Assert.assertNotNull(uploadedFileRepository.findByBucketNameAndUploadedFileName("bucket1", "sadsdsadadasd article"));
-        Assert.assertNotNull(uploadedFileRepository.findByBucketNameAndUploadedFileName("bucket2", "sadsdsadadasd article2"));
+        Assert.assertNotNull(uploadedFileRepository.findByBucketNameAndUploadedFileName("bucket_name", "uploaded_file_name_2"));
+        Assert.assertNotNull(uploadedFileRepository.findByBucketNameAndUploadedFileName("bucket_name", "uploaded_file_name"));
     }
 
     @Test
