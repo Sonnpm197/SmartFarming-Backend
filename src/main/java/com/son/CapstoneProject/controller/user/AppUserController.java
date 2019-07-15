@@ -1,15 +1,18 @@
 package com.son.CapstoneProject.controller.user;
 
 import com.son.CapstoneProject.common.ConstantValue;
+import com.son.CapstoneProject.common.StringUtils;
 import com.son.CapstoneProject.entity.login.AppUser;
+import com.son.CapstoneProject.entity.login.SocialUserInformation;
+import com.son.CapstoneProject.entity.pagination.AppUserPagination;
 import com.son.CapstoneProject.repository.loginRepository.AppUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import static com.son.CapstoneProject.common.ConstantValue.USERS_PER_PAGE;
 
 @RestController
 @RequestMapping("/userDetail")
@@ -18,6 +21,16 @@ public class AppUserController {
 
     @Autowired
     private AppUserRepository appUserRepository;
+
+    @GetMapping("/viewNumberOfPages")
+    public long viewNumberOfPages() {
+        long numberOfUsers = appUserRepository.count();
+        if (numberOfUsers % USERS_PER_PAGE == 0) {
+            return numberOfUsers / USERS_PER_PAGE;
+        } else {
+            return (numberOfUsers / USERS_PER_PAGE) + 1;
+        }
+    }
 
     @GetMapping("/viewNumberOfUsers")
     public long viewNumberOfUsers() {
@@ -30,12 +43,16 @@ public class AppUserController {
     }
 
     @GetMapping("/viewUsers/{pageNumber}")
-    public List<AppUser> viewUsers(@PathVariable int pageNumber) {
+    public AppUserPagination viewUsers(@PathVariable int pageNumber) {
         PageRequest pageNumWithElements = PageRequest.of(
                 pageNumber,
                 ConstantValue.USERS_PER_PAGE,
-                Sort.by("userId"));
-        return appUserRepository.findAll(pageNumWithElements).getContent();
+                Sort.by("reputation").descending());
+
+        AppUserPagination userPagination = new AppUserPagination();
+        userPagination.setAppUsersByPageIndex(appUserRepository.findAll(pageNumWithElements).getContent());
+        userPagination.setNumberOfPages(Integer.parseInt("" + viewNumberOfPages()));
+        return userPagination;
     }
 
     /**
@@ -47,9 +64,30 @@ public class AppUserController {
      * @return
      */
     @PostMapping("/editProfile/{userId}")
-    public AppUser editProfile(@PathVariable AppUser updatedAppUser, @PathVariable Long userId) {
+    @Transactional
+    public AppUser editProfile(@RequestBody AppUser updatedAppUser, @PathVariable Long userId) {
         AppUser appUser = appUserRepository.findById(userId).get();
-        appUser.setSocialUserInformation(updatedAppUser.getSocialUserInformation());
+        SocialUserInformation oldSocialUserInformation = appUser.getSocialUserInformation();
+        SocialUserInformation newSocialUserInformation = updatedAppUser.getSocialUserInformation();
+
+        if (!StringUtils.isNullOrEmpty(newSocialUserInformation.getEmail())) {
+            oldSocialUserInformation.setEmail(newSocialUserInformation.getEmail());
+        }
+
+        if (!StringUtils.isNullOrEmpty(newSocialUserInformation.getFirstName())) {
+            oldSocialUserInformation.setEmail(newSocialUserInformation.getFirstName());
+        }
+
+        if (!StringUtils.isNullOrEmpty(newSocialUserInformation.getLastName())) {
+            oldSocialUserInformation.setEmail(newSocialUserInformation.getLastName());
+        }
+
+        if (!StringUtils.isNullOrEmpty(newSocialUserInformation.getPhotoUrl())) {
+            oldSocialUserInformation.setEmail(newSocialUserInformation.getPhotoUrl());
+        }
+
+        appUser.setSocialUserInformation(oldSocialUserInformation);
+        appUser.setCvUrl(updatedAppUser.getCvUrl());
         return appUserRepository.save(appUser);
     }
 }

@@ -86,14 +86,14 @@ public class UpvoteController {
             controllerUtils.validateAppUser(userUpvote, methodName, true);
         }
 
-        if ("article".equalsIgnoreCase(type)) {
+        if (ARTICLE.equalsIgnoreCase(type)) {
             article = articleRepository.findById(id)
                     .orElseThrow(() -> new Exception(methodName + ": Not found article by id: " + id));
             author = article.getAppUser();
             appUserList = article.getUpvotedUserIds();
             tags = article.getTags();
 
-        } else if ("question".equalsIgnoreCase(type)) {
+        } else if (QUESTION.equalsIgnoreCase(type)) {
 
             question = questionRepository.findById(id)
                     .orElseThrow(() -> new Exception(methodName + ": Not found question by id: " + id));
@@ -101,7 +101,7 @@ public class UpvoteController {
             appUserList = question.getUpvotedUserIds();
             tags = question.getTags();
 
-        } else if ("answer".equalsIgnoreCase(type)) {
+        } else if (ANSWER.equalsIgnoreCase(type)) {
 
             answer = answerRepository.findById(id)
                     .orElseThrow(() -> new Exception(methodName + ": Not found answer by id: " + id));
@@ -109,7 +109,7 @@ public class UpvoteController {
             appUserList = answer.getUpvotedUserIds();
             tags = answer.getQuestion().getTags();
 
-        } else if ("comment".equalsIgnoreCase(type)) {
+        } else if (COMMENT.equalsIgnoreCase(type)) {
 
             comment = commentRepository.findById(id)
                     .orElseThrow(() -> new Exception(methodName + ": Not found comment by id: " + id));
@@ -183,22 +183,22 @@ public class UpvoteController {
             }
         }
 
-        if ("article".equalsIgnoreCase(type) && article != null) {
+        if (ARTICLE.equalsIgnoreCase(type) && article != null) {
 
             article.setUpvotedUserIds(appUserList);
             articleRepository.save(article);
 
-        } else if ("question".equalsIgnoreCase(type) && question != null) {
+        } else if (QUESTION.equalsIgnoreCase(type) && question != null) {
 
             question.setUpvotedUserIds(appUserList);
             questionRepository.save(question);
 
-        } else if ("answer".equalsIgnoreCase(type) && answer != null) {
+        } else if (ANSWER.equalsIgnoreCase(type) && answer != null) {
 
             answer.setUpvotedUserIds(appUserList);
             answerRepository.save(answer);
 
-        } else if ("comment".equalsIgnoreCase(type) && comment != null) {
+        } else if (COMMENT.equalsIgnoreCase(type) && comment != null) {
 
             comment.setUpvotedUserIds(appUserList);
             commentRepository.save(comment);

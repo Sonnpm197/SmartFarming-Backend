@@ -19,9 +19,15 @@ values (1, 'sdadsa','sadsa', 'sdadsa','sadsa', 'socialId','sadsa', 'sdadsa','sad
 
 -- Insert user add question
 insert into app_user (user_id, anonymous, cv_url, ip_address, reputation, role, view_count, social_id)
-values (1, 0, null , '127.0.0.1', 0, 'USER', 0, 1);
+values (1, 0, null , '127.0.0.1', 1, 'USER', 0, 1);
 insert into app_user (user_id, anonymous, cv_url, ip_address, reputation, role, view_count, social_id)
-values (2, 0, null , '127.0.0.2', 0, 'USER', 0, null);
+values (2, 0, null , '127.0.0.2', 5, 'USER', 0, null);
+insert into app_user (user_id, anonymous, cv_url, ip_address, reputation, role, view_count, social_id)
+values (3, 0, null , '127.0.0.2', 10, 'USER', 0, null);
+insert into app_user (user_id, anonymous, cv_url, ip_address, reputation, role, view_count, social_id)
+values (4, 0, null , '127.0.0.2', 2, 'USER', 0, null);
+insert into app_user (user_id, anonymous, cv_url, ip_address, reputation, role, view_count, social_id)
+values (5, 0, null , '127.0.0.2', 0, 'USER', 0, null);
 
 -- Insert tags
 insert into tag (tag_id, description, name, reputation, view_count)
@@ -84,18 +90,6 @@ insert into comment (comment_id, content, util_timestamp, answer_id, user_id, ar
 values (14, N'Câu bình luận đó là 11 cho câu hỏi số 1', null , null, 2, null, 1);
 insert into comment (comment_id, content, util_timestamp, answer_id, user_id, article_id, question_id)
 values (15, N'Câu bình luận đó là 12 cho câu hỏi số 1', null , null, 1, null, 1);
-
--- Uploaded file for article 1
-insert into uploaded_file (id, bucket_name, uploaded_file_name, uploaded_file_url_shown_onui, article_id, question_id)
-values (1, 'bucket_name', 'uploaded_file_name', 'uploaded_file_url_shown_onui', null, 1);
-insert into uploaded_file (id, bucket_name, uploaded_file_name, uploaded_file_url_shown_onui, article_id, question_id)
-values (2, 'bucket_name', 'uploaded_file_name 2 ', 'uploaded_file_url_shown_onui 2',null, 1);
-
--- Updated uploaded file for article 1 (article_id = null because at this moment these 2 are not assigned to article1 yet)
-insert into uploaded_file (id, bucket_name, uploaded_file_name, uploaded_file_url_shown_onui, article_id, question_id)
-values (3, 'bucket_name', 'updated_uploaded_file_name', 'uploaded_file_url_shown_onui', null, null);
-insert into uploaded_file (id, bucket_name, uploaded_file_name, uploaded_file_url_shown_onui, article_id, question_id)
-values (4, 'bucket_name', 'updated_uploaded_file_name_2 ', 'uploaded_file_url_shown_onui_2', null, null);
 
 -- Report for question 1 from user 2
 insert into report(report_id, message, user_id, question_id)

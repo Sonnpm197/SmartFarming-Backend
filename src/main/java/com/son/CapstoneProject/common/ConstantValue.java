@@ -76,5 +76,7 @@ public class ConstantValue {
     // Constant values
     public static final String QUESTION = "question";
     public static final String ARTICLE = "article";
+    public static final String ANSWER = "answer";
     public static final String TAG = "tag";
+    public static final String COMMENT = "comment";
 }
