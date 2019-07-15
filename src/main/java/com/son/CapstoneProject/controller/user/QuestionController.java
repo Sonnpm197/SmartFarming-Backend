@@ -515,6 +515,7 @@ public class QuestionController {
         }
 
         report.setQuestion(question);
+        report.setUtilTimestamp(new Date());
         return reportRepository.save(report);
     }
 }

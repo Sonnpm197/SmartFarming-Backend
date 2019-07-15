@@ -6,6 +6,7 @@ import com.son.CapstoneProject.entity.Tag;
 import com.son.CapstoneProject.entity.pagination.ArticlePagination;
 import com.son.CapstoneProject.entity.pagination.Pagination;
 import com.son.CapstoneProject.entity.pagination.QuestionPagination;
+import com.son.CapstoneProject.entity.pagination.TagPagination;
 import com.son.CapstoneProject.entity.search.GenericClass;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
@@ -208,10 +209,10 @@ public class HibernateSearchRepository {
     }
 
     private Pagination returnFinalListByClassName(String className,
-                                            List<Article> finalArticles,
-                                            List<Question> finalQuestions,
-                                            List<Tag> finalTags,
-                                            int pageIndex) {
+                                                  List<Article> finalArticles,
+                                                  List<Question> finalQuestions,
+                                                  List<Tag> finalTags,
+                                                  int pageIndex) {
         // At the end of the loop return result
         if (ARTICLE.equalsIgnoreCase(className)) {
             // Sort article by date
@@ -299,7 +300,43 @@ public class HibernateSearchRepository {
 
             return questionPagination;
         } else if (TAG.equalsIgnoreCase(className)) {
-            // return finalTags;
+            Collections.sort(finalTags, (tag1, tag2) -> {
+                if (tag1.getReputation() > tag2.getReputation()) {
+                    return 1;
+                } else if (tag1.getReputation() < tag2.getReputation()) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            });
+
+            // Return by page index
+            int start = pageIndex * TAGS_PER_PAGE;
+            int end = start + TAGS_PER_PAGE;
+
+            List<Tag> tagsByPageIndex = new ArrayList<>();
+
+            int totalSize = finalTags.size();
+
+            // If start = 5 or 6
+            // Array has 0, 1, 2, 3, 4 => error
+            if (totalSize <= start) {
+                return new TagPagination();
+            } else {
+                for (int i = start; i < end; i++) {
+                    try {
+                        tagsByPageIndex.add(finalTags.get(i));
+                    } catch (IndexOutOfBoundsException e) {
+                        break;
+                    }
+                }
+            }
+
+            TagPagination tagPagination = new TagPagination();
+            tagPagination.setTagsByPageIndex(tagsByPageIndex);
+            tagPagination.setNumberOfPages(finalTags.size());
+
+            return tagPagination;
         }
         return new Pagination();
     }

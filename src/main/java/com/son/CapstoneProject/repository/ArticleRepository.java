@@ -13,5 +13,5 @@ public interface ArticleRepository extends PagingAndSortingRepository<Article, L
     Page<Article> findAll(Pageable pageable);
 
     @Query("select sum(a.viewCount) from Article a")
-    int getTotalViewCount();
+    Integer getTotalViewCount();
 }

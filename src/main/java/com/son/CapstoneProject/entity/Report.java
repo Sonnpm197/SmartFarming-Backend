@@ -35,4 +35,7 @@ public class Report {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "questionId", foreignKey = @ForeignKey(name = "FK_REPORT_QUESTION"))
     private Question question;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private java.util.Date utilTimestamp;
 }

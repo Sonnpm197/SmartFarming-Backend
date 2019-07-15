@@ -44,7 +44,9 @@ public class ConstantValue {
     // Pagination
     public static final int QUESTIONS_PER_PAGE = 3;
     public static final int ARTICLES_PER_PAGE = 5;
+    public static final int TAGS_PER_PAGE = 5;
     public static final int USERS_PER_PAGE = 5;
+    public static final int REPORTS_PER_PAGE = 5;
 
     // Vote point
     public static final int ARTICLE_UPVOTE_POINT = 1;

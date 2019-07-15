@@ -16,4 +16,6 @@ public class UserChartInfo {
     private int totalQuestionReputation;
     private int totalAnswerReputation;
     private int totalCommentReputation;
+
+    private int totalQuestionViewCount;
 }
