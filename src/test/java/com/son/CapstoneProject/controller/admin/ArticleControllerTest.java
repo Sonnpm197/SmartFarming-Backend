@@ -8,6 +8,7 @@ import com.son.CapstoneProject.entity.Tag;
 import com.son.CapstoneProject.entity.pagination.ArticlePagination;
 import com.son.CapstoneProject.repository.ArticleRepository;
 import com.son.CapstoneProject.repository.TagRepository;
+import com.son.CapstoneProject.repository.UploadedFileRepository;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Assert;
 import org.junit.Test;
@@ -30,28 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
-
-//    String url = "http://test.com/solarSystem/planets/{planet}/moons/{moon}";
-//
-//    // URI (URL) parameters
-//    Map<String, String> uriParams = new HashMap<String, String>();
-//uriParams.put("planets", "Mars");
-//uriParams.put("moons", "Phobos");
-//
-//    // Query parameters
-//    UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url)
-//            // Add query parameter
-//            .queryParam("firstName", "Mark")
-//            .queryParam("lastName", "Watney");
-//
-//System.out.println(builder.buildAndExpand(uriParams).toUri());
-///**
-// * Console output:
-// * http://test.com/solarSystem/planets/Mars/moons/Phobos?firstName=Mark&lastName=Watney
-// */
-//
-//restTemplate.exchange(builder.buildAndExpand(uriParams).toUri() , HttpMethod.PUT,
-//    requestEntity, class_p);
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = Application.class)
@@ -65,6 +45,9 @@ public class ArticleControllerTest {
 
     @Autowired
     private TagRepository tagRepository;
+
+    @Autowired
+    private UploadedFileRepository uploadedFileRepository;
 
     @Value("${front-end.settings.cross-origin.url}")
     private String frontEndUrl;
@@ -199,6 +182,86 @@ public class ArticleControllerTest {
 
         System.out.println(">> Result: " + response.getBody());
 //        Assert.assertEquals("người miền Nam sinh sống ở HN", response.getBody().getArticlesByPageIndex().get(0).getTitle());
+    }
+
+    @Test
+    @SqlGroup({
+            @Sql("/sql/articleController/insert_article.sql"),
+            @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
+    })
+    public void addArticle() {
+        String url = createURL("/article/addArticle");
+
+        String requestBody = CommonTest.readStringFromFile("src\\test\\resources\\json\\articleController\\addArticle.json");
+
+        // URI (URL) parameters
+        Map<String, String> uriParams = new HashMap<>();
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
+        // Add query parameter
+//            .queryParam("firstName", "Mark")
+//            .queryParam("lastName", "Watney");
+
+        System.out.println(">>> Testing URI: " + builder.buildAndExpand(uriParams).toUri());
+
+        HttpEntity<String> entity = new HttpEntity<>(requestBody, CommonTest.getHeaders("POST", frontEndUrl));
+        ResponseEntity<Article> response = CommonTest.getRestTemplate().exchange(
+                builder.buildAndExpand(uriParams).toUri(),
+                HttpMethod.POST,
+                entity,
+                new ParameterizedTypeReference<Article>() {
+                });
+
+        Article article = response.getBody();
+        System.out.println(">> Result: " + article);
+
+        // Assert tags
+        Assert.assertNotNull(tagRepository.findByName("sen sen"));
+        Assert.assertNotNull(tagRepository.findByName("sen bị cá ăn"));
+
+        // Assert uploaded file in db
+        Assert.assertNotNull(uploadedFileRepository.findByBucketNameAndUploadedFileName("bucket1", "sadsdsadadasd article"));
+        Assert.assertNotNull(uploadedFileRepository.findByBucketNameAndUploadedFileName("bucket2", "sadsdsadadasd article2"));
+    }
+
+    @Test
+    @SqlGroup({
+            @Sql("/sql/articleController/insert_article.sql"),
+            @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
+    })
+    public void updateArticle() {
+        String url = createURL("/article/updateArticle");
+
+        String requestBody = CommonTest.readStringFromFile("src\\test\\resources\\json\\articleController\\addArticle.json");
+
+        // URI (URL) parameters
+        Map<String, String> uriParams = new HashMap<>();
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
+        // Add query parameter
+//            .queryParam("firstName", "Mark")
+//            .queryParam("lastName", "Watney");
+
+        System.out.println(">>> Testing URI: " + builder.buildAndExpand(uriParams).toUri());
+
+        HttpEntity<String> entity = new HttpEntity<>(requestBody, CommonTest.getHeaders("POST", frontEndUrl));
+        ResponseEntity<Article> response = CommonTest.getRestTemplate().exchange(
+                builder.buildAndExpand(uriParams).toUri(),
+                HttpMethod.POST,
+                entity,
+                new ParameterizedTypeReference<Article>() {
+                });
+
+        Article article = response.getBody();
+        System.out.println(">> Result: " + article);
+
+        // Assert tags
+        Assert.assertNotNull(tagRepository.findByName("sen sen"));
+        Assert.assertNotNull(tagRepository.findByName("sen bị cá ăn"));
+
+        // Assert uploaded file in db
+        Assert.assertNotNull(uploadedFileRepository.findByBucketNameAndUploadedFileName("bucket1", "sadsdsadadasd article"));
+        Assert.assertNotNull(uploadedFileRepository.findByBucketNameAndUploadedFileName("bucket2", "sadsdsadadasd article2"));
     }
 
     private Article loadArticle(String filePath) throws IOException {

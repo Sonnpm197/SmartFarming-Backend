@@ -183,22 +183,22 @@ public class UpvoteController {
             }
         }
 
-        if ("article".equalsIgnoreCase(type)) {
+        if ("article".equalsIgnoreCase(type) && article != null) {
 
             article.setUpvotedUserIds(appUserList);
             articleRepository.save(article);
 
-        } else if ("question".equalsIgnoreCase(type)) {
+        } else if ("question".equalsIgnoreCase(type) && question != null) {
 
             question.setUpvotedUserIds(appUserList);
             questionRepository.save(question);
 
-        } else if ("answer".equalsIgnoreCase(type)) {
+        } else if ("answer".equalsIgnoreCase(type) && answer != null) {
 
             answer.setUpvotedUserIds(appUserList);
             answerRepository.save(answer);
 
-        } else if ("comment".equalsIgnoreCase(type)) {
+        } else if ("comment".equalsIgnoreCase(type) && comment != null) {
 
             comment.setUpvotedUserIds(appUserList);
             commentRepository.save(comment);

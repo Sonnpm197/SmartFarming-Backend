@@ -4,11 +4,13 @@ import com.son.CapstoneProject.configuration.HttpRequestResponseUtils;
 import com.son.CapstoneProject.controller.ControllerUtils;
 import com.son.CapstoneProject.entity.Article;
 import com.son.CapstoneProject.entity.Tag;
+import com.son.CapstoneProject.entity.UploadedFile;
 import com.son.CapstoneProject.entity.login.AppUser;
 import com.son.CapstoneProject.entity.pagination.ArticlePagination;
 import com.son.CapstoneProject.entity.search.ArticleSearch;
 import com.son.CapstoneProject.entity.search.GenericClass;
 import com.son.CapstoneProject.repository.ArticleRepository;
+import com.son.CapstoneProject.repository.UploadedFileRepository;
 import com.son.CapstoneProject.repository.searchRepository.HibernateSearchRepository;
 import com.son.CapstoneProject.service.ViewCountingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +44,9 @@ public class ArticleController {
 
     @Autowired
     private ViewCountingService countingService;
+
+    @Autowired
+    private UploadedFileRepository uploadedFileRepository;
 
     @Autowired
     private ControllerUtils controllerUtils;
@@ -115,7 +120,21 @@ public class ArticleController {
         List<Tag> tags = controllerUtils.saveDistinctiveTags(article.getTags());
         article.setTags(tags);
 
-        return ResponseEntity.ok(articleRepository.save(article));
+        article = articleRepository.save(article);
+
+        // Note: this uploaded file are already saved on GG Cloud
+        // This requested question will have UploadedFile objects => save info of this question to that UploadedFile
+        List<UploadedFile> uploadedFiles = article.getUploadedFiles();
+
+        if (uploadedFiles != null) {
+            for (UploadedFile uploadedFile : uploadedFiles) {
+                // We still need to save question for this uploaded file
+                uploadedFile.setArticle(article);
+                uploadedFileRepository.save(uploadedFile);
+            }
+        }
+
+        return ResponseEntity.ok(article);
     }
 
     /**

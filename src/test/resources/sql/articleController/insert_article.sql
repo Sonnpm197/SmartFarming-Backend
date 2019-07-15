@@ -10,6 +10,13 @@ delete from question;
 delete from tag;
 delete from app_user;
 
+
+-- Insert user add article
+insert into app_user (user_id, anonymous, cv_url, ip_address, reputation, role, view_count, social_id)
+values (1, 0, null , '127.0.0.1', 0, 'USER', 0, null);
+insert into app_user (user_id, anonymous, cv_url, ip_address, reputation, role, view_count, social_id)
+values (2, 0, null , '127.0.0.2', 0, 'USER', 0, null);
+
 -- Insert tags
 insert into tag (tag_id, description, name, reputation, view_count)
 values (0, 'tagDescription0','trồng trọt', 0, 0);
@@ -18,7 +25,7 @@ values (1, 'tagDescription1','chăn nuôi', 0, 0);
 
 -- Insert articles
 insert into article (user_id, category, content, title, util_timestamp, view_count, article_id)
-values (null, N'trồng trọt',N'Ẩm thực: đồ ăn hà nội khá chán, chắc do chỉ đa phần người Bắc nên em không hợp khẩu vị', N'người miền Nam sinh sống ở HN', '2012-02-22T18:10:00', 0, 1);
+values (1, N'trồng trọt',N'Ẩm thực: đồ ăn hà nội khá chán, chắc do chỉ đa phần người Bắc nên em không hợp khẩu vị', N'người miền Nam sinh sống ở HN', '2012-02-22T18:10:00', 0, 1);
 insert into article (user_id, category, content, title, util_timestamp, view_count, article_id)
 values (null, N'chăn nuôi',N'Ẩm thực: đồ ăn hà nội khá chán, chắc do chỉ đa phần người Bắc nên em không hợp khẩu vị', N'người miền Nam sinh sống ở HN', '2012-02-23T18:10:00', 0, 2);
 insert into article (user_id, category, content, title, util_timestamp, view_count, article_id)

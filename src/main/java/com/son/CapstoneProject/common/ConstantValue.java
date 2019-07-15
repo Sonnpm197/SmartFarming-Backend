@@ -7,7 +7,7 @@ import java.util.List;
 public class ConstantValue {
 
     // GG cloud storage properties
-    public static final String GOOGLE_CREDENTIALS_URL = "C:\\Users\\Son\\Desktop\\Test-Project-1-d0294f6a791f.json";
+    public static final String GOOGLE_CREDENTIALS_URL = "src\\main\\resources\\Test-Project-1-d0294f6a791f.json";
     public static final String GOOGLE_PROJECT_ID = "test-project-1-234610";
     // https://storage.cloud.google.com/[BUCKET_NAME]/[OBJECT_NAME]
     // To view on browsers
