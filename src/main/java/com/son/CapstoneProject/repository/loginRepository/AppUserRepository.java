@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AppUserRepository extends PagingAndSortingRepository<AppUser, Long> {
 
-    AppUser findBySocialUserInformation_SocialUserInformationId(Long id);
+    AppUser findBySocialUser_SocialUserId(Long id);
 
     Page<AppUser> findAll(Pageable pageable);
 

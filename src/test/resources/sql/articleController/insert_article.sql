@@ -15,7 +15,7 @@ delete from question_upvoted_user_ids
 delete from question;
 delete from tag;
 delete from app_user;
-delete from social_user_information;
+delete from social_user;
 
 
 -- Insert user add article

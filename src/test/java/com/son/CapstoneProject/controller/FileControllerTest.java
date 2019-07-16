@@ -81,7 +81,7 @@ public class FileControllerTest {
     public void uploadImageFile() throws Exception {
         MockMultipartFile multipartFile = new MockMultipartFile(
                 "file", "Capture1.PNG",
-                "text/plain", Files.readAllBytes(Paths.get("C:\\IntelliJ Projects\\CapstoneProject\\src\\test\\resources\\file\\Capture1.PNG")));
+                "text/plain", Files.readAllBytes(Paths.get("src\\test\\resources\\file\\Capture1.PNG")));
         UploadedFile uploadedFile = uploadedFile(multipartFile);
         // Save to DB
         Assert.assertNotNull(uploadedFile);
@@ -92,7 +92,7 @@ public class FileControllerTest {
     public void uploadPDFFile() throws Exception {
         MockMultipartFile multipartFile = new MockMultipartFile(
                 "file", "sample.pdf",
-                "text/plain", Files.readAllBytes(Paths.get("C:\\IntelliJ Projects\\CapstoneProject\\src\\test\\resources\\file\\sample.pdf")));
+                "text/plain", Files.readAllBytes(Paths.get("src\\test\\resources\\file\\sample.pdf")));
 
         UploadedFile uploadedFile = uploadedFile(multipartFile);
         // Save to DB
@@ -104,7 +104,7 @@ public class FileControllerTest {
     public void uploadMSWordFile() throws Exception {
         MockMultipartFile multipartFile = new MockMultipartFile(
                 "file", "word.docx",
-                "text/plain", Files.readAllBytes(Paths.get("C:\\IntelliJ Projects\\CapstoneProject\\src\\test\\resources\\file\\word.docx")));
+                "text/plain", Files.readAllBytes(Paths.get("src\\test\\resources\\file\\word.docx")));
 
         UploadedFile uploadedFile = uploadedFile(multipartFile);
         // Save to DB
@@ -121,7 +121,7 @@ public class FileControllerTest {
     public void updateFile() throws Exception {
         MockMultipartFile multipartFile = new MockMultipartFile(
                 "file", "word.docx",
-                "text/plain", Files.readAllBytes(Paths.get("C:\\IntelliJ Projects\\CapstoneProject\\src\\test\\resources\\file\\word.docx")));
+                "text/plain", Files.readAllBytes(Paths.get("src\\test\\resources\\file\\word.docx")));
 
         String url = createURL(8080, "/file/uploadFile");
 
@@ -136,7 +136,7 @@ public class FileControllerTest {
 
         multipartFile = new MockMultipartFile(
                 "file", "newword.docx",
-                "text/plain", Files.readAllBytes(Paths.get("C:\\IntelliJ Projects\\CapstoneProject\\src\\test\\resources\\file\\newword.docx")));
+                "text/plain", Files.readAllBytes(Paths.get("src\\test\\resources\\file\\newword.docx")));
 
         // Update file which has been uploaded
         result = this.mvc.perform(fileUpload(createURL(8080, "/file/updateFile") + "/" + uploadedFileResponse.getId())
@@ -168,7 +168,7 @@ public class FileControllerTest {
         // Upload file to delete
         MockMultipartFile multipartFile = new MockMultipartFile(
                 "file", "word.docx",
-                "text/plain", Files.readAllBytes(Paths.get("C:\\IntelliJ Projects\\CapstoneProject\\src\\test\\resources\\file\\word.docx")));
+                "text/plain", Files.readAllBytes(Paths.get("src\\test\\resources\\file\\word.docx")));
 
         String url = createURL(8080, "/file/uploadFile");
 

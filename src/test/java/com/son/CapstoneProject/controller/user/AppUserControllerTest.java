@@ -2,15 +2,10 @@ package com.son.CapstoneProject.controller.user;
 
 import com.son.CapstoneProject.Application;
 import com.son.CapstoneProject.controller.CommonTest;
-import com.son.CapstoneProject.entity.Question;
-import com.son.CapstoneProject.entity.Tag;
-import com.son.CapstoneProject.entity.UploadedFile;
 import com.son.CapstoneProject.entity.login.AppUser;
-import com.son.CapstoneProject.entity.login.SocialUserInformation;
-import com.son.CapstoneProject.entity.pagination.QuestionPagination;
 import com.son.CapstoneProject.entity.pagination.AppUserPagination;
 import com.son.CapstoneProject.repository.loginRepository.AppUserRepository;
-import com.son.CapstoneProject.repository.loginRepository.SocialUserInformationRepository;
+import com.son.CapstoneProject.repository.loginRepository.SocialUserRepository;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,7 +24,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static com.son.CapstoneProject.controller.CommonTest.createURL;
@@ -50,7 +44,7 @@ public class AppUserControllerTest {
     private AppUserRepository appUserRepository;
 
     @Autowired
-    private SocialUserInformationRepository socialUserInformationRepository;
+    private SocialUserRepository socialUserRepository;
 
     @Test
     @SqlGroup({
@@ -113,7 +107,7 @@ public class AppUserControllerTest {
         System.out.println(">> Result: " + appUser);
 
         // Check saved SocialInfo + saved url
-        Assert.assertEquals("updatedEmail", socialUserInformationRepository.findById(1L).get().getEmail());
+        Assert.assertEquals("updatedEmail", socialUserRepository.findById(1L).get().getEmail());
         Assert.assertEquals("abcd", appUserRepository.findById(appUser.getUserId()).get().getCvUrl());
 
     }
