@@ -1,6 +1,7 @@
 package com.son.CapstoneProject.controller.user;
 
 import com.son.CapstoneProject.entity.Tag;
+import com.son.CapstoneProject.entity.pagination.TagPagination;
 import com.son.CapstoneProject.repository.TagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -19,8 +20,12 @@ public class TagController {
     private TagRepository tagRepository;
 
     @GetMapping("/viewTop5TagsByViewCount")
-    public List<Tag> findTop5ByOrderByViewCount() {
-        return tagRepository.findTop5ByOrderByViewCountDesc();
+    public TagPagination findTop5ByOrderByViewCount() {
+        List<Tag> tags = tagRepository.findTop5ByOrderByViewCountDesc();
+        TagPagination tagPagination = new TagPagination();
+        tagPagination.setTagsByPageIndex(tags);
+        tagPagination.setNumberOfPages(1);
+        return tagPagination;
     }
 
 }

@@ -3,6 +3,7 @@ package com.son.CapstoneProject.controller.user;
 import com.son.CapstoneProject.Application;
 import com.son.CapstoneProject.controller.CommonTest;
 import com.son.CapstoneProject.entity.Tag;
+import com.son.CapstoneProject.entity.pagination.TagPagination;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,11 +40,11 @@ public class TagControllerTest {
     })
     public void getTop5TagsByViewCount() {
         HttpEntity<String> entity = new HttpEntity<>(null, CommonTest.getHeaders("GET", frontEndUrl));
-        ResponseEntity<List<Tag>> response = CommonTest.getRestTemplate().exchange(
+        ResponseEntity<TagPagination> response = CommonTest.getRestTemplate().exchange(
                 createURL(port, "/tag/viewTop5TagsByViewCount"),
                 HttpMethod.GET,
                 entity,
-                new ParameterizedTypeReference<List<Tag>>() {
+                new ParameterizedTypeReference<TagPagination>() {
                 });
         String expected = "5"; // 5 questions
         System.out.println(">> Result: " + response.getBody());

@@ -94,11 +94,11 @@ public class QuestionControllerTest {
     })
     public void viewTop3QuestionsByViewCount() {
         HttpEntity<String> entity = new HttpEntity<>(null, CommonTest.getHeaders("GET", frontEndUrl));
-        ResponseEntity<List<Question>> response = CommonTest.getRestTemplate().exchange(
+        ResponseEntity<QuestionPagination> response = CommonTest.getRestTemplate().exchange(
                 createURL(port, "/question/viewTop3QuestionsByViewCount"),
                 HttpMethod.GET,
                 entity,
-                new ParameterizedTypeReference<List<Question>>() {
+                new ParameterizedTypeReference<QuestionPagination>() {
                 });
         System.out.println(">> Result: " + response.getBody());
 //        Assert.assertEquals(expected, response.getBody());

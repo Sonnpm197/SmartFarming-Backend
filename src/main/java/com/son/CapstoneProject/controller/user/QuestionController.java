@@ -80,8 +80,12 @@ public class QuestionController {
     }
 
     @GetMapping("/viewTop3QuestionsByViewCount")
-    public List<Question> viewTop3QuestionsByViewCount() {
-        return questionRepository.findTop3ByOrderByViewCountDesc();
+    public QuestionPagination viewTop3QuestionsByViewCount() {
+        List<Question> questions = questionRepository.findTop3ByOrderByViewCountDesc();
+        QuestionPagination questionPagination = new QuestionPagination();
+        questionPagination.setQa(questions);
+        questionPagination.setNumberOfPages(1);
+        return questionPagination;
     }
 
     @GetMapping("/viewNumberOfPages")
