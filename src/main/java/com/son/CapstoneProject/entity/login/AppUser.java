@@ -33,9 +33,9 @@ public class AppUser {
 
     private boolean anonymous;
 
-    @JoinColumn(name = "social_id", foreignKey = @ForeignKey(name = "FK_APPUSER_SOCIALUSERINFORMATION"))
+    @JoinColumn(name = "social_id", foreignKey = @ForeignKey(name = "FK_APPUSER_SOCIALUSER"))
     @OneToOne(fetch = FetchType.LAZY)
-    private SocialUserInformation socialUserInformation;
+    private SocialUser socialUser;
 
 //    @Column(name = "Email", length = 128)
 //    private String email;

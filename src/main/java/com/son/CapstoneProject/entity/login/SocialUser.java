@@ -17,11 +17,11 @@ import javax.persistence.Id;
 @Getter
 @Setter
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class SocialUserInformation {
+public class SocialUser {
 
     @Id
     @GeneratedValue
-    private Long socialUserInformationId;
+    private Long socialUserId;
 
     private String id; // social user Id by facebook and google
 

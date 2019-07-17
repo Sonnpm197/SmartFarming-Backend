@@ -15,9 +15,9 @@ delete from question_upvoted_user_ids
 delete from question;
 delete from tag;
 delete from app_user;
-delete from social_user_information;
+delete from social_user;
 
-insert into social_user_information (social_user_information_id, auth_token, authorization_code, email, first_name, id, id_token, last_name, name, photo_url, provider)
+insert into social_user (social_user_id, auth_token, authorization_code, email, first_name, id, id_token, last_name, name, photo_url, provider)
 values (1, 'sdadsa','sadsa', 'sdadsa','sadsa', 'socialId','sadsa', 'sdadsa','sadsa', 'sdadsa','sadsa');
 
 -- Insert user add question

@@ -3,7 +3,7 @@ package com.son.CapstoneProject.controller.user;
 import com.son.CapstoneProject.common.ConstantValue;
 import com.son.CapstoneProject.common.StringUtils;
 import com.son.CapstoneProject.entity.login.AppUser;
-import com.son.CapstoneProject.entity.login.SocialUserInformation;
+import com.son.CapstoneProject.entity.login.SocialUser;
 import com.son.CapstoneProject.entity.pagination.AppUserPagination;
 import com.son.CapstoneProject.repository.loginRepository.AppUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,8 +67,8 @@ public class AppUserController {
     @Transactional
     public AppUser editProfile(@RequestBody AppUser updatedAppUser, @PathVariable Long userId) {
         AppUser appUser = appUserRepository.findById(userId).get();
-        SocialUserInformation oldSocialUserInformation = appUser.getSocialUserInformation();
-        SocialUserInformation newSocialUserInformation = updatedAppUser.getSocialUserInformation();
+        SocialUser oldSocialUserInformation = appUser.getSocialUser();
+        SocialUser newSocialUserInformation = updatedAppUser.getSocialUser();
 
         if (!StringUtils.isNullOrEmpty(newSocialUserInformation.getEmail())) {
             oldSocialUserInformation.setEmail(newSocialUserInformation.getEmail());
@@ -86,7 +86,7 @@ public class AppUserController {
             oldSocialUserInformation.setEmail(newSocialUserInformation.getPhotoUrl());
         }
 
-        appUser.setSocialUserInformation(oldSocialUserInformation);
+        appUser.setSocialUser(oldSocialUserInformation);
         appUser.setCvUrl(updatedAppUser.getCvUrl());
         return appUserRepository.save(appUser);
     }
