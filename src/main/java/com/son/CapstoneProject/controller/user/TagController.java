@@ -18,7 +18,7 @@ public class TagController {
     @Autowired
     private TagRepository tagRepository;
 
-    @GetMapping("/findTop5ByOrderByViewCount")
+    @GetMapping("/viewTop5TagsByViewCount")
     public List<Tag> findTop5ByOrderByViewCount() {
         return tagRepository.findTop5ByOrderByViewCountDesc();
     }

@@ -40,7 +40,7 @@ public class TagControllerTest {
     public void getTop5TagsByViewCount() {
         HttpEntity<String> entity = new HttpEntity<>(null, CommonTest.getHeaders("GET", frontEndUrl));
         ResponseEntity<List<Tag>> response = CommonTest.getRestTemplate().exchange(
-                createURL(port, "/tag/findTop5ByOrderByViewCount"),
+                createURL(port, "/tag/viewTop5TagsByViewCount"),
                 HttpMethod.GET,
                 entity,
                 new ParameterizedTypeReference<List<Tag>>() {
