@@ -11,4 +11,6 @@ public interface TagRepository extends PagingAndSortingRepository<Tag, Long> {
 
     Tag findByName(String name);
 
+    List<Tag> findTop5ByOrderByViewCountDesc();
+
 }

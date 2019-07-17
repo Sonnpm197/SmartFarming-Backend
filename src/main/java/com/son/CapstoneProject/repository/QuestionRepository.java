@@ -21,6 +21,8 @@ public interface QuestionRepository extends PagingAndSortingRepository<Question,
     @Query("select sum(q.viewCount) from Question q")
     Integer getTotalViewCount();
 
+    List<Question> findTop3ByOrderByViewCountDesc();
+
     @Query("select q from Question q where q.utilTimestamp >= :startDateTime and q.utilTimestamp <= :endDateTime")
     List<Question> findAllByUtilTimestampBetween(@Param("startDateTime") Date startDateTime, @Param("endDateTime") Date endDateTime);
 }

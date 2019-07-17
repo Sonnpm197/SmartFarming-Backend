@@ -68,7 +68,7 @@ public class Question implements Serializable {
     private String content;
 
     // Many questions can be asked by an user
-    @JsonBackReference
+//    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId", foreignKey = @ForeignKey(name = "FK_QUESTION_APPUSER"))
     private AppUser appUser;

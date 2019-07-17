@@ -160,7 +160,6 @@
         </dependency>
 
         <!--Check uploaded file if this is an img-->
-        <!-- https://mvnrepository.com/artifact/jmimemagic/jmimemagic -->
         <dependency>
             <groupId>jmimemagic</groupId>
             <artifactId>jmimemagic</artifactId>

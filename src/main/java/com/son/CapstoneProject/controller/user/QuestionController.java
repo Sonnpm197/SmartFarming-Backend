@@ -79,6 +79,11 @@ public class QuestionController {
         return questionRepository.count();
     }
 
+    @GetMapping("/viewTop3QuestionsByViewCount")
+    public List<Question> viewTop3QuestionsByViewCount() {
+        return questionRepository.findTop3ByOrderByViewCountDesc();
+    }
+
     @GetMapping("/viewNumberOfPages")
     public long viewNumberOfPages() {
         long numberOfQuestion = questionRepository.count();

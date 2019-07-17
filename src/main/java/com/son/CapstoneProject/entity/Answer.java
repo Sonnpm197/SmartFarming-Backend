@@ -28,7 +28,7 @@ public class Answer implements Serializable {
     private String content;
 
     // Many answers can be replied by an user
-    @JsonBackReference(value = "appUser")
+//    @JsonBackReference(value = "appUser")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId", foreignKey = @ForeignKey(name = "FK_ANSWER_APPUSER"))
     private AppUser appUser;

@@ -54,16 +54,16 @@ public class AppUser {
 //    private boolean enabled;
 
     // An user can ask many questions
-    @JsonIgnore
-    @JsonManagedReference
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "appUser")
-    private List<Question> questions = new ArrayList<>();
+//    @JsonIgnore
+//    @JsonManagedReference
+//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "appUser")
+//    private List<Question> questions = new ArrayList<>();
 
     // An user can have many answers
-    @JsonIgnore
-    @JsonManagedReference
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "appUser")
-    private List<Answer> answers = new ArrayList<>();
+//    @JsonIgnore
+//    @JsonManagedReference
+//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "appUser")
+//    private List<Answer> answers = new ArrayList<>();
 
     private int reputation;
 

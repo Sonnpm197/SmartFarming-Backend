@@ -92,6 +92,23 @@ public class QuestionControllerTest {
             @Sql("/sql/questionController/insert_question.sql"),
             @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
     })
+    public void viewTop3QuestionsByViewCount() {
+        HttpEntity<String> entity = new HttpEntity<>(null, CommonTest.getHeaders("GET", frontEndUrl));
+        ResponseEntity<List<Question>> response = CommonTest.getRestTemplate().exchange(
+                createURL(port, "/question/viewTop3QuestionsByViewCount"),
+                HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<List<Question>>() {
+                });
+        System.out.println(">> Result: " + response.getBody());
+//        Assert.assertEquals(expected, response.getBody());
+    }
+
+    @Test
+    @SqlGroup({
+            @Sql("/sql/questionController/insert_question.sql"),
+            @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
+    })
     public void viewNumberOfPages() {
         HttpEntity<String> entity = new HttpEntity<>(null, CommonTest.getHeaders("GET", frontEndUrl));
         ResponseEntity<String> response = CommonTest.getRestTemplate().exchange(
