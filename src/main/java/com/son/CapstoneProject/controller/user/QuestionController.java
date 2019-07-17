@@ -251,29 +251,29 @@ public class QuestionController {
      */
     @DeleteMapping("/deleteQuestion/{questionId}")
     @Transactional
-    public Map<String, String> deleteQuestion(@RequestBody AppUser appUser,
+    public Map<String, String> deleteQuestion(/*@RequestBody AppUser appUser,*/
                                               @PathVariable Long questionId,
                                               HttpServletRequest request) throws Exception {
 
         String methodName = "UserController.deleteQuestion";
 
-        controllerUtils.validateAppUser(appUser, methodName, false);
-
-        if (appUser.isAnonymous()) {
-            appUser = controllerUtils.saveOrReturnAnonymousUser(HttpRequestResponseUtils.getClientIpAddress(request));
-        } else {
-            controllerUtils.validateAppUser(appUser, methodName, true);
-        }
+//        controllerUtils.validateAppUser(appUser, methodName, false);
+//
+//        if (appUser.isAnonymous()) {
+//            appUser = controllerUtils.saveOrReturnAnonymousUser(HttpRequestResponseUtils.getClientIpAddress(request));
+//        } else {
+//            controllerUtils.validateAppUser(appUser, methodName, true);
+//        }
 
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new Exception(methodName + ": Not found question with id: " + questionId));
 
         // Cannot delete other questions
-        if (!appUser.getUserId().equals(question.getAppUser().getUserId())) {
-            String message = methodName + ": You cannot delete other questions";
-            logger.info(message);
-            throw new Exception(message);
-        }
+//        if (!appUser.getUserId().equals(question.getAppUser().getUserId())) {
+//            String message = methodName + ": You cannot delete other questions";
+//            logger.info(message);
+//            throw new Exception(message);
+//        }
 
         // Remove the edited versions first
         List<EditedQuestion> editedQuestions = question.getEditedQuestions();

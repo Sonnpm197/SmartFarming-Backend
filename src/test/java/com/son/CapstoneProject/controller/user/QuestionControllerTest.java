@@ -359,7 +359,7 @@ public class QuestionControllerTest {
 
         String url = createURL(port, "/question/deleteQuestion/{id}");
 
-        String requestBody = CommonTest.readStringFromFile("src\\test\\resources\\json\\questionController\\deleteQuestion.json");
+        //String requestBody = CommonTest.readStringFromFile("src\\test\\resources\\json\\questionController\\deleteQuestion.json");
 
         // URI (URL) parameters
         Map<String, Integer> uriParams = new HashMap<>();
@@ -369,7 +369,8 @@ public class QuestionControllerTest {
 
         System.out.println(">>> Testing URI: " + builder.buildAndExpand(uriParams).toUri());
 
-        HttpEntity<String> entity = new HttpEntity<>(requestBody, CommonTest.getHeaders("DELETE", frontEndUrl));
+//        HttpEntity<String> entity = new HttpEntity<>(requestBody, CommonTest.getHeaders("DELETE", frontEndUrl));
+        HttpEntity<String> entity = new HttpEntity<>(null, CommonTest.getHeaders("DELETE", frontEndUrl));
         ResponseEntity<Question> response = CommonTest.getRestTemplate().exchange(
                 builder.buildAndExpand(uriParams).toUri(),
                 HttpMethod.DELETE,
