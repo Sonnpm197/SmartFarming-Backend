@@ -20,12 +20,12 @@ public class TagController {
     private TagRepository tagRepository;
 
     @GetMapping("/viewTop5TagsByViewCount")
-    public TagPagination findTop5ByOrderByViewCount() {
+    public List<Tag> findTop5ByOrderByViewCount() {
         List<Tag> tags = tagRepository.findTop5ByOrderByViewCountDesc();
-        TagPagination tagPagination = new TagPagination();
-        tagPagination.setTagsByPageIndex(tags);
-        tagPagination.setNumberOfPages(1);
-        return tagPagination;
+//        TagPagination tagPagination = new TagPagination();
+//        tagPagination.setTagsByPageIndex(tags);
+//        tagPagination.setNumberOfPages(1);
+        return tags;
     }
 
 }

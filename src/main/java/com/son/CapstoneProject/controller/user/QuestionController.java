@@ -34,7 +34,7 @@ import static com.son.CapstoneProject.common.ConstantValue.QUESTIONS_PER_PAGE;
 @CrossOrigin(origins = {"${front-end.settings.cross-origin.url}"})
 public class QuestionController {
 
-    private Logger logger = Logger.getLogger(QuestionController.class.getSimpleName());
+//    private Logger logger = Logger.getLogger(QuestionController.class.getSimpleName());
 
     @Autowired
     private FileController fileController;
@@ -80,12 +80,12 @@ public class QuestionController {
     }
 
     @GetMapping("/viewTop3QuestionsByViewCount")
-    public QuestionPagination viewTop3QuestionsByViewCount() {
+    public List<Question> viewTop3QuestionsByViewCount() {
         List<Question> questions = questionRepository.findTop3ByOrderByViewCountDesc();
-        QuestionPagination questionPagination = new QuestionPagination();
-        questionPagination.setQa(questions);
-        questionPagination.setNumberOfPages(1);
-        return questionPagination;
+//        QuestionPagination questionPagination = new QuestionPagination();
+//        questionPagination.setQa(questions);
+//        questionPagination.setNumberOfPages(1);
+        return questions;
     }
 
     @GetMapping("/viewNumberOfPages")
@@ -147,11 +147,11 @@ public class QuestionController {
         // If the request contain anonymous = true
         if (appUser.isAnonymous()) {
             String ipAddress = HttpRequestResponseUtils.getClientIpAddress(request);
-            logger.info(methodName + ": Anonymous user with ip address: " + ipAddress);
+            // logger.info(methodName + ": Anonymous user with ip address: " + ipAddress);
             // To generate Id of that user to allow that comment save to DB
             appUser = controllerUtils.saveOrReturnAnonymousUser(ipAddress);
             question.setAppUser(appUser);
-            logger.info(methodName + ": created anonymous user " + appUser);
+            // logger.info(methodName + ": created anonymous user " + appUser);
         } else {
             // If they has logged in
             controllerUtils.validateAppUser(appUser, methodName, true);
@@ -206,7 +206,7 @@ public class QuestionController {
         // Cannot update other questions
         if (!appUser.getUserId().equals(oldQuestion.getAppUser().getUserId())) {
             String message = methodName + ": You cannot update other user question";
-            logger.info(message);
+            // logger.info(message);
             throw new Exception(message);
         }
 
@@ -367,7 +367,7 @@ public class QuestionController {
         // Cannot edit your question (this function is to edit other user question)
         if (appUser.getUserId().equals(oldQuestion.getAppUser().getUserId())) {
             String message = methodName + ": This method is to edit other user question. Please do not edit your question";
-            logger.info(message);
+            // logger.info(message);
             throw new Exception(message);
         }
 
@@ -423,7 +423,7 @@ public class QuestionController {
         // If this is not your question
         if (!appUser.getUserId().equals(question.getAppUser().getUserId())) {
             String message = methodName + "You cannot view other edited question versions";
-            logger.info(message);
+            // logger.info(message);
             throw new Exception(message);
         }
 
@@ -449,7 +449,7 @@ public class QuestionController {
 
         if (editedQuestion.getEditedQuestionId() == null) {
             String message = methodName + "You must include edited question id";
-            logger.info(message);
+            // logger.info(message);
             throw new Exception(message);
         }
 
@@ -465,7 +465,7 @@ public class QuestionController {
         // If this is not your question
         if (!userCreatedQuestion.getUserId().equals(userEditedQuestion.getUserId())) {
             String message = methodName + "You cannot approve your own edited question versions";
-            logger.info(message);
+            // logger.info(message);
             throw new Exception(message);
         }
 
@@ -519,7 +519,7 @@ public class QuestionController {
         // You cannot report your own question
         if (appUser.getUserId().equals(question.getAppUser().getUserId())) {
             String message = methodName + ": You cannot report our own question";
-            logger.info(message);
+            // logger.info(message);
             throw new Exception(message);
         }
 
