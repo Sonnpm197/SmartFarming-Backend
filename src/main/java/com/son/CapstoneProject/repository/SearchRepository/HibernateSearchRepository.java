@@ -1,5 +1,6 @@
 package com.son.CapstoneProject.repository.searchRepository;
 
+import com.son.CapstoneProject.controller.FileController;
 import com.son.CapstoneProject.entity.Article;
 import com.son.CapstoneProject.entity.Question;
 import com.son.CapstoneProject.entity.Tag;
@@ -16,6 +17,8 @@ import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.FullTextQuery;
 import org.hibernate.search.jpa.Search;
 import org.hibernate.search.query.dsl.QueryBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -30,6 +33,8 @@ import static com.son.CapstoneProject.common.ConstantValue.*;
 
 @Repository
 public class HibernateSearchRepository {
+
+    private static final Logger logger = LoggerFactory.getLogger(HibernateSearchRepository.class);
 
     //    @PersistenceContext allows you to specify which persistence unit you want to use.
 //    Your project might have multiple data sources connected to different DBs
@@ -88,21 +93,21 @@ public class HibernateSearchRepository {
      */
 
     public Pagination search2(String searchedText, String className, String[] fields, String articleCategory, int pageIndex) {
-        GenericClass genericClass = null;
-
-        if (ARTICLE.equalsIgnoreCase(className)) {
-            genericClass = new GenericClass(Article.class);
-        } else if (QUESTION.equalsIgnoreCase(className)) {
-            genericClass = new GenericClass(Question.class);
-        } else if (TAG.equalsIgnoreCase(className)) {
-            genericClass = new GenericClass(Tag.class);
-        }
-
-        List<Article> finalArticles = new ArrayList<>();
-        List<Question> finalQuestions = new ArrayList<>();
-        List<Tag> finalTags = new ArrayList<>();
-
         try {
+            GenericClass genericClass = null;
+
+            if (ARTICLE.equalsIgnoreCase(className)) {
+                genericClass = new GenericClass(Article.class);
+            } else if (QUESTION.equalsIgnoreCase(className)) {
+                genericClass = new GenericClass(Question.class);
+            } else if (TAG.equalsIgnoreCase(className)) {
+                genericClass = new GenericClass(Tag.class);
+            }
+
+            List<Article> finalArticles = new ArrayList<>();
+            List<Question> finalQuestions = new ArrayList<>();
+            List<Tag> finalTags = new ArrayList<>();
+
             // If it starts with double quotes then search exactly
             if (searchedText.startsWith("\"") && searchedText.endsWith("\"")) {
 
@@ -152,10 +157,9 @@ public class HibernateSearchRepository {
                 return returnFinalListByClassName(className, finalArticles, finalQuestions, finalTags, pageIndex);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("An error has occurred", e);
+            throw e;
         }
-
-        return new Pagination();
     }
 
 

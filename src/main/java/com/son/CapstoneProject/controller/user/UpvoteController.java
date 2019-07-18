@@ -9,10 +9,13 @@ import com.son.CapstoneProject.entity.login.UserRole;
 import com.son.CapstoneProject.repository.*;
 import com.son.CapstoneProject.repository.loginRepository.AppUserRepository;
 import com.son.CapstoneProject.repository.loginRepository.UserRoleRepository;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -27,7 +30,7 @@ import static com.son.CapstoneProject.entity.login.AppRole.*;
 @CrossOrigin(origins = {"${front-end.settings.cross-origin.url}"})
 public class UpvoteController {
 
-    private Logger logger = Logger.getLogger(UpvoteController.class.getSimpleName());
+    private static final Logger logger = LoggerFactory.getLogger(UpvoteController.class);
 
     @Autowired
     private ArticleRepository articleRepository;
@@ -66,146 +69,150 @@ public class UpvoteController {
     public String upvote(@RequestBody AppUser userUpvote,
                          @PathVariable String type,
                          @PathVariable Long id,
-                         HttpServletRequest request) throws Exception {
+                         HttpServletRequest request) {
+        try {
+            String methodName = "UpvoteController.upvote";
 
-        String methodName = "UpvoteController.upvote";
+            Article article = null;
+            Question question = null;
+            Answer answer = null;
+            Comment comment = null;
+            AppUser author = null;
+            List<Long> appUserList = null;
+            List<Tag> tags = null;
 
-        Article article = null;
-        Question question = null;
-        Answer answer = null;
-        Comment comment = null;
-        AppUser author = null;
-        List<Long> appUserList = null;
-        List<Tag> tags = null;
+            controllerUtils.validateAppUser(userUpvote, methodName, false);
 
-        controllerUtils.validateAppUser(userUpvote, methodName, false);
-
-        if (userUpvote.isAnonymous()) {
-            userUpvote = controllerUtils.saveOrReturnAnonymousUser(HttpRequestResponseUtils.getClientIpAddress(request));
-        } else {
-            controllerUtils.validateAppUser(userUpvote, methodName, true);
-        }
-
-        if (ARTICLE.equalsIgnoreCase(type)) {
-            article = articleRepository.findById(id)
-                    .orElseThrow(() -> new Exception(methodName + ": Not found article by id: " + id));
-            author = article.getAppUser();
-            appUserList = article.getUpvotedUserIds();
-            tags = article.getTags();
-
-        } else if (QUESTION.equalsIgnoreCase(type)) {
-
-            question = questionRepository.findById(id)
-                    .orElseThrow(() -> new Exception(methodName + ": Not found question by id: " + id));
-            author = question.getAppUser();
-            appUserList = question.getUpvotedUserIds();
-            tags = question.getTags();
-
-        } else if (ANSWER.equalsIgnoreCase(type)) {
-
-            answer = answerRepository.findById(id)
-                    .orElseThrow(() -> new Exception(methodName + ": Not found answer by id: " + id));
-            author = answer.getAppUser();
-            appUserList = answer.getUpvotedUserIds();
-            tags = answer.getQuestion().getTags();
-
-        } else if (COMMENT.equalsIgnoreCase(type)) {
-
-            comment = commentRepository.findById(id)
-                    .orElseThrow(() -> new Exception(methodName + ": Not found comment by id: " + id));
-            author = comment.getAppUser();
-            appUserList = comment.getUpvotedUserIds();
-
-            // Comment can be from article, question, answer
-            // Find the origin of this comment then increase vote for the tags
-            if (comment.getArticle() != null) {
-                tags = comment.getArticle().getTags();
-            } else if (comment.getQuestion() != null) {
-                tags = comment.getQuestion().getTags();
-            } else if (comment.getAnswer() != null) {
-                tags = comment.getAnswer().getQuestion().getTags();
+            if (userUpvote.isAnonymous()) {
+                userUpvote = controllerUtils.saveOrReturnAnonymousUser(HttpRequestResponseUtils.getClientIpAddress(request));
+            } else {
+                controllerUtils.validateAppUser(userUpvote, methodName, true);
             }
 
-        }
+            if (ARTICLE.equalsIgnoreCase(type)) {
+                article = articleRepository.findById(id)
+                        .orElseThrow(() -> new Exception(methodName + ": Not found article by id: " + id));
+                author = article.getAppUser();
+                appUserList = article.getUpvotedUserIds();
+                tags = article.getTags();
 
-        if (author == null) {
-            String message = methodName + " cannot find the appropriate author";
-            logger.info(message);
-            throw new Exception(message);
-        }
+            } else if (QUESTION.equalsIgnoreCase(type)) {
 
-        if (tags == null) {
-            String message = methodName + " cannot find the relative tags";
-            logger.info(message);
-            throw new Exception(message);
-        }
+                question = questionRepository.findById(id)
+                        .orElseThrow(() -> new Exception(methodName + ": Not found question by id: " + id));
+                author = question.getAppUser();
+                appUserList = question.getUpvotedUserIds();
+                tags = question.getTags();
 
-        // You cannot like your own article, question, answer or comment
-        if (userUpvote.getUserId().equals(author.getUserId())) {
-            String message = methodName + ": You cannot like our own " + type;
-            logger.info(message);
-            throw new Exception(message);
-        }
+            } else if (ANSWER.equalsIgnoreCase(type)) {
 
-        // Increase 1 reputation for the one who receives your like
+                answer = answerRepository.findById(id)
+                        .orElseThrow(() -> new Exception(methodName + ": Not found answer by id: " + id));
+                author = answer.getAppUser();
+                appUserList = answer.getUpvotedUserIds();
+                tags = answer.getQuestion().getTags();
 
-        if (appUserList == null) {
-            appUserList = new ArrayList<>();
-            appUserList.add(userUpvote.getUserId());
-            // Decrease tag point of that post
-            updateReputation(tags, author, type, true);
-        } else {
-            // Click like again => dislike
-            Iterator<Long> iterator = appUserList.iterator();
+            } else if (COMMENT.equalsIgnoreCase(type)) {
 
-            boolean userAlreadyLikedPost = false;
-            while (iterator.hasNext()) {
-                Long existedId = iterator.next();
-                // If they click again means they dislike this
-                if (existedId.equals(userUpvote.getUserId())) {
-                    userAlreadyLikedPost = true;
+                comment = commentRepository.findById(id)
+                        .orElseThrow(() -> new Exception(methodName + ": Not found comment by id: " + id));
+                author = comment.getAppUser();
+                appUserList = comment.getUpvotedUserIds();
 
-                    // Decrease tag point of that post
-                    updateReputation(tags, author, type, false);
+                // Comment can be from article, question, answer
+                // Find the origin of this comment then increase vote for the tags
+                if (comment.getArticle() != null) {
+                    tags = comment.getArticle().getTags();
+                } else if (comment.getQuestion() != null) {
+                    tags = comment.getQuestion().getTags();
+                } else if (comment.getAnswer() != null) {
+                    tags = comment.getAnswer().getQuestion().getTags();
+                }
 
-                    // Then remove that userId
-                    iterator.remove();
+            }
+
+            if (author == null) {
+                String message = methodName + " cannot find the appropriate author";
+                // logger.info(message);
+                throw new Exception(message);
+            }
+
+            if (tags == null) {
+                String message = methodName + " cannot find the relative tags";
+                // logger.info(message);
+                throw new Exception(message);
+            }
+
+            // You cannot like your own article, question, answer or comment
+            if (userUpvote.getUserId().equals(author.getUserId())) {
+                String message = methodName + ": You cannot like our own " + type;
+                // logger.info(message);
+                throw new Exception(message);
+            }
+
+            // Increase 1 reputation for the one who receives your like
+
+            if (appUserList == null) {
+                appUserList = new ArrayList<>();
+                appUserList.add(userUpvote.getUserId());
+                // Decrease tag point of that post
+                updateReputation(tags, author, type, true);
+            } else {
+                // Click like again => dislike
+                Iterator<Long> iterator = appUserList.iterator();
+
+                boolean userAlreadyLikedPost = false;
+                while (iterator.hasNext()) {
+                    Long existedId = iterator.next();
+                    // If they click again means they dislike this
+                    if (existedId.equals(userUpvote.getUserId())) {
+                        userAlreadyLikedPost = true;
+
+                        // Decrease tag point of that post
+                        updateReputation(tags, author, type, false);
+
+                        // Then remove that userId
+                        iterator.remove();
+                    }
+                }
+
+                // He hasn't liked yet
+                if (!userAlreadyLikedPost) {
+
+                    appUserList.add(userUpvote.getUserId());
+
+                    // Increase tag point of that post
+                    updateReputation(tags, author, type, true);
                 }
             }
 
-            // He hasn't liked yet
-            if (!userAlreadyLikedPost) {
+            if (ARTICLE.equalsIgnoreCase(type) && article != null) {
 
-                appUserList.add(userUpvote.getUserId());
+                article.setUpvotedUserIds(appUserList);
+                articleRepository.save(article);
 
-                // Increase tag point of that post
-                updateReputation(tags, author, type, true);
+            } else if (QUESTION.equalsIgnoreCase(type) && question != null) {
+
+                question.setUpvotedUserIds(appUserList);
+                questionRepository.save(question);
+
+            } else if (ANSWER.equalsIgnoreCase(type) && answer != null) {
+
+                answer.setUpvotedUserIds(appUserList);
+                answerRepository.save(answer);
+
+            } else if (COMMENT.equalsIgnoreCase(type) && comment != null) {
+
+                comment.setUpvotedUserIds(appUserList);
+                commentRepository.save(comment);
+
             }
+
+            return "UpVote " + type + " with id: " + id + " successfully";
+        } catch (Exception e) {
+            logger.error("An error has occurred", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
-
-        if (ARTICLE.equalsIgnoreCase(type) && article != null) {
-
-            article.setUpvotedUserIds(appUserList);
-            articleRepository.save(article);
-
-        } else if (QUESTION.equalsIgnoreCase(type) && question != null) {
-
-            question.setUpvotedUserIds(appUserList);
-            questionRepository.save(question);
-
-        } else if (ANSWER.equalsIgnoreCase(type) && answer != null) {
-
-            answer.setUpvotedUserIds(appUserList);
-            answerRepository.save(answer);
-
-        } else if (COMMENT.equalsIgnoreCase(type) && comment != null) {
-
-            comment.setUpvotedUserIds(appUserList);
-            commentRepository.save(comment);
-
-        }
-
-        return "UpVote " + type + " with id: " + id + " successfully";
     }
 
     /**

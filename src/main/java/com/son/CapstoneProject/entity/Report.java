@@ -38,4 +38,12 @@ public class Report {
 
     @Temporal(TemporalType.TIMESTAMP)
     private java.util.Date utilTimestamp;
+
+    @Override
+    public String toString() {
+        return "Report{" +
+                "reportId=" + reportId +
+                ", message='" + message + '\'' +
+                '}';
+    }
 }

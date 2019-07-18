@@ -44,6 +44,33 @@ public class AdminControllerTest {
             @Sql("/sql/adminController/insert.sql"),
             @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
     })
+    public void viewNumberOfReportPages() {
+        String url = createURL(port, "/admin/viewNumberOfReportPages");
+
+        // URI (URL) parameters
+        Map<String, Integer> uriParams = new HashMap<>();
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
+
+        System.out.println(">>> Testing URI: " + builder.buildAndExpand(uriParams).toUri());
+
+        HttpEntity<String> entity = new HttpEntity<>(null, CommonTest.getHeaders("GET", frontEndUrl));
+        ResponseEntity<Long> response = CommonTest.getRestTemplate().exchange(
+                builder.buildAndExpand(uriParams).toUri(),
+                HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<Long>() {
+                });
+
+        Long reportPagination = response.getBody();
+        System.out.println(">> Result: " + reportPagination);
+    }
+
+    @Test
+    @SqlGroup({
+            @Sql("/sql/adminController/insert.sql"),
+            @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
+    })
     public void viewReportsByPageIndex() {
         String url = createURL(port, "/admin/viewReportsByPageIndex/{pageIndex}");
 

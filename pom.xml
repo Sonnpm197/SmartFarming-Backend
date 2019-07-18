@@ -26,6 +26,40 @@
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+
+        <!--&lt;!&ndash;New version of logging for log4j2&ndash;&gt;-->
+        <!--<dependency>-->
+            <!--<groupId>org.bgee.log4jdbc-log4j2</groupId>-->
+            <!--<artifactId>log4jdbc-log4j2-jdbc4</artifactId>-->
+            <!--<version>1.16</version>-->
+        <!--</dependency>-->
+
+        <!--Old version of logging-->
+        <!--log hibernate log to file-->
+        <!--<dependency>-->
+            <!--<groupId>org.slf4j</groupId>-->
+            <!--<artifactId>slf4j-api</artifactId>-->
+            <!--<version>1.6.4</version>-->
+        <!--</dependency>-->
+
+        <!--&lt;!&ndash; Log4j &ndash;&gt;-->
+        <!--<dependency>-->
+            <!--<groupId>org.slf4j</groupId>-->
+            <!--<artifactId>slf4j-log4j12</artifactId>-->
+            <!--<version>1.6.4</version>-->
+        <!--</dependency>-->
+
+         <!--LOG4J for JDBC (format log)-->
+        <dependency>
+            <groupId>org.lazyluke</groupId>
+            <artifactId>log4jdbc-remix</artifactId>
+            <version>0.2.7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
@@ -78,55 +112,55 @@
 
         <!--Login with google and facebook-->
         <!--<dependency>-->
-            <!--<groupId>org.springframework.boot</groupId>-->
-            <!--<artifactId>spring-boot-starter-security</artifactId>-->
+        <!--<groupId>org.springframework.boot</groupId>-->
+        <!--<artifactId>spring-boot-starter-security</artifactId>-->
         <!--</dependency>-->
 
         <!--<dependency>-->
-            <!--<groupId>org.springframework.security</groupId>-->
-            <!--<artifactId>spring-security-config</artifactId>-->
+        <!--<groupId>org.springframework.security</groupId>-->
+        <!--<artifactId>spring-security-config</artifactId>-->
         <!--</dependency>-->
 
         <!--<dependency>-->
-            <!--<groupId>org.springframework.security.oauth</groupId>-->
-            <!--<artifactId>spring-security-oauth2</artifactId>-->
-            <!--<version>2.2.1.RELEASE</version>-->
+        <!--<groupId>org.springframework.security.oauth</groupId>-->
+        <!--<artifactId>spring-security-oauth2</artifactId>-->
+        <!--<version>2.2.1.RELEASE</version>-->
         <!--</dependency>-->
 
         <!--<dependency>-->
-            <!--<groupId>org.springframework.social</groupId>-->
-            <!--<artifactId>spring-social-core</artifactId>-->
-            <!--<version>1.1.5.RELEASE</version>-->
+        <!--<groupId>org.springframework.social</groupId>-->
+        <!--<artifactId>spring-social-core</artifactId>-->
+        <!--<version>1.1.5.RELEASE</version>-->
         <!--</dependency>-->
 
         <!--<dependency>-->
-            <!--<groupId>org.springframework.social</groupId>-->
-            <!--<artifactId>spring-social-config</artifactId>-->
-            <!--<version>1.1.5.RELEASE</version>-->
+        <!--<groupId>org.springframework.social</groupId>-->
+        <!--<artifactId>spring-social-config</artifactId>-->
+        <!--<version>1.1.5.RELEASE</version>-->
         <!--</dependency>-->
 
         <!--<dependency>-->
-            <!--<groupId>org.springframework.social</groupId>-->
-            <!--<artifactId>spring-social-web</artifactId>-->
-            <!--<version>1.1.5.RELEASE</version>-->
+        <!--<groupId>org.springframework.social</groupId>-->
+        <!--<artifactId>spring-social-web</artifactId>-->
+        <!--<version>1.1.5.RELEASE</version>-->
         <!--</dependency>-->
 
         <!--<dependency>-->
-            <!--<groupId>org.springframework.social</groupId>-->
-            <!--<artifactId>spring-social-security</artifactId>-->
-            <!--<version>1.1.5.RELEASE</version>-->
+        <!--<groupId>org.springframework.social</groupId>-->
+        <!--<artifactId>spring-social-security</artifactId>-->
+        <!--<version>1.1.5.RELEASE</version>-->
         <!--</dependency>-->
 
         <!--<dependency>-->
-            <!--<groupId>org.springframework.social</groupId>-->
-            <!--<artifactId>spring-social-facebook</artifactId>-->
-            <!--<version>2.0.3.RELEASE</version>-->
+        <!--<groupId>org.springframework.social</groupId>-->
+        <!--<artifactId>spring-social-facebook</artifactId>-->
+        <!--<version>2.0.3.RELEASE</version>-->
         <!--</dependency>-->
 
         <!--<dependency>-->
-            <!--<groupId>org.springframework.social</groupId>-->
-            <!--<artifactId>spring-social-google</artifactId>-->
-            <!--<version>1.0.0.RELEASE</version>-->
+        <!--<groupId>org.springframework.social</groupId>-->
+        <!--<artifactId>spring-social-google</artifactId>-->
+        <!--<version>1.0.0.RELEASE</version>-->
         <!--</dependency>-->
 
         <!-- End of Spring social libs-->
@@ -136,27 +170,6 @@
             <groupId>com.google.cloud</groupId>
             <artifactId>google-cloud-storage</artifactId>
             <version>1.79.0</version>
-        </dependency>
-
-        <!--log hibernate log to file-->
-        <!--<dependency>-->
-            <!--<groupId>org.slf4j</groupId>-->
-            <!--<artifactId>slf4j-api</artifactId>-->
-            <!--<version>1.6.4</version>-->
-        <!--</dependency>-->
-
-        <!-- Log4j -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.6.4</version>
-        </dependency>
-
-        <!-- LOG4J for JDBC (format log) -->
-        <dependency>
-            <groupId>org.lazyluke</groupId>
-            <artifactId>log4jdbc-remix</artifactId>
-            <version>0.2.7</version>
         </dependency>
 
         <!--Check uploaded file if this is an img-->

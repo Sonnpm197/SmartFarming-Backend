@@ -40,15 +40,15 @@ public class TagControllerTest {
     })
     public void getTop5TagsByViewCount() {
         HttpEntity<String> entity = new HttpEntity<>(null, CommonTest.getHeaders("GET", frontEndUrl));
-        ResponseEntity<TagPagination> response = CommonTest.getRestTemplate().exchange(
+        ResponseEntity<List<Tag>> response = CommonTest.getRestTemplate().exchange(
                 createURL(port, "/tag/viewTop5TagsByViewCount"),
                 HttpMethod.GET,
                 entity,
-                new ParameterizedTypeReference<TagPagination>() {
+                new ParameterizedTypeReference<List<Tag>>() {
                 });
-        String expected = "5"; // 5 questions
+        int expected = 4; // 5 questions
         System.out.println(">> Result: " + response.getBody());
-        Assert.assertEquals(expected, response.getBody());
+        Assert.assertEquals(expected, response.getBody().size());
     }
 
 }

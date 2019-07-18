@@ -11,7 +11,6 @@ import com.son.CapstoneProject.repository.ArticleRepository;
 import com.son.CapstoneProject.repository.QuestionRepository;
 import com.son.CapstoneProject.repository.TagRepository;
 import com.son.CapstoneProject.repository.loginRepository.AppUserRepository;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -28,7 +27,7 @@ import static com.son.CapstoneProject.common.ConstantValue.*;
 @Service
 public class ViewCountingService {
 
-    private Logger logger = Logger.getLogger(ViewCountingService.class.getSimpleName());
+//    private Logger logger = Logger.getLogger(ViewCountingService.class.getSimpleName());
 
     @Autowired
     private QuestionRepository questionRepository;
@@ -156,7 +155,7 @@ public class ViewCountingService {
         }
 
         if (tags == null) {
-            logger.info("No tags found fot type: " + type + " with id: " + id);
+            // logger.info("No tags found fot type: " + type + " with id: " + id);
             return;
         }
 

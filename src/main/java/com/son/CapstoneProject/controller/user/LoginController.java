@@ -5,17 +5,23 @@ import com.son.CapstoneProject.entity.login.AppUser;
 import com.son.CapstoneProject.entity.login.SocialUser;
 import com.son.CapstoneProject.repository.loginRepository.AppUserRepository;
 import com.son.CapstoneProject.repository.loginRepository.SocialUserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @Transactional
 @CrossOrigin(origins = {"${front-end.settings.cross-origin.url}"})
 public class LoginController {
 
-//    private List<String> adminEmails = new ArrayList<>(Arrays.asList("sonnpmse04810@fpt.edu.vn"));
+    private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
+
+    //    private List<String> adminEmails = new ArrayList<>(Arrays.asList("sonnpmse04810@fpt.edu.vn"));
 //
 //    @Autowired
 //    private AppUserDAO appUserDAO;
@@ -40,42 +46,48 @@ public class LoginController {
 
     /**
      * Save socialUserInformation from Angular
+     *
      * @return
      */
     @PostMapping("/login")
     @Transactional
-    public ResponseEntity<AppUser> login(@RequestBody SocialUser socialUser) throws Exception {
-        String methodName = "LoginController.login";
-        if (socialUser == null) {
-            throw new Exception(methodName + ": socialUserInformation from request body is null");
+    public ResponseEntity<AppUser> login(@RequestBody SocialUser socialUser) {
+        try {
+            String methodName = "LoginController.login";
+            if (socialUser == null) {
+                throw new Exception(methodName + ": socialUserInformation from request body is null");
+            }
+
+            // Check if this social user is existed
+            SocialUser existedSocialUser = socialUserRepository.findById(socialUser.getId());
+
+            // This user has existed => return appUser
+            if (existedSocialUser != null) {
+                Long socialUserInformationId = existedSocialUser.getSocialUserId();
+                AppUser appUser = appUserRepository.findBySocialUser_SocialUserId(socialUserInformationId);
+                return ResponseEntity.ok(appUser);
+            }
+
+            // Save socialUser from angular js first
+            socialUser = socialUserRepository.save(socialUser);
+
+            // Then create an appUser
+            AppUser appUser = new AppUser();
+            appUser.setSocialUser(socialUser);
+
+            // Check if this is an admin or not
+            if (socialUser.getEmail() != null
+                    && ConstantValue.listAdmin.contains(socialUser.getEmail().toLowerCase())) {
+                appUser.setRole(ConstantValue.Role.ADMIN.getValue());
+            } else {
+                appUser.setRole(ConstantValue.Role.USER.getValue());
+            }
+
+            return ResponseEntity.ok(appUserRepository.save(appUser));
+        } catch (Exception e) {
+            logger.error("An error has occurred", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
-
-        // Check if this social user is existed
-        SocialUser existedSocialUser = socialUserRepository.findById(socialUser.getId());
-
-        // This user has existed => return appUser
-        if (existedSocialUser != null) {
-            Long socialUserInformationId = existedSocialUser.getSocialUserId();
-            AppUser appUser = appUserRepository.findBySocialUser_SocialUserId(socialUserInformationId);
-            return ResponseEntity.ok(appUser);
-        }
-
-        // Save socialUser from angular js first
-        socialUser = socialUserRepository.save(socialUser);
-
-        // Then create an appUser
-        AppUser appUser = new AppUser();
-        appUser.setSocialUser(socialUser);
-
-        // Check if this is an admin or not
-        if (socialUser.getEmail() != null
-                && ConstantValue.listAdmin.contains(socialUser.getEmail().toLowerCase())) {
-            appUser.setRole(ConstantValue.Role.ADMIN.getValue());
-        } else {
-            appUser.setRole(ConstantValue.Role.USER.getValue());
-        }
-
-        return ResponseEntity.ok(appUserRepository.save(appUser));
     }
 //
 //    @GetMapping(value = "/userInfo", produces = "application/json")

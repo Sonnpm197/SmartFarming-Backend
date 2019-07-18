@@ -5,10 +5,15 @@ import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.son.CapstoneProject.common.StringUtils;
+import com.son.CapstoneProject.controller.user.CommentController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
 
 public class BlobHandler {
+
+    private static final Logger logger = LoggerFactory.getLogger(BlobHandler.class);
 
     private static final BlobHandler BLOB_HANDLER = new BlobHandler();
 
@@ -23,11 +28,16 @@ public class BlobHandler {
     // [VARIABLE "my_unique_bucket"]
     // [VARIABLE "my_blob_name"]
     public Blob getBlobFromId(String bucketName, String blobName) {
-        if (!StringUtils.isNullOrEmpty(bucketName) && !StringUtils.isNullOrEmpty(blobName)) {
-            BlobId blobId = BlobId.of(bucketName, blobName);
-            return GoogleCloudStorage.getStorage().get(blobId);
+        try {
+            if (!StringUtils.isNullOrEmpty(bucketName) && !StringUtils.isNullOrEmpty(blobName)) {
+                BlobId blobId = BlobId.of(bucketName, blobName);
+                return GoogleCloudStorage.getStorage().get(blobId);
+            }
+            return null;
+        } catch (Exception e) {
+            logger.error("An error has occurred", e);
+            throw e;
         }
-        return null;
     }
 
     /**
@@ -37,20 +47,25 @@ public class BlobHandler {
     // [VARIABLE "my_unique_bucket"]
     // [VARIABLE "my_blob_name"]
     public Blob createBlobFromByteArray(String bucketName, String blobName, byte[] byteArray, String contentType) {
-        BlobId blobId = BlobId.of(bucketName, blobName);
+        try {
+            BlobId blobId = BlobId.of(bucketName, blobName);
 
-        if (getBlobFromId(bucketName, blobName) != null) {
-            // This means this file has duplicated name with another file
-            blobName = UUID.randomUUID().toString() + blobName;
-            blobId = BlobId.of(bucketName, blobName);
+            if (getBlobFromId(bucketName, blobName) != null) {
+                // This means this file has duplicated name with another file
+                blobName = UUID.randomUUID().toString() + blobName;
+                blobId = BlobId.of(bucketName, blobName);
+            }
+
+            BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType(contentType).build();
+            Blob blob = GoogleCloudStorage.getStorage().create(blobInfo, byteArray);
+
+            // Make this blob public
+            GoogleCloudStorage.getStorage().createAcl(blobId, Acl.of(Acl.User.ofAllUsers(), Acl.Role.READER));
+            return blob;
+        } catch (Exception e) {
+            logger.error("An error has occurred", e);
+            throw e;
         }
-
-        BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType(contentType).build();
-        Blob blob = GoogleCloudStorage.getStorage().create(blobInfo, byteArray);
-
-        // Make this blob public
-        GoogleCloudStorage.getStorage().createAcl(blobId, Acl.of(Acl.User.ofAllUsers(), Acl.Role.READER));
-        return blob;
     }
 
     /**
@@ -60,10 +75,15 @@ public class BlobHandler {
     // [VARIABLE "my_unique_bucket"]
     // [VARIABLE "my_blob_name"]
     public Blob updateBlob(String bucketName, String blobName, byte[] byteArray, String contentType) {
-        BlobId blobId = BlobId.of(bucketName, blobName);
-        // Delete then create new
-        deleteBlob(bucketName, blobName);
-        return createBlobFromByteArray(bucketName, blobName, byteArray, contentType);
+        try {
+            BlobId blobId = BlobId.of(bucketName, blobName);
+            // Delete then create new
+            deleteBlob(bucketName, blobName);
+            return createBlobFromByteArray(bucketName, blobName, byteArray, contentType);
+        } catch (Exception e) {
+            logger.error("An error has occurred", e);
+            throw e;
+        }
     }
 
     /**
@@ -73,12 +93,17 @@ public class BlobHandler {
     // [VARIABLE "my_unique_bucket"]
     // [VARIABLE "my_blob_name"]
     public boolean deleteBlob(String bucketName, String blobName) {
-        if (!StringUtils.isNullOrEmpty(bucketName) && !StringUtils.isNullOrEmpty(blobName)) {
-            BlobId blobId = BlobId.of(bucketName, blobName);
-            // true = deleted / false = not deleted
-            return GoogleCloudStorage.getStorage().delete(blobId);
+        try {
+            if (!StringUtils.isNullOrEmpty(bucketName) && !StringUtils.isNullOrEmpty(blobName)) {
+                BlobId blobId = BlobId.of(bucketName, blobName);
+                // true = deleted / false = not deleted
+                return GoogleCloudStorage.getStorage().delete(blobId);
+            }
+            return false;
+        } catch (Exception e) {
+            logger.error("An error has occurred", e);
+            throw e;
         }
-        return false;
     }
 
 }

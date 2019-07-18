@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="info">
+    <Properties>
+        <Property name="basePath">C:\\capstoneProject</Property>
+    </Properties>
+
+    <Appenders>
+        <!-- Console Appender -->
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MMM-dd HH:mm:ss a} [%t] %-5level %logger{36} - %msg%n" />
+        </Console>
+
+        <!-- File Appender -->
+        <File name="File" fileName="C:\\capstoneProject\\sql.log">
+            <PatternLayout pattern="%d{yyyy-MMM-dd HH:mm:ss a} [%t] %-5level %logger{36} - %msg%n" />
+        </File>
+    </Appenders>
+
+    <Loggers>
+
+        <!--Log sql statement-->
+        <Logger name="org.hibernate.SQL" level="debug" additivity="false">
+            <AppenderRef ref="Console" />
+        </Logger>
+
+        <!-- Log JDBC bind parameters -->
+        <Logger name="org.hibernate.type.descriptor.sql" level="trace" additivity="false">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="File" />
+        </Logger>
+
+        <Root level="info" additivity="false">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="File" />
+        </Root>
+
+        <logger name="log4jdbc.log4j2" level="info" additivity="false">
+            <MarkerFilter marker="LOG4JDBC_JDBC" onMatch="DENY" onMismatch="NEUTRAL"/>
+            <appender-ref ref="log4jdbc_file"/>
+        </logger>
+
+        <!--jdbc.sqltiming-->
+        <logger name="log4jdbc.log4j2" level="error" additivity="false">
+            <MarkerFilter marker="LOG4JDBC_NON_STATEMENT" onMatch="DENY" onMismatch="NEUTRAL"/>
+            <appender-ref ref="log4jdbc_file"/>
+        </logger>
+
+        <!--jdbc.audit-->
+        <logger name="log4jdbc.log4j2" level="off" additivity="false">
+            <MarkerFilter marker="LOG4JDBC_AUDIT" onMatch="ACCEPT" onMismatch="DENY"/>
+            <appender-ref ref="log4jdbc_file"/>
+        </logger>
+
+        <!--jdbc.resultset-->
+        <logger name="log4jdbc.log4j2" level="off" additivity="false">
+            <MarkerFilter marker="LOG4JDBC_RESULTSET" onMatch="ACCEPT" onMismatch="DENY"/>
+            <appender-ref ref="log4jdbc_file"/>
+        </logger>
+
+        <!--jdbc.connection-->
+        <logger name="log4jdbc.log4j2" level="error" additivity="false">
+            <MarkerFilter marker="LOG4JDBC_CONNECTION" onMatch="ACCEPT" onMismatch="DENY"/>
+            <appender-ref ref="log4jdbc_file"/>
+        </logger>
+
+        <!--jdbc.resultsettable-->
+        <logger name="log4jdbc.log4j2" level="off" additivity="false">
+            <MarkerFilter marker="LOG4JDBC_RESULTSETTABLE" onMatch="ACCEPT" onMismatch="DENY"/>
+            <appender-ref ref="log4jdbc_file"/>
+        </logger>
+    </Loggers>
+
+
+</Configuration>

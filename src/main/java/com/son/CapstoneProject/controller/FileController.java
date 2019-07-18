@@ -8,17 +8,18 @@ import com.son.CapstoneProject.repository.UploadedFileRepository;
 import com.son.CapstoneProject.service.googleStorage.BlobHandler;
 import net.sf.jmimemagic.Magic;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.jboss.logging.annotations.Pos;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +31,8 @@ import static com.son.CapstoneProject.common.ConstantValue.GOOGLE_ACCESS_FILE_PR
 @CrossOrigin(origins = {"${front-end.settings.cross-origin.url}"})
 public class FileController {
 
+    private static final Logger logger = LoggerFactory.getLogger(FileController.class);
+
 //    @Autowired
 //    private FileStorageService fileStorageService;
 
@@ -38,7 +41,7 @@ public class FileController {
 
     @PostMapping("/uploadFile")
     @Transactional
-    public UploadedFile uploadFile(@RequestParam("file") MultipartFile file) throws Exception {
+    public UploadedFile uploadFile(@RequestParam("file") MultipartFile file) {
 //        String fileName = fileStorageService.storeFile(file);
 //        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
 //                .path("/downloadFile/")
@@ -46,21 +49,20 @@ public class FileController {
 //                .toUriString();
 //
 //        return new UploadFileResponse(fileName, fileDownloadUri, file.getContentType(), file.getSize());
-
-        String methodName = "FileController.uploadFile: ";
-
-        validateFile(file, methodName);
-
-        String bucketName = getBucketNameByContentType(file);
-
-        if (bucketName.equals(ConstantValue.UNKNOWN_FILE_BUCKET)) {
-            throw new Exception(methodName + "File type: " + file.getContentType() + " is not supported");
-        }
-
-        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-
-        // Upload file using google cloud storage
         try {
+            String methodName = "FileController.uploadFile: ";
+
+            validateFile(file, methodName);
+
+            String bucketName = getBucketNameByContentType(file);
+
+            if (bucketName.equals(ConstantValue.UNKNOWN_FILE_BUCKET)) {
+                throw new Exception(methodName + "File type: " + file.getContentType() + " is not supported");
+            }
+
+            String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+
+            // Upload file using google cloud storage
             Blob blob = BlobHandler.getInstance().createBlobFromByteArray(bucketName, fileName, file.getBytes(), file.getContentType());
             BlobId blobId = blob.getBlobId();
             String uploadedBucketName = blobId.getBucket();
@@ -74,10 +76,9 @@ public class FileController {
             // Save to UploadedFile table
             return uploadedFileRepository.save(uploadedFile);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("An error has occurred", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
-
-        return null;
     }
 
     /**
@@ -87,13 +88,17 @@ public class FileController {
      * @return
      */
     @PostMapping("/uploadMultipleFiles")
-    public List<UploadedFile> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files) throws Exception {
-        List<UploadedFile> uploadedFiles = new ArrayList<>();
-        for (MultipartFile file : files) {
-            uploadedFiles.add(uploadFile(file));
+    public List<UploadedFile> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files) {
+        try {
+            List<UploadedFile> uploadedFiles = new ArrayList<>();
+            for (MultipartFile file : files) {
+                uploadedFiles.add(uploadFile(file));
+            }
+            return uploadedFiles;
+        } catch (Exception e) {
+            logger.error("An error has occurred", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
-
-        return uploadedFiles;
     }
 
     /**
@@ -101,30 +106,29 @@ public class FileController {
      * It needs fileName on UI (without the full link) to find the blob on gg cloud to delete
      *
      * @return
-     * @throws Exception
      */
     @PutMapping("/updateFile/{uploadedFileId}")
     @Transactional
-    public UploadedFile updateFile(@RequestParam("file") MultipartFile updatedFile, @PathVariable Long uploadedFileId) throws Exception {
-
-        String methodName = "FileController.changeFile: ";
-
-        validateFile(updatedFile, methodName);
-
-        Optional<UploadedFile> uploadedFileOnUIOptional = uploadedFileRepository.findById(uploadedFileId);
-
-        if (!uploadedFileOnUIOptional.isPresent()) {
-            return null;
-        }
-
-        UploadedFile uploadedFileOnUI = uploadedFileOnUIOptional.get();
-
-        String bucketName = uploadedFileOnUI.getBucketName();
-
-        String fileName = uploadedFileOnUI.getUploadedFileName();
-
-        // Upload file using google cloud storage
+    public UploadedFile updateFile(@RequestParam("file") MultipartFile updatedFile, @PathVariable Long
+            uploadedFileId) {
         try {
+            String methodName = "FileController.changeFile: ";
+
+            validateFile(updatedFile, methodName);
+
+            Optional<UploadedFile> uploadedFileOnUIOptional = uploadedFileRepository.findById(uploadedFileId);
+
+            if (!uploadedFileOnUIOptional.isPresent()) {
+                return null;
+            }
+
+            UploadedFile uploadedFileOnUI = uploadedFileOnUIOptional.get();
+
+            String bucketName = uploadedFileOnUI.getBucketName();
+
+            String fileName = uploadedFileOnUI.getUploadedFileName();
+
+            // Upload file using google cloud storage
             Blob blob = BlobHandler.getInstance().updateBlob(bucketName, fileName, updatedFile.getBytes(), updatedFile.getContentType());
             BlobId blobId = blob.getBlobId();
             String uploadedBucketName = blobId.getBucket();
@@ -141,39 +145,36 @@ public class FileController {
             // Save to UploadedFile table
             return uploadedFileRepository.save(returedUpdatedFile);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("An error has occurred", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
-
-        return null;
     }
 
     @DeleteMapping("/deleteFile")
     @Transactional
     public String deleteFile(@RequestBody UploadedFile uploadedFileOnUI) {
-
-        String bucketName = uploadedFileOnUI.getBucketName();
-
-        String fileName = uploadedFileOnUI.getUploadedFileName();
-
-        UploadedFile uploadedFile = uploadedFileRepository.findByBucketNameAndUploadedFileName(bucketName, fileName);
-
-        if (uploadedFile == null) {
-            return null;
-        }
-
-        // Delete data from DB
-        uploadedFileRepository.delete(uploadedFile);
-
-        // Upload file using google cloud storage
         try {
+            String bucketName = uploadedFileOnUI.getBucketName();
+
+            String fileName = uploadedFileOnUI.getUploadedFileName();
+
+            UploadedFile uploadedFile = uploadedFileRepository.findByBucketNameAndUploadedFileName(bucketName, fileName);
+
+            if (uploadedFile == null) {
+                return null;
+            }
+
+            // Delete data from DB
+            uploadedFileRepository.delete(uploadedFile);
+
+            // Upload file using google cloud storage
             boolean deleted = BlobHandler.getInstance().deleteBlob(bucketName, fileName);
 
             return (deleted ? "successfully" : "failed") + " deleted file url: " + GOOGLE_ACCESS_FILE_PREFIX_URL + "/" + bucketName + "/" + fileName;
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("An error has occurred", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
-
-        return null;
     }
 
     /**
@@ -205,14 +206,19 @@ public class FileController {
 //                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
 //                .body(resource);
 //    }
-    private String getBucketNameByContentType(MultipartFile file) throws Exception {
-        byte[] input = file.getBytes();
-        if (isImage(input)) {
-            return ConstantValue.FILE_IMAGE_BUCKET;
-        } else if (isPDF(input)) {
-            return ConstantValue.FILE_PDF_BUCKET;
-        } else if (isMSWord(input)) {
-            return ConstantValue.FILE_WORD_BUCKET;
+    private String getBucketNameByContentType(MultipartFile file) {
+        try {
+            byte[] input = file.getBytes();
+            if (isImage(input)) {
+                return ConstantValue.FILE_IMAGE_BUCKET;
+            } else if (isPDF(input)) {
+                return ConstantValue.FILE_PDF_BUCKET;
+            } else if (isMSWord(input)) {
+                return ConstantValue.FILE_WORD_BUCKET;
+            }
+        } catch (Exception e) {
+            logger.error("An error has occurred", e);
+            return ConstantValue.UNKNOWN_FILE_BUCKET;
         }
 
         return ConstantValue.UNKNOWN_FILE_BUCKET;
@@ -235,6 +241,7 @@ public class FileController {
                 return true;
             }
         } catch (Exception e) {
+            logger.error("File is not image: ", e);
             return false;
         }
         return false;
@@ -244,6 +251,7 @@ public class FileController {
         try {
             PDDocument.load(array);
         } catch (Exception e) {
+            logger.error("File is not PDF: ", e);
             return false;
         }
         return true;
@@ -253,6 +261,7 @@ public class FileController {
         try {
             XWPFDocument xdoc = new XWPFDocument(new ByteArrayInputStream(array));
         } catch (Exception e) {
+            logger.error("File is not MSWord", e);
             return false;
         }
         return true;
