@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
-@Transactional
 @CrossOrigin(origins = {"${front-end.settings.cross-origin.url}"})
 public class LoginController {
 
