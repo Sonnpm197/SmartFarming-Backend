@@ -120,10 +120,15 @@ public class QuestionController {
         }
     }
 
-    @GetMapping("/viewQuestionsByDate/{pageNumber}")
-    public QuestionPagination viewQuestionsByDate(@PathVariable int pageNumber) {
+    @GetMapping("/viewQuestions/{sortBy}/{pageNumber}")
+    public QuestionPagination viewQuestionsByDate(@PathVariable String sortBy, @PathVariable int pageNumber) {
         try {
             PageRequest pageNumWithElements = PageRequest.of(pageNumber, QUESTIONS_PER_PAGE, Sort.by("utilTimestamp").descending());
+
+            if ("viewCount".equalsIgnoreCase(sortBy)) {
+                pageNumWithElements = PageRequest.of(pageNumber, QUESTIONS_PER_PAGE, Sort.by("viewCount").descending());
+            }
+
             Page<Question> questionPage = questionRepository.findAll(pageNumWithElements);
             QuestionPagination questionPagination = new QuestionPagination();
             questionPagination.setQa(questionPage.getContent());
@@ -135,30 +140,19 @@ public class QuestionController {
         }
     }
 
-    @GetMapping("/viewQuestionsByViewCount/{pageNumber}")
-    public QuestionPagination viewQuestionsByViewCount(@PathVariable int pageNumber) {
-        try {
-            PageRequest pageNumWithElements = PageRequest.of(pageNumber, QUESTIONS_PER_PAGE, Sort.by("viewCount").descending());
-            Page<Question> questionPage = questionRepository.findAll(pageNumWithElements);
-            QuestionPagination questionPagination = new QuestionPagination();
-            questionPagination.setQa(questionPage.getContent());
-            questionPagination.setNumberOfPages(Integer.parseInt("" + viewNumberOfPages()));
-            return questionPagination;
-        } catch (Exception e) {
-            logger.error("An error has occurred", e);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
-        }
-    }
-
-    @GetMapping("/viewQuestionsByTag/{tagId}/{pageNumber}")
-    public QuestionPagination viewQuestionsByTag(@PathVariable Long tagId, @PathVariable int pageNumber) {
+    @GetMapping("/viewQuestionsByTag/{sortBy}/{tagId}/{pageNumber}")
+    public QuestionPagination viewQuestionsByTag(@PathVariable String sortBy, @PathVariable Long tagId, @PathVariable int pageNumber) {
         try {
             String methodName = "QuestionController.viewQuestionsByTag: ";
 
-            Tag tag = tagRepository.findById(tagId)
+            tagRepository.findById(tagId)
                     .orElseThrow(() -> new Exception(methodName + "cannot find any tags by tagid: " + tagId));
 
-            PageRequest pageNumWithElements = PageRequest.of(pageNumber, QUESTIONS_PER_PAGE, Sort.by("utilTimestamp"));
+            PageRequest pageNumWithElements = PageRequest.of(pageNumber, QUESTIONS_PER_PAGE, Sort.by("utilTimestamp").descending());
+
+            if ("viewCount".equalsIgnoreCase(sortBy)) {
+                pageNumWithElements = PageRequest.of(pageNumber, QUESTIONS_PER_PAGE, Sort.by("viewCount").descending());
+            }
             Page<Question> questionPage = questionRepository.findByTags_tagId(tagId, pageNumWithElements);
 
             // Return pagination objects
