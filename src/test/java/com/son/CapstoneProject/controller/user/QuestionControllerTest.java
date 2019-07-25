@@ -126,8 +126,8 @@ public class QuestionControllerTest {
             @Sql("/sql/questionController/insert_question.sql"),
             @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
     })
-    public void viewQuestionsByPageIndex() {
-        String url = createURL(port, "/question/viewQuestions/{pageNumber}");
+    public void viewQuestionsByDate() {
+        String url = createURL(port, "/question/viewQuestionsByDate/{pageNumber}");
 
         // URI (URL) parameters
         Map<String, Integer> uriParams = new HashMap<>();
@@ -147,6 +147,7 @@ public class QuestionControllerTest {
 
         QuestionPagination questionList = response.getBody();
         System.out.println(">> Result: " + questionList);
+        System.out.println();
 //        for (int i = 0; i < questionList.size(); i++) {
 //            Question question = questionList.get(i);
 //            // Assert if the higher article has higher date
@@ -156,6 +157,74 @@ public class QuestionControllerTest {
 //            }
 //            Assert.assertTrue(question.getUtilTimestamp().compareTo(questionList.get(i - 1).getUtilTimestamp()) >= 0);
 //        }
+    }
+
+    @Test
+    @SqlGroup({
+            @Sql("/sql/questionController/insert_question_view_count.sql"),
+            @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
+    })
+    public void viewQuestionsByViewCount() {
+        String url = createURL(port, "/question/viewQuestionsByViewCount/{pageNumber}");
+
+        // URI (URL) parameters
+        Map<String, Integer> uriParams = new HashMap<>();
+        uriParams.put("pageNumber", 0);
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
+
+        System.out.println(">>> Testing URI: " + builder.buildAndExpand(uriParams).toUri());
+
+        HttpEntity<String> entity = new HttpEntity<>(null, CommonTest.getHeaders("GET", frontEndUrl));
+        ResponseEntity<QuestionPagination> response = CommonTest.getRestTemplate().exchange(
+                builder.buildAndExpand(uriParams).toUri(),
+                HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<QuestionPagination>() {
+                });
+
+        QuestionPagination questionList = response.getBody();
+        System.out.println(">> Result: " + questionList);
+        System.out.println();
+//        for (int i = 0; i < questionList.size(); i++) {
+//            Question question = questionList.get(i);
+//            // Assert if the higher article has higher date
+//            // 5 > 4 > 3 > 2 > 1
+//            if (i - 1 < 0) {
+//                break;
+//            }
+//            Assert.assertTrue(question.getUtilTimestamp().compareTo(questionList.get(i - 1).getUtilTimestamp()) >= 0);
+//        }
+    }
+
+    @Test
+    @SqlGroup({
+            @Sql("/sql/questionController/insert_question.sql"),
+            @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
+    })
+    public void viewQuestionsByTag() {
+        String url = createURL(port, "/question/viewQuestionsByTag/{tagId}/{pageNumber}");
+
+        // URI (URL) parameters
+        Map<String, Integer> uriParams = new HashMap<>();
+        uriParams.put("tagId", 0);
+        uriParams.put("pageNumber", 0);
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
+
+        System.out.println(">>> Testing URI: " + builder.buildAndExpand(uriParams).toUri());
+
+        HttpEntity<String> entity = new HttpEntity<>(null, CommonTest.getHeaders("GET", frontEndUrl));
+        ResponseEntity<QuestionPagination> response = CommonTest.getRestTemplate().exchange(
+                builder.buildAndExpand(uriParams).toUri(),
+                HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<QuestionPagination>() {
+                });
+
+        QuestionPagination questionList = response.getBody();
+        System.out.println(">> Result: " + questionList);
+        System.out.println();
     }
 
     /**

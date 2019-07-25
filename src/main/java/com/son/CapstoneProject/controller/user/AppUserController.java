@@ -16,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+
 import static com.son.CapstoneProject.common.ConstantValue.USERS_PER_PAGE;
 
 @RestController
@@ -47,6 +49,21 @@ public class AppUserController {
     public long viewNumberOfUsers() {
         try {
             return appUserRepository.count();
+        } catch (Exception e) {
+            logger.error("An error has occurred", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        }
+    }
+
+    @GetMapping("/viewTop3UsersByReputation")
+    public AppUserPagination viewTop3UsersByReputation() {
+        try {
+            List<AppUser> appUsers = appUserRepository.findTop3ByOrderByReputationDesc();
+
+            AppUserPagination appUserPagination = new AppUserPagination();
+            appUserPagination.setAppUsersByPageIndex(appUsers);
+            appUserPagination.setNumberOfPages(1);
+            return appUserPagination;
         } catch (Exception e) {
             logger.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);

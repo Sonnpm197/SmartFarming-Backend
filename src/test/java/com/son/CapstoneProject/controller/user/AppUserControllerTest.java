@@ -24,6 +24,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.son.CapstoneProject.controller.CommonTest.createURL;
@@ -73,6 +74,35 @@ public class AppUserControllerTest {
 
         AppUserPagination appUserPagination = response.getBody();
         System.out.println(">> Result: " + Arrays.toString(appUserPagination.getAppUsersByPageIndex().toArray()));
+
+    }
+
+    @Test
+    @SqlGroup({
+            @Sql("/sql/appUserController/insert_appUser.sql"),
+            @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
+    })
+    public void viewTop3UsersByReputation() {
+
+        String url = createURL(port, "/userDetail/viewTop3UsersByReputation");
+
+        // URI (URL) parameters
+        Map<String, Integer> uriParams = new HashMap<>();
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
+
+        System.out.println(">>> Testing URI: " + builder.buildAndExpand(uriParams).toUri());
+
+        HttpEntity<String> entity = new HttpEntity<>(null, CommonTest.getHeaders("GET", frontEndUrl));
+        ResponseEntity<List<AppUser>> response = CommonTest.getRestTemplate().exchange(
+                builder.buildAndExpand(uriParams).toUri(),
+                HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<List<AppUser>>() {
+                });
+
+        List<AppUser> appUserPagination = response.getBody();
+        System.out.println();
 
     }
 

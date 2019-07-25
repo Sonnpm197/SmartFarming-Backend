@@ -26,13 +26,13 @@ public class TagController {
     private TagRepository tagRepository;
 
     @GetMapping("/viewTop5TagsByViewCount")
-    public List<Tag> findTop5ByOrderByViewCount() {
+    public TagPagination findTop5ByOrderByViewCount() {
         try {
             List<Tag> tags = tagRepository.findTop5ByOrderByViewCountDesc();
-//        TagPagination tagPagination = new TagPagination();
-//        tagPagination.setTagsByPageIndex(tags);
-//        tagPagination.setNumberOfPages(1);
-            return tags;
+            TagPagination tagPagination = new TagPagination();
+            tagPagination.setTagsByPageIndex(tags);
+            tagPagination.setNumberOfPages(1);
+            return tagPagination;
         } catch (Exception e) {
             logger.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);

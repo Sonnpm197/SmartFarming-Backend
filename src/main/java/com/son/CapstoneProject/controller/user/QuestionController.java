@@ -1,5 +1,6 @@
 package com.son.CapstoneProject.controller.user;
 
+import com.son.CapstoneProject.common.ConstantValue;
 import com.son.CapstoneProject.configuration.HttpRequestResponseUtils;
 import com.son.CapstoneProject.controller.ControllerUtils;
 import com.son.CapstoneProject.controller.FileController;
@@ -72,6 +73,9 @@ public class QuestionController {
     @Autowired
     private HibernateSearchRepository hibernateSearchRepository;
 
+    @Autowired
+    private TagRepository tagRepository;
+
     @GetMapping("/test")
     public String test() {
         return "You only see this if you are an user";
@@ -88,13 +92,13 @@ public class QuestionController {
     }
 
     @GetMapping("/viewTop3QuestionsByViewCount")
-    public List<Question> viewTop3QuestionsByViewCount() {
+    public QuestionPagination viewTop3QuestionsByViewCount() {
         try {
             List<Question> questions = questionRepository.findTop3ByOrderByViewCountDesc();
-//        QuestionPagination questionPagination = new QuestionPagination();
-//        questionPagination.setQa(questions);
-//        questionPagination.setNumberOfPages(1);
-            return questions;
+            QuestionPagination questionPagination = new QuestionPagination();
+            questionPagination.setQa(questions);
+            questionPagination.setNumberOfPages(1);
+            return questionPagination;
         } catch (Exception e) {
             logger.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
@@ -116,14 +120,60 @@ public class QuestionController {
         }
     }
 
-    @GetMapping("/viewQuestions/{pageNumber}")
-    public QuestionPagination viewQuestionsByPageIndex(@PathVariable int pageNumber) {
+    @GetMapping("/viewQuestionsByDate/{pageNumber}")
+    public QuestionPagination viewQuestionsByDate(@PathVariable int pageNumber) {
         try {
-            PageRequest pageNumWithElements = PageRequest.of(pageNumber, QUESTIONS_PER_PAGE, Sort.by("utilTimestamp"));
+            PageRequest pageNumWithElements = PageRequest.of(pageNumber, QUESTIONS_PER_PAGE, Sort.by("utilTimestamp").descending());
             Page<Question> questionPage = questionRepository.findAll(pageNumWithElements);
             QuestionPagination questionPagination = new QuestionPagination();
             questionPagination.setQa(questionPage.getContent());
             questionPagination.setNumberOfPages(Integer.parseInt("" + viewNumberOfPages()));
+            return questionPagination;
+        } catch (Exception e) {
+            logger.error("An error has occurred", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        }
+    }
+
+    @GetMapping("/viewQuestionsByViewCount/{pageNumber}")
+    public QuestionPagination viewQuestionsByViewCount(@PathVariable int pageNumber) {
+        try {
+            PageRequest pageNumWithElements = PageRequest.of(pageNumber, QUESTIONS_PER_PAGE, Sort.by("viewCount").descending());
+            Page<Question> questionPage = questionRepository.findAll(pageNumWithElements);
+            QuestionPagination questionPagination = new QuestionPagination();
+            questionPagination.setQa(questionPage.getContent());
+            questionPagination.setNumberOfPages(Integer.parseInt("" + viewNumberOfPages()));
+            return questionPagination;
+        } catch (Exception e) {
+            logger.error("An error has occurred", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        }
+    }
+
+    @GetMapping("/viewQuestionsByTag/{tagId}/{pageNumber}")
+    public QuestionPagination viewQuestionsByTag(@PathVariable Long tagId, @PathVariable int pageNumber) {
+        try {
+            String methodName = "QuestionController.viewQuestionsByTag: ";
+
+            Tag tag = tagRepository.findById(tagId)
+                    .orElseThrow(() -> new Exception(methodName + "cannot find any tags by tagid: " + tagId));
+
+            PageRequest pageNumWithElements = PageRequest.of(pageNumber, QUESTIONS_PER_PAGE, Sort.by("utilTimestamp"));
+            Page<Question> questionPage = questionRepository.findByTags_tagId(tagId, pageNumWithElements);
+
+            // Return pagination objects
+            QuestionPagination questionPagination = new QuestionPagination();
+            long numberOfQuestionsByTagId = questionRepository.findByTags_tagId(tagId).size();
+            long numberOfPages = 0;
+            if (numberOfQuestionsByTagId % QUESTIONS_PER_PAGE == 0) {
+                numberOfPages = numberOfQuestionsByTagId / QUESTIONS_PER_PAGE;
+            } else {
+                numberOfPages = (numberOfQuestionsByTagId / QUESTIONS_PER_PAGE) + 1;
+            }
+
+            questionPagination.setQa(questionPage.getContent());
+            questionPagination.setNumberOfPages(Integer.parseInt("" + numberOfPages));
+
             return questionPagination;
         } catch (Exception e) {
             logger.error("An error has occurred", e);

@@ -3,7 +3,6 @@ package com.son.CapstoneProject.controller.user;
 import com.son.CapstoneProject.Application;
 import com.son.CapstoneProject.controller.CommonTest;
 import com.son.CapstoneProject.entity.Tag;
-import com.son.CapstoneProject.entity.pagination.TagPagination;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

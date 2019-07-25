@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface AppUserRepository extends PagingAndSortingRepository<AppUser, Long> {
 
@@ -15,6 +17,8 @@ public interface AppUserRepository extends PagingAndSortingRepository<AppUser, L
     Page<AppUser> findAll(Pageable pageable);
 
     AppUser findByIpAddress(String ipAddress);
+
+    List<AppUser> findTop3ByOrderByReputationDesc();
 
 //    AppUser findByUserName(String userName);
 
