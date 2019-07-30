@@ -94,14 +94,14 @@ public class AppUserControllerTest {
         System.out.println(">>> Testing URI: " + builder.buildAndExpand(uriParams).toUri());
 
         HttpEntity<String> entity = new HttpEntity<>(null, CommonTest.getHeaders("GET", frontEndUrl));
-        ResponseEntity<List<AppUser>> response = CommonTest.getRestTemplate().exchange(
+        ResponseEntity<AppUserPagination> response = CommonTest.getRestTemplate().exchange(
                 builder.buildAndExpand(uriParams).toUri(),
                 HttpMethod.GET,
                 entity,
-                new ParameterizedTypeReference<List<AppUser>>() {
+                new ParameterizedTypeReference<AppUserPagination>() {
                 });
 
-        List<AppUser> appUserPagination = response.getBody();
+        AppUserPagination appUserPagination = response.getBody();
         System.out.println();
 
     }

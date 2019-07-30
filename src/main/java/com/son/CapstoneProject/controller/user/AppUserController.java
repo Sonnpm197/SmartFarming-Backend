@@ -58,7 +58,7 @@ public class AppUserController {
     @GetMapping("/viewTop3UsersByReputation")
     public AppUserPagination viewTop3UsersByReputation() {
         try {
-            List<AppUser> appUsers = appUserRepository.findTop3ByOrderByReputationDesc();
+            List<AppUser> appUsers = appUserRepository.findTop3ByRoleOrderByReputationDesc(ConstantValue.Role.USER.getValue());
 
             AppUserPagination appUserPagination = new AppUserPagination();
             appUserPagination.setAppUsersByPageIndex(appUsers);
