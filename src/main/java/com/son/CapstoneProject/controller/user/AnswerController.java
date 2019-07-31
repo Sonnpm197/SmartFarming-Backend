@@ -143,29 +143,29 @@ public class AnswerController {
      */
     @DeleteMapping("/deleteAnswerToQuestion/{answerId}")
     @Transactional
-    public Map<String, String> deleteAnswerToQuestion(@RequestBody AppUser appUser,
+    public Map<String, String> deleteAnswerToQuestion(/*@RequestBody AppUser appUser,*/
                                                       @PathVariable Long answerId,
                                                       HttpServletRequest request) {
         try {
             String methodName = "UserController.deleteAnswerToQuestion";
 
-            controllerUtils.validateAppUser(appUser, methodName, false);
-
-            if (appUser.isAnonymous()) {
-                appUser = controllerUtils.saveOrReturnAnonymousUser(HttpRequestResponseUtils.getClientIpAddress(request));
-            } else {
-                controllerUtils.validateAppUser(appUser, methodName, true);
-            }
+//            controllerUtils.validateAppUser(appUser, methodName, false);
+//
+//            if (appUser.isAnonymous()) {
+//                appUser = controllerUtils.saveOrReturnAnonymousUser(HttpRequestResponseUtils.getClientIpAddress(request));
+//            } else {
+//                controllerUtils.validateAppUser(appUser, methodName, true);
+//            }
 
             Answer answer = answerRepository.findById(answerId)
                     .orElseThrow(() -> new Exception(methodName + ": Found no answer with id: " + answerId));
-
-            // Cannot delete other questions
-            if (!appUser.getUserId().equals(answer.getAppUser().getUserId())) {
-                String message = methodName + ": You cannot delete others' answers";
-                // logger.info(message);
-                throw new Exception(message);
-            }
+//
+//            // Cannot delete other questions
+//            if (!appUser.getUserId().equals(answer.getAppUser().getUserId())) {
+//                String message = methodName + ": You cannot delete others' answers";
+//                // logger.info(message);
+//                throw new Exception(message);
+//            }
 
             // Delete comment in answer first
             List<Comment> comments = answer.getComments();
