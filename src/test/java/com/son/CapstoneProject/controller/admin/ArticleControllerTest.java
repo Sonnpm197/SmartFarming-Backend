@@ -62,6 +62,27 @@ public class ArticleControllerTest {
 
     @Test
     @SqlGroup({
+            @Sql("/sql/articleController/insert_article_multiple_categories.sql"),
+            @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
+    })
+    public void viewDistinctCategories() {
+        HttpEntity<String> entity = new HttpEntity<>(null, CommonTest.getHeaders("GET", frontEndUrl));
+        ResponseEntity<List<String>> response = CommonTest.getRestTemplate().exchange(
+                createURL("/article/viewDistinctCategories"),
+                HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<List<String>>() {
+                });
+        System.out.println(">> Result: " + response.getBody());
+        List<String> categories = response.getBody();
+        Assert.assertEquals(3, categories.size());
+        Assert.assertTrue(categories.contains("trồng trọt"));
+        Assert.assertTrue(categories.contains("chăn nuôi"));
+        Assert.assertTrue(categories.contains("kỹ thuật trồng"));
+    }
+
+    @Test
+    @SqlGroup({
             @Sql("/sql/articleController/insert_article.sql"),
             @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
     })

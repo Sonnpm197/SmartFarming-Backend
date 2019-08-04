@@ -67,6 +67,16 @@ public class ArticleController {
         return articleRepository.count();
     }
 
+    @GetMapping("/viewDistinctCategories")
+    public List<String> viewDistinctCategories() {
+        try {
+            return articleRepository.findDistinctCategory();
+        } catch (Exception e) {
+            logger.error("An error has occurred", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        }
+    }
+
     @GetMapping("/viewNumberOfPages")
     public long viewNumberOfPages() {
         try {

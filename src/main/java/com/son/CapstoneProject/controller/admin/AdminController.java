@@ -221,7 +221,7 @@ public class AdminController {
     }
 
     @GetMapping("/userChartInfo/{userId}")
-    public Map<String, UserChartInfo> detailUserActivitiesByDays(@PathVariable Long userId) {
+    public List<UserChartInfo> detailUserActivitiesByDays(@PathVariable Long userId) {
         try {
             List<Question> questionsByUserId = questionRepository.findByAppUser_UserId(userId);
             List<Answer> answersByUserId = answerRepository.findByAppUser_UserId(userId);
@@ -266,7 +266,7 @@ public class AdminController {
                 }
             }
 
-            Map<String, UserChartInfo> userChartInfoByDate = new HashMap<>();
+            List<UserChartInfo> userChartInfoByDate = new ArrayList<>();
             SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
             // After get distinct date then select to get the list data for each day
             for (String date : distinctDate) {
@@ -310,8 +310,9 @@ public class AdminController {
                         }
                     }
 
-                    // Add to map
-                    userChartInfoByDate.put(date, userChartInfo);
+                    userChartInfo.setDate(date);
+                    // Add to list
+                    userChartInfoByDate.add(userChartInfo);
 
                 } catch (ParseException e) {
                     e.printStackTrace();
@@ -411,19 +412,19 @@ public class AdminController {
      */
     @DeleteMapping("/deleteAnswerToQuestion/{answerId}")
     @Transactional
-    public Map<String, String> deleteAnswerToQuestion(@RequestBody AppUser appUser,
+    public Map<String, String> deleteAnswerToQuestion(/*@RequestBody AppUser appUser,*/
                                                       @PathVariable Long answerId,
                                                       HttpServletRequest request) {
         try {
             String methodName = "Admin.deleteAnswerToQuestion";
 
-            controllerUtils.validateAppUser(appUser, methodName, false);
-
-            if (appUser.isAnonymous()) {
-                appUser = controllerUtils.saveOrReturnAnonymousUser(HttpRequestResponseUtils.getClientIpAddress(request));
-            } else {
-                controllerUtils.validateAppUser(appUser, methodName, true);
-            }
+//            controllerUtils.validateAppUser(appUser, methodName, false);
+//
+//            if (appUser.isAnonymous()) {
+//                appUser = controllerUtils.saveOrReturnAnonymousUser(HttpRequestResponseUtils.getClientIpAddress(request));
+//            } else {
+//                controllerUtils.validateAppUser(appUser, methodName, true);
+//            }
 
             Answer answer = answerRepository.findById(answerId)
                     .orElseThrow(() -> new Exception(methodName + ": Found no answer with id: " + answerId));

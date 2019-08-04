@@ -256,7 +256,7 @@ public class AnswerController {
      */
     @PutMapping("/unmarkAcceptedAnswerToQuestion/{questionId}/{answerId}")
     @Transactional
-    public ResponseEntity<Answer> unmarkAcceptedAnswerToQuestion(@RequestBody AppUser questionAuthor,
+    public ResponseEntity<Answer> unmarkAcceptedAnswerToQuestion(/*@RequestBody AppUser questionAuthor,*/
                                                                  @PathVariable Long questionId,
                                                                  @PathVariable Long answerId) {
         try {
@@ -268,14 +268,14 @@ public class AnswerController {
             Question question = questionRepository.findById(questionId)
                     .orElseThrow(() -> new Exception(methodName + ": Not found any questions with id: " + questionId));
 
-            controllerUtils.validateAppUser(questionAuthor, methodName, true);
-
-            // Check if you are the author
-            if (questionAuthor.getUserId().equals(answer.getAppUser().getUserId())) {
-                String message = methodName + ": You cannot mark accepted answer if you are not the author of the question";
-                // logger.info(message);
-                throw new Exception(message);
-            }
+//            controllerUtils.validateAppUser(questionAuthor, methodName, true);
+//
+//            // Check if you are the author
+//            if (questionAuthor.getUserId().equals(answer.getAppUser().getUserId())) {
+//                String message = methodName + ": You cannot mark accepted answer if you are not the author of the question";
+//                // logger.info(message);
+//                throw new Exception(message);
+//            }
 
             if (!answer.isAccepted()) {
                 return null;

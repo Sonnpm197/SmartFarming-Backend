@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface ArticleRepository extends PagingAndSortingRepository<Article, Long> {
 
@@ -14,4 +16,7 @@ public interface ArticleRepository extends PagingAndSortingRepository<Article, L
 
     @Query("select sum(a.viewCount) from Article a")
     Integer getTotalViewCount();
+
+    @Query("SELECT DISTINCT a.category FROM Article a")
+    List<String> findDistinctCategory();
 }

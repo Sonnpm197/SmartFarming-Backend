@@ -9,6 +9,8 @@ import lombok.*;
 @ToString
 public class UserChartInfo {
 
+    private String date;
+
     private int numberOfQuestion;
     private int numberOfAnswer;
     private int numberOfComment;
