@@ -1,5 +1,6 @@
 package com.son.CapstoneProject.repository.searchRepository;
 
+import com.son.CapstoneProject.common.StringUtils;
 import com.son.CapstoneProject.controller.FileController;
 import com.son.CapstoneProject.entity.Article;
 import com.son.CapstoneProject.entity.Question;
@@ -139,12 +140,14 @@ public class HibernateSearchRepository {
                 for (String field : fields) {
                     List<org.apache.lucene.search.Query> queryList = new ArrayList<>();
                     for (String keyword : arrKeywords) {
-                        org.apache.lucene.search.Query query = getQueryBuilder(genericClass)
-                                .keyword()
-                                .onField(field)
-                                .matching(keyword.trim())
-                                .createQuery();
-                        queryList.add(query);
+                        if (!StringUtils.isNullOrEmpty(keyword)) {
+                            org.apache.lucene.search.Query query = getQueryBuilder(genericClass)
+                                    .keyword()
+                                    .onField(field)
+                                    .matching(keyword.trim())
+                                    .createQuery();
+                            queryList.add(query);
+                        }
                     }
 
                     addDistinctValueToList(
