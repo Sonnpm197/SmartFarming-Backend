@@ -627,4 +627,28 @@ public class QuestionController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
+
+    @GetMapping("/viewTop10Questions/{type}")
+    public QuestionPagination viewTop10Questions(@PathVariable String type) {
+        try {
+            List<Question> questions;
+            if ("viewCount".equalsIgnoreCase(type)) {
+                questions = questionRepository.findTop10ByOrderByViewCountDesc();
+            } else if ("upvoteCount".equalsIgnoreCase(type)) {
+                questions = questionRepository.findTop10ByOrderByUpvoteCountDesc();
+            } else if ("time".equalsIgnoreCase(type)) {
+                questions = questionRepository.findTop10ByOrderByUtilTimestampDesc();
+            } else {
+                throw new Exception("Unknown type to view top 10 questions: " + type);
+            }
+
+            QuestionPagination questionPagination = new QuestionPagination();
+            questionPagination.setQa(questions);
+            questionPagination.setNumberOfPages(1);
+            return questionPagination;
+        } catch (Exception e) {
+            logger.error("An error has occurred", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        }
+    }
 }

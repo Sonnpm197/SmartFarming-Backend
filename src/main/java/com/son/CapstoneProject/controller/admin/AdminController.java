@@ -115,6 +115,36 @@ public class AdminController {
         }
     }
 
+    @GetMapping("/viewOneReport/{reportId}")
+    public Report viewOneReport(@PathVariable Long reportId) {
+        try {
+            String methodName = "AdminController.viewOneReport";
+            return reportRepository.findById(reportId)
+                    .orElseThrow(() -> new Exception(methodName + ": cannot find any report with id: " + reportId));
+        } catch (Exception e) {
+            logger.error("An error has occurred", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        }
+    }
+
+    @DeleteMapping("/deleteReport/{reportId}")
+    @Transactional
+    public Map<String, String> deleteReport(@PathVariable Long reportId) {
+        try {
+            String methodName = "AdminController.deleteReport";
+            Report report = reportRepository.findById(reportId)
+                    .orElseThrow(() -> new Exception(methodName + ": cannot find any report with id: " + reportId));
+            reportRepository.delete(report);
+            Map<String, String> map = new HashMap<>();
+            map.put("reportId", "" + reportId);
+            map.put("deleted", "true");
+            return map;
+        } catch (Exception e) {
+            logger.error("An error has occurred", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        }
+    }
+
     @PostMapping("/searchTagsByPageIndex/{pageNumber}")
     public TagPagination searchTagsByPageIndex(@RequestBody TagSearch tagSearch, @PathVariable int pageNumber) {
         try {

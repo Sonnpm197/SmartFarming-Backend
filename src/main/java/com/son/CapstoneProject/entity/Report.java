@@ -29,6 +29,9 @@ public class Report {
     private AppUser appUser;
 
     @Column(columnDefinition = "ntext")
+    private String reason;
+
+    @Column(columnDefinition = "ntext")
     private String message;
 
     @JsonBackReference
