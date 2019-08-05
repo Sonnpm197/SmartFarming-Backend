@@ -17,7 +17,11 @@ public interface QuestionRepository extends PagingAndSortingRepository<Question,
 
     Page<Question> findAll(Pageable pageable);
 
+    Page<Question> findByAppUser_UserId(Long userId, Pageable pageable);
+
     List<Question> findByAppUser_UserId(Long userId);
+
+    List<Question> findTop5ByAppUser_UserIdOrderByViewCountDesc(Long userId);
 
     @Query("select sum(q.viewCount) from Question q")
     Integer getTotalViewCount();

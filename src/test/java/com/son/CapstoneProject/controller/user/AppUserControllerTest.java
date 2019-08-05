@@ -2,8 +2,12 @@ package com.son.CapstoneProject.controller.user;
 
 import com.son.CapstoneProject.Application;
 import com.son.CapstoneProject.controller.CommonTest;
+import com.son.CapstoneProject.entity.Question;
+import com.son.CapstoneProject.entity.Tag;
 import com.son.CapstoneProject.entity.login.AppUser;
 import com.son.CapstoneProject.entity.pagination.AppUserPagination;
+import com.son.CapstoneProject.entity.pagination.QuestionPagination;
+import com.son.CapstoneProject.entity.pagination.TagPagination;
 import com.son.CapstoneProject.repository.loginRepository.AppUserRepository;
 import com.son.CapstoneProject.repository.loginRepository.SocialUserRepository;
 import org.junit.Assert;
@@ -139,6 +143,147 @@ public class AppUserControllerTest {
         // Check saved SocialInfo + saved url
         Assert.assertEquals("updatedEmail", socialUserRepository.findById(1L).get().getEmail());
         Assert.assertEquals("abcd", appUserRepository.findById(appUser.getUserId()).get().getCvUrl());
+
+    }
+
+    @Test
+    @SqlGroup({
+            @Sql("/sql/appUserController/insert_appUser_top_5_tags.sql"),
+            @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
+    })
+    public void getTop5TagsOfUser() {
+
+        String url = createURL(port, "/userDetail/getTop5TagsOfUser/{userId}");
+
+        // URI (URL) parameters
+        Map<String, Integer> uriParams = new HashMap<>();
+        uriParams.put("userId", 1);
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
+
+        System.out.println(">>> Testing URI: " + builder.buildAndExpand(uriParams).toUri());
+
+        HttpEntity<String> entity = new HttpEntity<>(null, CommonTest.getHeaders("GET", frontEndUrl));
+        ResponseEntity<TagPagination> response = CommonTest.getRestTemplate().exchange(
+                builder.buildAndExpand(uriParams).toUri(),
+                HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<TagPagination>() {
+                });
+
+        TagPagination tagPagination = response.getBody();
+        List<Tag> tags = tagPagination.getTagsByPageIndex();
+        Assert.assertEquals("chăn nuôi 2", tags.get(0).getName());
+        Assert.assertEquals("chăn nuôi", tags.get(1).getName());
+        Assert.assertEquals("trồng trọt", tags.get(2).getName());
+        Assert.assertEquals("chăn nuôi 4", tags.get(3).getName());
+        Assert.assertEquals("chăn nuôi 3", tags.get(4).getName());
+    }
+
+    @Test
+    @SqlGroup({
+            @Sql("/sql/appUserController/insert_appUser_get_all_tags.sql"),
+            @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
+    })
+    public void getAllTagsOfUser() {
+
+        String url = createURL(port, "/userDetail/getAllTagsOfUser/{userId}/{pageNumber}");
+
+        // URI (URL) parameters
+        Map<String, Integer> uriParams = new HashMap<>();
+        uriParams.put("userId", 1);
+        uriParams.put("pageNumber", 0);
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
+
+        System.out.println(">>> Testing URI: " + builder.buildAndExpand(uriParams).toUri());
+
+        HttpEntity<String> entity = new HttpEntity<>(null, CommonTest.getHeaders("GET", frontEndUrl));
+        ResponseEntity<TagPagination> response = CommonTest.getRestTemplate().exchange(
+                builder.buildAndExpand(uriParams).toUri(),
+                HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<TagPagination>() {
+                });
+
+        TagPagination tagPagination = response.getBody();
+        List<Tag> tags = tagPagination.getTagsByPageIndex();
+        Assert.assertEquals("chăn nuôi 2", tags.get(0).getName());
+        Assert.assertEquals("chăn nuôi", tags.get(1).getName());
+        Assert.assertEquals("trồng trọt", tags.get(2).getName());
+        Assert.assertEquals("chăn nuôi 4", tags.get(3).getName());
+        Assert.assertEquals("chăn nuôi 3", tags.get(4).getName());
+
+    }
+
+    @Test
+    @SqlGroup({
+            @Sql("/sql/appUserController/insert_appUser_top_5_questions.sql"),
+            @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
+    })
+    public void getTop5QuestionsOfUser() {
+
+        String url = createURL(port, "/userDetail/getTop5QuestionsOfUser/{userId}");
+
+        // URI (URL) parameters
+        Map<String, Integer> uriParams = new HashMap<>();
+        uriParams.put("userId", 1);
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
+
+        System.out.println(">>> Testing URI: " + builder.buildAndExpand(uriParams).toUri());
+
+        HttpEntity<String> entity = new HttpEntity<>(null, CommonTest.getHeaders("GET", frontEndUrl));
+        ResponseEntity<QuestionPagination> response = CommonTest.getRestTemplate().exchange(
+                builder.buildAndExpand(uriParams).toUri(),
+                HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<QuestionPagination>() {
+                });
+
+        QuestionPagination questionPagination = response.getBody();
+        List<Question> questions = questionPagination.getQa();
+        Assert.assertEquals("title 5", questions.get(0).getTitle());
+        Assert.assertEquals("title 2", questions.get(1).getTitle());
+        Assert.assertEquals("title 3", questions.get(2).getTitle());
+        Assert.assertEquals("title 1", questions.get(3).getTitle());
+        Assert.assertEquals("title 4", questions.get(4).getTitle());
+
+    }
+
+    @Test
+    @SqlGroup({
+            @Sql("/sql/appUserController/insert_appUser_all_questions.sql"),
+            @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
+    })
+    public void getAllQuestionsOfUser() {
+
+        String url = createURL(port, "/userDetail/getAllQuestionsOfUser/{userId}/{pageNumber}");
+
+        // URI (URL) parameters
+        Map<String, Integer> uriParams = new HashMap<>();
+        uriParams.put("userId", 1);
+        uriParams.put("pageNumber", 0);
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
+
+        System.out.println(">>> Testing URI: " + builder.buildAndExpand(uriParams).toUri());
+
+        HttpEntity<String> entity = new HttpEntity<>(null, CommonTest.getHeaders("GET", frontEndUrl));
+        ResponseEntity<QuestionPagination> response = CommonTest.getRestTemplate().exchange(
+                builder.buildAndExpand(uriParams).toUri(),
+                HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<QuestionPagination>() {
+                });
+
+        QuestionPagination questionPagination = response.getBody();
+        List<Question> questions = questionPagination.getQa();
+        Assert.assertEquals("title 5", questions.get(0).getTitle());
+        Assert.assertEquals("title 2", questions.get(1).getTitle());
+        Assert.assertEquals("title 3", questions.get(2).getTitle());
+//        Assert.assertEquals("title 1", questions.get(3).getTitle());
+//        Assert.assertEquals("title 4", questions.get(4).getTitle());
 
     }
 }

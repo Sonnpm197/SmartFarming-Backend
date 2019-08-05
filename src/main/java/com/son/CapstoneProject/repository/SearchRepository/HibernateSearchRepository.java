@@ -259,9 +259,16 @@ public class HibernateSearchRepository {
                 }
             }
 
+            int numberOfPages = 0;
+            if (totalSize % ARTICLES_PER_PAGE == 0) {
+                numberOfPages = totalSize / ARTICLES_PER_PAGE;
+            } else {
+                numberOfPages = totalSize / ARTICLES_PER_PAGE + 1;
+            }
+
             ArticlePagination articlePagination = new ArticlePagination();
             articlePagination.setArticlesByPageIndex(articlesByPageIndex);
-            articlePagination.setNumberOfPages(finalArticles.size());
+            articlePagination.setNumberOfPages(numberOfPages);
             return articlePagination;
 
         } else if (QUESTION.equalsIgnoreCase(className)) {
@@ -301,9 +308,16 @@ public class HibernateSearchRepository {
                 }
             }
 
+            int numberOfPages = 0;
+            if (totalSize % QUESTIONS_PER_PAGE == 0) {
+                numberOfPages = totalSize / QUESTIONS_PER_PAGE;
+            } else {
+                numberOfPages = totalSize / QUESTIONS_PER_PAGE + 1;
+            }
+
             QuestionPagination questionPagination = new QuestionPagination();
             questionPagination.setQa(questionsByPageIndex);
-            questionPagination.setNumberOfPages(finalQuestions.size());
+            questionPagination.setNumberOfPages(numberOfPages);
 
             return questionPagination;
         } else if (TAG.equalsIgnoreCase(className)) {
@@ -339,9 +353,16 @@ public class HibernateSearchRepository {
                 }
             }
 
+            int numberOfPages = 0;
+            if (totalSize % TAGS_PER_PAGE == 0) {
+                numberOfPages = totalSize / TAGS_PER_PAGE;
+            } else {
+                numberOfPages = totalSize / TAGS_PER_PAGE + 1;
+            }
+
             TagPagination tagPagination = new TagPagination();
             tagPagination.setTagsByPageIndex(tagsByPageIndex);
-            tagPagination.setNumberOfPages(finalTags.size());
+            tagPagination.setNumberOfPages(numberOfPages);
 
             return tagPagination;
         }

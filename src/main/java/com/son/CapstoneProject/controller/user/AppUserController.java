@@ -2,13 +2,21 @@ package com.son.CapstoneProject.controller.user;
 
 import com.son.CapstoneProject.common.ConstantValue;
 import com.son.CapstoneProject.common.StringUtils;
+import com.son.CapstoneProject.entity.AppUserTag;
+import com.son.CapstoneProject.entity.Question;
+import com.son.CapstoneProject.entity.Tag;
 import com.son.CapstoneProject.entity.login.AppUser;
 import com.son.CapstoneProject.entity.login.SocialUser;
 import com.son.CapstoneProject.entity.pagination.AppUserPagination;
+import com.son.CapstoneProject.entity.pagination.QuestionPagination;
+import com.son.CapstoneProject.entity.pagination.TagPagination;
+import com.son.CapstoneProject.repository.AppUserTagRepository;
+import com.son.CapstoneProject.repository.QuestionRepository;
 import com.son.CapstoneProject.repository.loginRepository.AppUserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -16,8 +24,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import static com.son.CapstoneProject.common.ConstantValue.QUESTIONS_PER_PAGE;
+import static com.son.CapstoneProject.common.ConstantValue.TAGS_PER_PAGE;
 import static com.son.CapstoneProject.common.ConstantValue.USERS_PER_PAGE;
 
 @RestController
@@ -29,6 +40,12 @@ public class AppUserController {
 
     @Autowired
     private AppUserRepository appUserRepository;
+
+    @Autowired
+    private AppUserTagRepository appUserTagRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
 
     @GetMapping("/viewNumberOfPages")
     public long viewNumberOfPages() {
@@ -133,6 +150,94 @@ public class AppUserController {
             appUser.setSocialUser(oldSocialUserInformation);
             appUser.setCvUrl(updatedAppUser.getCvUrl());
             return appUserRepository.save(appUser);
+        } catch (Exception e) {
+            logger.error("An error has occurred", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        }
+    }
+
+    @GetMapping("/getTop5TagsOfUser/{userId}")
+    public TagPagination getTop5TagsOfUser(@PathVariable Long userId) {
+        try {
+            List<AppUserTag> appUserTags = appUserTagRepository.findTop5ByAppUser_UserIdOrderByViewCountDesc(userId);
+            List<Tag> tags = new ArrayList<>();
+            for (AppUserTag appUserTag: appUserTags) {
+                tags.add(appUserTag.getTag());
+            }
+
+            TagPagination tagPagination = new TagPagination();
+            tagPagination.setTagsByPageIndex(tags);
+            tagPagination.setNumberOfPages(1);
+            return tagPagination;
+        } catch (Exception e) {
+            logger.error("An error has occurred", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        }
+    }
+
+    @GetMapping("/getAllTagsOfUser/{userId}/{pageNumber}")
+    public TagPagination getAllTagOfUser(@PathVariable Long userId, @PathVariable int pageNumber) {
+        try {
+            PageRequest pageNumWithElements = PageRequest.of(pageNumber, TAGS_PER_PAGE, Sort.by("viewCount").descending());
+            Page<AppUserTag> appUserTags = appUserTagRepository.findByAppUser_UserId(userId, pageNumWithElements);
+
+            List<Tag> tags = new ArrayList<>();
+            for (AppUserTag appUserTag: appUserTags.getContent()) {
+                tags.add(appUserTag.getTag());
+            }
+
+            int numberOfPages = 0;
+            int resultTagsSize = tags.size();
+
+            if (resultTagsSize % TAGS_PER_PAGE == 0) {
+                numberOfPages = resultTagsSize / TAGS_PER_PAGE;
+            } else {
+                numberOfPages = resultTagsSize / TAGS_PER_PAGE + 1;
+            }
+
+            TagPagination tagPagination = new TagPagination();
+            tagPagination.setTagsByPageIndex(tags);
+            tagPagination.setNumberOfPages(numberOfPages);
+            return tagPagination;
+        } catch (Exception e) {
+            logger.error("An error has occurred", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        }
+    }
+
+    @GetMapping("/getTop5QuestionsOfUser/{userId}")
+    public QuestionPagination getTop5QuestionsOfUser(@PathVariable Long userId) {
+        try {
+            List<Question> questions = questionRepository.findTop5ByAppUser_UserIdOrderByViewCountDesc(userId);
+            QuestionPagination questionPagination = new QuestionPagination();
+            questionPagination.setQa(questions);
+            questionPagination.setNumberOfPages(1);
+            return questionPagination;
+        } catch (Exception e) {
+            logger.error("An error has occurred", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        }
+    }
+
+    @GetMapping("/getAllQuestionsOfUser/{userId}/{pageNumber}")
+    public QuestionPagination getAllQuestionsOfUser(@PathVariable Long userId, @PathVariable int pageNumber) {
+        try {
+            PageRequest pageNumWithElements = PageRequest.of(pageNumber, QUESTIONS_PER_PAGE, Sort.by("viewCount").descending());
+            Page<Question> questionPage = questionRepository.findByAppUser_UserId(userId, pageNumWithElements);
+
+            int numberOfPages = 0;
+            int resultTagsSize = questionPage.getContent().size();
+
+            if (resultTagsSize % QUESTIONS_PER_PAGE == 0) {
+                numberOfPages = resultTagsSize / QUESTIONS_PER_PAGE;
+            } else {
+                numberOfPages = resultTagsSize / QUESTIONS_PER_PAGE + 1;
+            }
+
+            QuestionPagination questionPagination = new QuestionPagination();
+            questionPagination.setQa(questionPage.getContent());
+            questionPagination.setNumberOfPages(numberOfPages);
+            return questionPagination;
         } catch (Exception e) {
             logger.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);

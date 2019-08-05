@@ -20,6 +20,4 @@ public interface AppUserRepository extends PagingAndSortingRepository<AppUser, L
 
     List<AppUser> findTop3ByRoleOrderByReputationDesc(String role);
 
-//    AppUser findByUserName(String userName);
-
 }
