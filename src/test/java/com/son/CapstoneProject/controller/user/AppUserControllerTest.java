@@ -153,11 +153,12 @@ public class AppUserControllerTest {
     })
     public void getTop5TagsOfUser() {
 
-        String url = createURL(port, "/userDetail/getTop5TagsOfUser/{userId}");
+        String url = createURL(port, "/userDetail/getTop5TagsOfUser/{type}/{userId}");
 
         // URI (URL) parameters
-        Map<String, Integer> uriParams = new HashMap<>();
-        uriParams.put("userId", 1);
+        Map<String, String> uriParams = new HashMap<>();
+        uriParams.put("userId", "1");
+        uriParams.put("type", "viewCount");
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
 
@@ -223,11 +224,12 @@ public class AppUserControllerTest {
     })
     public void getTop5QuestionsOfUser() {
 
-        String url = createURL(port, "/userDetail/getTop5QuestionsOfUser/{userId}");
+        String url = createURL(port, "/userDetail/getTop5QuestionsOfUser/{type}/{userId}");
 
         // URI (URL) parameters
-        Map<String, Integer> uriParams = new HashMap<>();
-        uriParams.put("userId", 1);
+        Map<String, String> uriParams = new HashMap<>();
+        uriParams.put("userId", "1");
+        uriParams.put("type", "viewCount");
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
 
@@ -285,5 +287,34 @@ public class AppUserControllerTest {
 //        Assert.assertEquals("title 1", questions.get(3).getTitle());
 //        Assert.assertEquals("title 4", questions.get(4).getTitle());
 
+    }
+
+    @Test
+    @SqlGroup({
+            @Sql("/sql/appUserController/insert_appUser_total_tags_count.sql"),
+            @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
+    })
+    public void getTotalTagsOfUser() {
+
+        String url = createURL(port, "/userDetail/getTotalTagsOfUser/{userId}");
+
+        // URI (URL) parameters
+        Map<String, Integer> uriParams = new HashMap<>();
+        uriParams.put("userId", 1);
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
+
+        System.out.println(">>> Testing URI: " + builder.buildAndExpand(uriParams).toUri());
+
+        HttpEntity<String> entity = new HttpEntity<>(null, CommonTest.getHeaders("GET", frontEndUrl));
+        ResponseEntity<Integer> response = CommonTest.getRestTemplate().exchange(
+                builder.buildAndExpand(uriParams).toUri(),
+                HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<Integer>() {
+                });
+
+        Integer numberOfTags = response.getBody();
+        Assert.assertEquals(Integer.valueOf(2), numberOfTags);
     }
 }

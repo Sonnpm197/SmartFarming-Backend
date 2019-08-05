@@ -19,4 +19,9 @@ public interface ArticleRepository extends PagingAndSortingRepository<Article, L
 
     @Query("SELECT DISTINCT a.category FROM Article a")
     List<String> findDistinctCategory();
+
+    List<Article> findTop10ByOrderByUtilTimestampDesc();
+
+    List<Article> findTop10ByOrderByUpvoteCountDesc();
+
 }

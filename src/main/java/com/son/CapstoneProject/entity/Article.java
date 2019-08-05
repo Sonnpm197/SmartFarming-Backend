@@ -71,6 +71,8 @@ public class Article {
     @ElementCollection
     private List<Long> upvotedUserIds;
 
+    private Integer upvoteCount;
+
     private int viewCount;
 
     @Override

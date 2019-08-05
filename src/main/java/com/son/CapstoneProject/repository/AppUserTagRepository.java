@@ -1,10 +1,12 @@
 package com.son.CapstoneProject.repository;
 
 import com.son.CapstoneProject.entity.AppUserTag;
+import com.son.CapstoneProject.entity.login.AppUser;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -18,5 +20,10 @@ public interface AppUserTagRepository extends PagingAndSortingRepository<AppUser
 
     List<AppUserTag> findTop5ByAppUser_UserIdOrderByViewCountDesc(Long userId);
 
+    List<AppUserTag> findTop5ByAppUser_UserIdOrderByReputationDesc(Long userId);
+
     Page<AppUserTag> findByAppUser_UserId(Long userId, Pageable pageable);
+
+    @Query("select count(a.appUserTagId) from AppUserTag a where a.appUser = :appUser")
+    Integer getTotalTagCount(@Param("appUser") AppUser appUser);
 }

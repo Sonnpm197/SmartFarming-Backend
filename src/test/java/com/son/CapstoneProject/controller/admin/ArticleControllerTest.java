@@ -326,4 +326,40 @@ public class ArticleControllerTest {
         // Assert updated file
         Assert.assertEquals(0, uploadedFileRepository.findByArticle_ArticleId(1L).size());
     }
+
+    @Test
+    @SqlGroup({
+            @Sql("/sql/articleController/insert_article_top_10_by_upvote_count.sql"),
+            @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
+    })
+    public void getTop10ArticlesByUpvoteCount() {
+        HttpEntity<String> entity = new HttpEntity<>(null, CommonTest.getHeaders("GET", frontEndUrl));
+        ResponseEntity<ArticlePagination> response = CommonTest.getRestTemplate().exchange(
+                createURL("/article/getTop10ArticlesByUpvoteCount"),
+                HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<ArticlePagination>() {
+                });
+        String expected = "10";
+        System.out.println(">> Result: " + response.getBody());
+        Assert.assertEquals(expected, response.getBody().getArticlesByPageIndex().size());
+    }
+
+    @Test
+    @SqlGroup({
+            @Sql("/sql/articleController/insert_article_top_10_by_upload_date.sql"),
+            @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
+    })
+    public void getTop10ArticlesByUploadDate() {
+        HttpEntity<String> entity = new HttpEntity<>(null, CommonTest.getHeaders("GET", frontEndUrl));
+        ResponseEntity<ArticlePagination> response = CommonTest.getRestTemplate().exchange(
+                createURL("/article/getTop10ArticlesByUploadDate"),
+                HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<ArticlePagination>() {
+                });
+        String expected = "10";
+        System.out.println(">> Result: " + response.getBody());
+        Assert.assertEquals(expected, response.getBody().getArticlesByPageIndex().size());
+    }
 }

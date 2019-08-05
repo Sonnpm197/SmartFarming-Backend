@@ -189,11 +189,13 @@ public class UpvoteController {
             if (ARTICLE.equalsIgnoreCase(type) && article != null) {
 
                 article.setUpvotedUserIds(appUserList);
+                article.setUpvoteCount(appUserList.size());
                 articleRepository.save(article);
 
             } else if (QUESTION.equalsIgnoreCase(type) && question != null) {
 
                 question.setUpvotedUserIds(appUserList);
+                question.setUpvoteCount(appUserList.size());
                 questionRepository.save(question);
 
             } else if (ANSWER.equalsIgnoreCase(type) && answer != null) {

@@ -156,12 +156,20 @@ public class AppUserController {
         }
     }
 
-    @GetMapping("/getTop5TagsOfUser/{userId}")
-    public TagPagination getTop5TagsOfUser(@PathVariable Long userId) {
+    @GetMapping("/getTop5TagsOfUser/{type}/{userId}")
+    public TagPagination getTop5TagsOfUser(@PathVariable String type, @PathVariable Long userId) {
         try {
-            List<AppUserTag> appUserTags = appUserTagRepository.findTop5ByAppUser_UserIdOrderByViewCountDesc(userId);
+            List<AppUserTag> appUserTags;
+            if ("viewCount".equalsIgnoreCase(type)) {
+                appUserTags = appUserTagRepository.findTop5ByAppUser_UserIdOrderByViewCountDesc(userId);
+            } else if ("upvoteCount".equalsIgnoreCase(type)) {
+                appUserTags = appUserTagRepository.findTop5ByAppUser_UserIdOrderByReputationDesc(userId);
+            } else {
+                throw new Exception("Unknown type to getTop5TagsOfUser: " + type);
+            }
+
             List<Tag> tags = new ArrayList<>();
-            for (AppUserTag appUserTag: appUserTags) {
+            for (AppUserTag appUserTag : appUserTags) {
                 tags.add(appUserTag.getTag());
             }
 
@@ -182,7 +190,7 @@ public class AppUserController {
             Page<AppUserTag> appUserTags = appUserTagRepository.findByAppUser_UserId(userId, pageNumWithElements);
 
             List<Tag> tags = new ArrayList<>();
-            for (AppUserTag appUserTag: appUserTags.getContent()) {
+            for (AppUserTag appUserTag : appUserTags.getContent()) {
                 tags.add(appUserTag.getTag());
             }
 
@@ -205,10 +213,17 @@ public class AppUserController {
         }
     }
 
-    @GetMapping("/getTop5QuestionsOfUser/{userId}")
-    public QuestionPagination getTop5QuestionsOfUser(@PathVariable Long userId) {
+    @GetMapping("/getTop5QuestionsOfUser/{type}/{userId}")
+    public QuestionPagination getTop5QuestionsOfUser(@PathVariable String type, @PathVariable Long userId) {
         try {
-            List<Question> questions = questionRepository.findTop5ByAppUser_UserIdOrderByViewCountDesc(userId);
+            List<Question> questions;
+            if ("viewCount".equalsIgnoreCase(type)) {
+                questions = questionRepository.findTop5ByAppUser_UserIdOrderByViewCountDesc(userId);
+            } else if ("upvoteCount".equalsIgnoreCase(type)) {
+                questions = questionRepository.findTop5ByAppUser_UserIdOrderByUpvoteCountDesc(userId);
+            } else {
+                throw new Exception("Unknown type to find top 5 questions: " + type);
+            }
             QuestionPagination questionPagination = new QuestionPagination();
             questionPagination.setQa(questions);
             questionPagination.setNumberOfPages(1);
@@ -238,6 +253,18 @@ public class AppUserController {
             questionPagination.setQa(questionPage.getContent());
             questionPagination.setNumberOfPages(numberOfPages);
             return questionPagination;
+        } catch (Exception e) {
+            logger.error("An error has occurred", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        }
+    }
+
+    @GetMapping("/getTotalTagsOfUser/{userId}")
+    public int getTotalTagsOfUser(@PathVariable Long userId) {
+        try {
+            AppUser appUser = appUserRepository.findById(userId)
+                    .orElseThrow(() -> new Exception("Cannot find any users with id: " + userId));
+            return appUserTagRepository.getTotalTagCount(appUser);
         } catch (Exception e) {
             logger.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);

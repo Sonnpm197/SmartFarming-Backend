@@ -110,6 +110,8 @@ public class Question implements Serializable {
     @ElementCollection
     private List<Long> upvotedUserIds;
 
+    private Integer upvoteCount;
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "question")
     private List<Report> reports;
 

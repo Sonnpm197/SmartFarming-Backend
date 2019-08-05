@@ -23,6 +23,8 @@ public interface QuestionRepository extends PagingAndSortingRepository<Question,
 
     List<Question> findTop5ByAppUser_UserIdOrderByViewCountDesc(Long userId);
 
+    List<Question> findTop5ByAppUser_UserIdOrderByUpvoteCountDesc(Long userId);
+
     @Query("select sum(q.viewCount) from Question q")
     Integer getTotalViewCount();
 

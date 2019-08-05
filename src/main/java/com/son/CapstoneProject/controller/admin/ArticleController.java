@@ -275,4 +275,30 @@ public class ArticleController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
+
+    @GetMapping("/getTop10ArticlesByUpvoteCount")
+    public ArticlePagination getTop10ArticlesByUpvoteCount() {
+        try {
+            ArticlePagination articlePagination = new ArticlePagination();
+            articlePagination.setArticlesByPageIndex(articleRepository.findTop10ByOrderByUpvoteCountDesc());
+            articlePagination.setNumberOfPages(1);
+            return articlePagination;
+        } catch (Exception e) {
+            logger.error("An error has occurred", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        }
+    }
+
+    @GetMapping("/getTop10ArticlesByUploadDate")
+    public ArticlePagination getTop10ArticlesByUploadDate() {
+        try {
+            ArticlePagination articlePagination = new ArticlePagination();
+            articlePagination.setArticlesByPageIndex(articleRepository.findTop10ByOrderByUtilTimestampDesc());
+            articlePagination.setNumberOfPages(1);
+            return articlePagination;
+        } catch (Exception e) {
+            logger.error("An error has occurred", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        }
+    }
 }

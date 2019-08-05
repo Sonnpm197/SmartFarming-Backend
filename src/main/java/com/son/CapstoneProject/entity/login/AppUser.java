@@ -1,17 +1,11 @@
 package com.son.CapstoneProject.entity.login;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.son.CapstoneProject.entity.Answer;
-import com.son.CapstoneProject.entity.Question;
-import com.son.CapstoneProject.entity.Tag;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "App_User")
@@ -82,5 +76,18 @@ public class AppUser {
                     "\"userId\":" + "\"" + userId + "\"" +
                     ", \"reputation\":" + "\"" + reputation + "\"" +
                 "}";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AppUser appUser = (AppUser) o;
+        return Objects.equals(userId, appUser.userId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(userId);
     }
 }
