@@ -38,6 +38,8 @@ insert into question (question_id, content, title, util_timestamp, view_count, u
 values (4, 'content 4', 'title 4', '2012-03-1T18:10:00', 50, 1);
 insert into question (question_id, content, title, util_timestamp, view_count, user_id)
 values (5, 'content 5', 'title 5', '2012-03-2T18:10:00', 50, 1); -- 2/3
+insert into question (question_id, content, title, util_timestamp, view_count, user_id)
+values (6, 'content 5', 'title 5', '2012-05-2T18:10:00', 50, 2);
 
 -- Answer id = 1 & 2 for question 1
 insert into answer (answer_id, content, is_accepted, util_timestamp, user_id, question_id)

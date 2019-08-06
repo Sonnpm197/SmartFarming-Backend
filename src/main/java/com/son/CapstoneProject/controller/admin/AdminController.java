@@ -9,6 +9,7 @@ import com.son.CapstoneProject.entity.pagination.ReportPagination;
 import com.son.CapstoneProject.entity.pagination.TagPagination;
 import com.son.CapstoneProject.entity.search.TagSearch;
 import com.son.CapstoneProject.repository.*;
+import com.son.CapstoneProject.repository.loginRepository.AppUserRepository;
 import com.son.CapstoneProject.repository.searchRepository.HibernateSearchRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +54,9 @@ public class AdminController {
 
     @Autowired
     private AppUserTagRepository appUserTagRepository;
+
+    @Autowired
+    private AppUserRepository appUserRepository;
 
     @Autowired
     private HibernateSearchRepository hibernateSearchRepository;
@@ -253,6 +257,9 @@ public class AdminController {
     @GetMapping("/userChartInfo/{userId}")
     public List<UserChartInfo> detailUserActivitiesByDays(@PathVariable Long userId) {
         try {
+            AppUser appUser = appUserRepository.findById(userId)
+                    .orElseThrow(() -> new Exception("Cannot find any users with this id: " + userId));
+
             List<Question> questionsByUserId = questionRepository.findByAppUser_UserId(userId);
             List<Answer> answersByUserId = answerRepository.findByAppUser_UserId(userId);
             List<Comment> commentsByUserId = commentRepository.findByAppUser_UserId(userId);
@@ -304,9 +311,9 @@ public class AdminController {
                     Date startDate = simpleDateFormat1.parse(date + " 00:00");
                     Date endDate = simpleDateFormat1.parse(date + " 23:59");
 
-                    List<Question> questions = questionRepository.findAllByUtilTimestampBetween(startDate, endDate);
-                    List<Answer> answers = answerRepository.findAllByUtilTimestampBetween(startDate, endDate);
-                    List<Comment> comments = commentRepository.findAllByUtilTimestampBetween(startDate, endDate);
+                    List<Question> questions = questionRepository.findByAppUserAndUtilTimestampBetween(appUser, startDate, endDate);
+                    List<Answer> answers = answerRepository.findByAppUserAndUtilTimestampBetween(appUser, startDate, endDate);
+                    List<Comment> comments = commentRepository.findByAppUserAndUtilTimestampBetween(appUser, startDate, endDate);
 
                     UserChartInfo userChartInfo = new UserChartInfo();
 
