@@ -25,6 +25,8 @@ public interface QuestionRepository extends PagingAndSortingRepository<Question,
 
     List<Question> findTop5ByAppUser_UserIdOrderByUpvoteCountDesc(Long userId);
 
+    List<Question> findTop5ByAppUser_UserIdOrderByUtilTimestampDesc(Long userId);
+
     List<Question> findTop10ByOrderByUpvoteCountDesc();
 
     List<Question> findTop10ByOrderByUtilTimestampDesc();

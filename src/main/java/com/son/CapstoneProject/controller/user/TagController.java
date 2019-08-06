@@ -15,6 +15,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
+import static com.son.CapstoneProject.common.ConstantValue.SORT_UPVOTE_COUNT;
+import static com.son.CapstoneProject.common.ConstantValue.SORT_VIEW_COUNT;
 import static com.son.CapstoneProject.common.ConstantValue.TAGS_PER_PAGE;
 
 @RestController
@@ -45,9 +47,9 @@ public class TagController {
     public TagPagination viewTop10Tags(@PathVariable String type) {
         try {
             List<Tag> tags;
-            if ("viewCount".equalsIgnoreCase(type)) {
+            if (SORT_VIEW_COUNT.equalsIgnoreCase(type)) {
                 tags = tagRepository.findTop10ByOrderByViewCountDesc();
-            } else if ("upvoteCount".equalsIgnoreCase(type)) {
+            } else if (SORT_UPVOTE_COUNT.equalsIgnoreCase(type)) {
                 tags = tagRepository.findTop10ByOrderByReputationDesc();
             } else {
                 throw new Exception("Unknown type to view top 10 tags: " + type);

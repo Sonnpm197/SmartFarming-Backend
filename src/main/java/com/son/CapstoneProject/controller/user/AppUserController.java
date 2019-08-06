@@ -27,9 +27,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.son.CapstoneProject.common.ConstantValue.QUESTIONS_PER_PAGE;
-import static com.son.CapstoneProject.common.ConstantValue.TAGS_PER_PAGE;
-import static com.son.CapstoneProject.common.ConstantValue.USERS_PER_PAGE;
+import static com.son.CapstoneProject.common.ConstantValue.*;
 
 @RestController
 @RequestMapping("/userDetail")
@@ -160,9 +158,9 @@ public class AppUserController {
     public TagPagination getTop5TagsOfUser(@PathVariable String type, @PathVariable Long userId) {
         try {
             List<AppUserTag> appUserTags;
-            if ("viewCount".equalsIgnoreCase(type)) {
+            if (SORT_VIEW_COUNT.equalsIgnoreCase(type)) {
                 appUserTags = appUserTagRepository.findTop5ByAppUser_UserIdOrderByViewCountDesc(userId);
-            } else if ("upvoteCount".equalsIgnoreCase(type)) {
+            } else if (SORT_UPVOTE_COUNT.equalsIgnoreCase(type)) {
                 appUserTags = appUserTagRepository.findTop5ByAppUser_UserIdOrderByReputationDesc(userId);
             } else {
                 throw new Exception("Unknown type to getTop5TagsOfUser: " + type);
@@ -217,10 +215,12 @@ public class AppUserController {
     public QuestionPagination getTop5QuestionsOfUser(@PathVariable String type, @PathVariable Long userId) {
         try {
             List<Question> questions;
-            if ("viewCount".equalsIgnoreCase(type)) {
+            if (SORT_VIEW_COUNT.equalsIgnoreCase(type)) {
                 questions = questionRepository.findTop5ByAppUser_UserIdOrderByViewCountDesc(userId);
-            } else if ("upvoteCount".equalsIgnoreCase(type)) {
+            } else if (SORT_UPVOTE_COUNT.equalsIgnoreCase(type)) {
                 questions = questionRepository.findTop5ByAppUser_UserIdOrderByUpvoteCountDesc(userId);
+            } else if (SORT_DATE.equalsIgnoreCase(type)) {
+                questions = questionRepository.findTop5ByAppUser_UserIdOrderByUtilTimestampDesc(userId);
             } else {
                 throw new Exception("Unknown type to find top 5 questions: " + type);
             }
@@ -238,10 +238,12 @@ public class AppUserController {
     public QuestionPagination getAllQuestionsOfUser(@PathVariable String type, @PathVariable Long userId, @PathVariable int pageNumber) {
         try {
             PageRequest pageNumWithElements;
-            if ("viewCount".equalsIgnoreCase(type)) {
+            if (SORT_VIEW_COUNT.equalsIgnoreCase(type)) {
                 pageNumWithElements = PageRequest.of(pageNumber, QUESTIONS_PER_PAGE, Sort.by("viewCount").descending());
-            } else if ("date".equalsIgnoreCase(type)) {
+            } else if (SORT_DATE.equalsIgnoreCase(type)) {
                 pageNumWithElements = PageRequest.of(pageNumber, QUESTIONS_PER_PAGE, Sort.by("utilTimestamp").descending());
+            } else if (SORT_UPVOTE_COUNT.equalsIgnoreCase(type)) {
+                pageNumWithElements = PageRequest.of(pageNumber, QUESTIONS_PER_PAGE, Sort.by("upvoteCount").descending());
             } else {
                 throw new Exception("Unknown type to sort questions: " + type);
             }

@@ -29,9 +29,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
-import static com.son.CapstoneProject.common.ConstantValue.EDITED_APPROVE_POINT;
-import static com.son.CapstoneProject.common.ConstantValue.QUESTION;
-import static com.son.CapstoneProject.common.ConstantValue.QUESTIONS_PER_PAGE;
+import static com.son.CapstoneProject.common.ConstantValue.*;
 
 @RestController
 @RequestMapping("/question")
@@ -125,7 +123,7 @@ public class QuestionController {
         try {
             PageRequest pageNumWithElements = PageRequest.of(pageNumber, QUESTIONS_PER_PAGE, Sort.by("utilTimestamp").descending());
 
-            if ("viewCount".equalsIgnoreCase(sortBy)) {
+            if (SORT_VIEW_COUNT.equalsIgnoreCase(sortBy)) {
                 pageNumWithElements = PageRequest.of(pageNumber, QUESTIONS_PER_PAGE, Sort.by("viewCount").descending());
             }
 
@@ -150,7 +148,7 @@ public class QuestionController {
 
             PageRequest pageNumWithElements = PageRequest.of(pageNumber, QUESTIONS_PER_PAGE, Sort.by("utilTimestamp").descending());
 
-            if ("viewCount".equalsIgnoreCase(sortBy)) {
+            if (SORT_VIEW_COUNT.equalsIgnoreCase(sortBy)) {
                 pageNumWithElements = PageRequest.of(pageNumber, QUESTIONS_PER_PAGE, Sort.by("viewCount").descending());
             }
             Page<Question> questionPage = questionRepository.findByTags_tagId(tagId, pageNumWithElements);
@@ -632,11 +630,11 @@ public class QuestionController {
     public QuestionPagination viewTop10Questions(@PathVariable String type) {
         try {
             List<Question> questions;
-            if ("viewCount".equalsIgnoreCase(type)) {
+            if (SORT_VIEW_COUNT.equalsIgnoreCase(type)) {
                 questions = questionRepository.findTop10ByOrderByViewCountDesc();
-            } else if ("upvoteCount".equalsIgnoreCase(type)) {
+            } else if (SORT_UPVOTE_COUNT.equalsIgnoreCase(type)) {
                 questions = questionRepository.findTop10ByOrderByUpvoteCountDesc();
-            } else if ("time".equalsIgnoreCase(type)) {
+            } else if (SORT_DATE.equalsIgnoreCase(type)) {
                 questions = questionRepository.findTop10ByOrderByUtilTimestampDesc();
             } else {
                 throw new Exception("Unknown type to view top 10 questions: " + type);

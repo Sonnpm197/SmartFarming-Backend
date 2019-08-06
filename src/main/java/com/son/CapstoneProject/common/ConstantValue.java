@@ -81,4 +81,9 @@ public class ConstantValue {
     public static final String ANSWER = "answer";
     public static final String TAG = "tag";
     public static final String COMMENT = "comment";
+
+    // Sort by values
+    public static final String SORT_VIEW_COUNT = "viewCount";
+    public static final String SORT_UPVOTE_COUNT = "upvoteCount";
+    public static final String SORT_DATE = "date";
 }
