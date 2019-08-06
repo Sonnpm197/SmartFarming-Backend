@@ -64,13 +64,21 @@ public class TagController {
         }
     }
 
-    @GetMapping("/findAllTags/{pageNumber}")
-    public TagPagination findAllTags(@PathVariable int pageNumber) {
+    @GetMapping("/findAllTags/{type}/{pageNumber}")
+    public TagPagination findAllTags(@PathVariable String type, @PathVariable int pageNumber) {
         try {
             PageRequest pageNumWithElements = PageRequest.of(pageNumber, TAGS_PER_PAGE);
-            Page<Tag> reportPage = tagRepository.findAll(pageNumWithElements);
+            Page<Tag> tagPage;
 
-            List<Tag> tags = reportPage.getContent();
+            if (SORT_VIEW_COUNT.equalsIgnoreCase(type)) {
+                tagPage = tagRepository.findAllByOrderByViewCountDesc(pageNumWithElements);
+            } else if (SORT_UPVOTE_COUNT.equalsIgnoreCase(type)) {
+                tagPage = tagRepository.findAllByOrderByReputationDesc(pageNumWithElements);
+            } else {
+                throw new Exception("Unknown type to findAllTags: " + type);
+            }
+
+            List<Tag> tags = tagPage.getContent();
             int size = tags.size();
             int numberOfPages;
 

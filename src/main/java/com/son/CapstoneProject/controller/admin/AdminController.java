@@ -149,8 +149,10 @@ public class AdminController {
         }
     }
 
-    @PostMapping("/searchTagsByPageIndex/{pageNumber}")
-    public TagPagination searchTagsByPageIndex(@RequestBody TagSearch tagSearch, @PathVariable int pageNumber) {
+    @PostMapping("/searchTagsByPageIndex/{type}/{pageNumber}")
+    public TagPagination searchTagsByPageIndex(@RequestBody TagSearch tagSearch,
+                                               @PathVariable String type,
+                                               @PathVariable int pageNumber) {
         try {
             // Admin search tags first
             TagPagination tagPagination = (TagPagination) hibernateSearchRepository.search2(
@@ -158,6 +160,7 @@ public class AdminController {
                     TAG,
                     new String[]{"name", "description"},
                     null,
+                    type,
                     pageNumber
             );
 

@@ -15,6 +15,10 @@ public interface TagRepository extends PagingAndSortingRepository<Tag, Long> {
 
     Page<Tag> findAll(Pageable pageable);
 
+    Page<Tag> findAllByOrderByViewCountDesc(Pageable pageable);
+
+    Page<Tag> findAllByOrderByReputationDesc(Pageable pageable);
+
     List<Tag> findTop5ByOrderByViewCountDesc();
 
     List<Tag> findTop10ByOrderByViewCountDesc();

@@ -31,8 +31,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
-import static com.son.CapstoneProject.common.ConstantValue.ARTICLE;
-import static com.son.CapstoneProject.common.ConstantValue.ARTICLES_PER_PAGE;
+import static com.son.CapstoneProject.common.ConstantValue.*;
 
 @RestController
 @RequestMapping("/article")
@@ -92,10 +91,21 @@ public class ArticleController {
         }
     }
 
-    @GetMapping("/viewArticles/{pageNumber}")
-    public ArticlePagination viewArticles(@PathVariable int pageNumber) {
+    @GetMapping("/viewArticles/{type}/{pageNumber}")
+    public ArticlePagination viewArticles(@PathVariable String type, @PathVariable int pageNumber) {
         try {
-            PageRequest pageNumWithElements = PageRequest.of(pageNumber, ARTICLES_PER_PAGE, Sort.by("utilTimestamp").descending());
+            PageRequest pageNumWithElements;
+
+            if (SORT_DATE.equalsIgnoreCase(type)) {
+                pageNumWithElements = PageRequest.of(pageNumber, ARTICLES_PER_PAGE, Sort.by("utilTimestamp").descending());
+            } else if (SORT_VIEW_COUNT.equalsIgnoreCase(type)) {
+                pageNumWithElements = PageRequest.of(pageNumber, ARTICLES_PER_PAGE, Sort.by("viewCount").descending());
+            } else if (SORT_UPVOTE_COUNT.equalsIgnoreCase(type)) {
+                pageNumWithElements = PageRequest.of(pageNumber, ARTICLES_PER_PAGE, Sort.by("upvoteCount").descending());
+            } else {
+                throw new Exception("ArticleController.viewArticles unknown type: " + type);
+            }
+
             Page<Article> articlePage = articleRepository.findAll(pageNumWithElements);
             ArticlePagination articlePagination = new ArticlePagination();
             articlePagination.setArticlesByPageIndex(articlePage.getContent());
@@ -136,14 +146,17 @@ public class ArticleController {
         }
     }
 
-    @PostMapping("/searchArticles/{pageNumber}")
-    public ArticlePagination searchArticles(@RequestBody ArticleSearch articleSearch, @PathVariable int pageNumber) {
+    @PostMapping("/searchArticles/{type}/{pageNumber}")
+    public ArticlePagination searchArticles(@RequestBody ArticleSearch articleSearch,
+                                            @PathVariable String type,
+                                            @PathVariable int pageNumber) {
         try {
             return (ArticlePagination) hibernateSearchRepository.search2(
                     articleSearch.getTextSearch(),
                     ARTICLE,
                     new String[]{"title", "content"},
                     articleSearch.getCategory(),
+                    type,
                     pageNumber
             );
         } catch (Exception e) {

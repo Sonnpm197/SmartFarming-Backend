@@ -118,13 +118,19 @@ public class QuestionController {
         }
     }
 
-    @GetMapping("/viewQuestions/{sortBy}/{pageNumber}")
-    public QuestionPagination viewQuestionsByDate(@PathVariable String sortBy, @PathVariable int pageNumber) {
+    @GetMapping("/viewQuestions/{type}/{pageNumber}")
+    public QuestionPagination viewQuestionsByDate(@PathVariable String type, @PathVariable int pageNumber) {
         try {
-            PageRequest pageNumWithElements = PageRequest.of(pageNumber, QUESTIONS_PER_PAGE, Sort.by("utilTimestamp").descending());
+            PageRequest pageNumWithElements;
 
-            if (SORT_VIEW_COUNT.equalsIgnoreCase(sortBy)) {
+            if (SORT_DATE.equalsIgnoreCase(type)) {
+                pageNumWithElements = PageRequest.of(pageNumber, QUESTIONS_PER_PAGE, Sort.by("utilTimestamp").descending());
+            } else if (SORT_VIEW_COUNT.equalsIgnoreCase(type)) {
                 pageNumWithElements = PageRequest.of(pageNumber, QUESTIONS_PER_PAGE, Sort.by("viewCount").descending());
+            } else if (SORT_UPVOTE_COUNT.equalsIgnoreCase(type)) {
+                pageNumWithElements = PageRequest.of(pageNumber, QUESTIONS_PER_PAGE, Sort.by("upvoteCount").descending());
+            } else {
+                throw new Exception("QuestionController.viewQuestionsByDate unknown type: " + type);
             }
 
             Page<Question> questionPage = questionRepository.findAll(pageNumWithElements);
@@ -138,19 +144,26 @@ public class QuestionController {
         }
     }
 
-    @GetMapping("/viewQuestionsByTag/{sortBy}/{tagId}/{pageNumber}")
-    public QuestionPagination viewQuestionsByTag(@PathVariable String sortBy, @PathVariable Long tagId, @PathVariable int pageNumber) {
+    @GetMapping("/viewQuestionsByTag/{type}/{tagId}/{pageNumber}")
+    public QuestionPagination viewQuestionsByTag(@PathVariable String type, @PathVariable Long tagId, @PathVariable int pageNumber) {
         try {
             String methodName = "QuestionController.viewQuestionsByTag: ";
 
             tagRepository.findById(tagId)
                     .orElseThrow(() -> new Exception(methodName + "cannot find any tags by tagid: " + tagId));
 
-            PageRequest pageNumWithElements = PageRequest.of(pageNumber, QUESTIONS_PER_PAGE, Sort.by("utilTimestamp").descending());
+            PageRequest pageNumWithElements;
 
-            if (SORT_VIEW_COUNT.equalsIgnoreCase(sortBy)) {
+            if (SORT_DATE.equalsIgnoreCase(type)) {
+                pageNumWithElements = PageRequest.of(pageNumber, QUESTIONS_PER_PAGE, Sort.by("utilTimestamp").descending());
+            } else if (SORT_VIEW_COUNT.equalsIgnoreCase(type)) {
                 pageNumWithElements = PageRequest.of(pageNumber, QUESTIONS_PER_PAGE, Sort.by("viewCount").descending());
+            } else if (SORT_UPVOTE_COUNT.equalsIgnoreCase(type)) {
+                pageNumWithElements = PageRequest.of(pageNumber, QUESTIONS_PER_PAGE, Sort.by("upvoteCount").descending());
+            } else {
+                throw new Exception(methodName + " unknown type: " + type);
             }
+
             Page<Question> questionPage = questionRepository.findByTags_tagId(tagId, pageNumWithElements);
 
             // Return pagination objects
@@ -187,13 +200,16 @@ public class QuestionController {
         }
     }
 
-    @PostMapping("/searchQuestions/{pageNumber}")
-    public QuestionPagination searchQuestions(@RequestBody QuestionSearch questionSearch, @PathVariable int pageNumber) {
+    @PostMapping("/searchQuestions/{type}/{pageNumber}")
+    public QuestionPagination searchQuestions(@RequestBody QuestionSearch questionSearch,
+                                              @PathVariable String type,
+                                              @PathVariable int pageNumber) {
         try {
             return (QuestionPagination) hibernateSearchRepository.search2(questionSearch.getTextSearch(),
                     QUESTION,
                     new String[]{"title", "content"},
                     null,
+                    type,
                     pageNumber);
         } catch (Exception e) {
             logger.error("An error has occurred", e);
