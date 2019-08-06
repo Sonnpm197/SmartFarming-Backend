@@ -234,10 +234,17 @@ public class AppUserController {
         }
     }
 
-    @GetMapping("/getAllQuestionsOfUser/{userId}/{pageNumber}")
-    public QuestionPagination getAllQuestionsOfUser(@PathVariable Long userId, @PathVariable int pageNumber) {
+    @GetMapping("/getAllQuestionsOfUser/{type}/{userId}/{pageNumber}")
+    public QuestionPagination getAllQuestionsOfUser(@PathVariable String type, @PathVariable Long userId, @PathVariable int pageNumber) {
         try {
-            PageRequest pageNumWithElements = PageRequest.of(pageNumber, QUESTIONS_PER_PAGE, Sort.by("viewCount").descending());
+            PageRequest pageNumWithElements;
+            if ("viewCount".equalsIgnoreCase(type)) {
+                pageNumWithElements = PageRequest.of(pageNumber, QUESTIONS_PER_PAGE, Sort.by("viewCount").descending());
+            } else if ("date".equalsIgnoreCase(type)) {
+                pageNumWithElements = PageRequest.of(pageNumber, QUESTIONS_PER_PAGE, Sort.by("utilTimestamp").descending());
+            } else {
+                throw new Exception("Unknown type to sort questions: " + type);
+            }
             Page<Question> questionPage = questionRepository.findByAppUser_UserId(userId, pageNumWithElements);
 
             int numberOfPages = 0;
