@@ -107,6 +107,21 @@ public class ArticleController {
         }
     }
 
+    @PostMapping("/viewArticlesByCategory/{pageNumber}")
+    public ArticlePagination viewArticlesByCategory(@RequestBody ArticleSearch articleSearch, @PathVariable int pageNumber) {
+        try {
+            PageRequest pageNumWithElements = PageRequest.of(pageNumber, ARTICLES_PER_PAGE, Sort.by("utilTimestamp").descending());
+            Page<Article> articlePage = articleRepository.findByCategory(articleSearch.getCategory(), pageNumWithElements);
+            ArticlePagination articlePagination = new ArticlePagination();
+            articlePagination.setArticlesByPageIndex(articlePage.getContent());
+            articlePagination.setNumberOfPages(Integer.parseInt("" + viewNumberOfPages()));
+            return articlePagination;
+        } catch (Exception e) {
+            logger.error("An error has occurred", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        }
+    }
+
     @GetMapping("/viewArticle/{id}")
     public Article viewArticle(@PathVariable Long id, HttpServletRequest request) {
         try {

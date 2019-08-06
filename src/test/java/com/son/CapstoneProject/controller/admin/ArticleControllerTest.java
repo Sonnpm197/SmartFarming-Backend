@@ -182,6 +182,38 @@ public class ArticleControllerTest {
             @Sql("/sql/articleController/insert_article.sql"),
             @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
     })
+    public void viewArticlesByCategory() {
+        String url = createURL("/article/viewArticlesByCategory/0");
+
+        String requestBody = CommonTest.readStringFromFile("src\\test\\resources\\json\\articleController\\searchArticle.json");
+
+        // URI (URL) parameters
+        Map<String, String> uriParams = new HashMap<>();
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
+
+        System.out.println(">>> Testing URI: " + builder.buildAndExpand(uriParams).toUri());
+
+        HttpEntity<String> entity = new HttpEntity<>(requestBody, CommonTest.getHeaders("POST", frontEndUrl));
+        ResponseEntity<ArticlePagination> response = CommonTest.getRestTemplate().exchange(
+                builder.buildAndExpand(uriParams).toUri(),
+                HttpMethod.POST,
+                entity,
+                new ParameterizedTypeReference<ArticlePagination>() {
+                });
+
+        System.out.println(">> Result: " + response.getBody());
+        System.out.println();
+    }
+
+    /**
+     * Note*: this method only test with indexed items
+     */
+    @Test
+    @SqlGroup({
+            @Sql("/sql/articleController/insert_article.sql"),
+            @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
+    })
     public void searchArticles() {
         String url = createURL("/article/searchArticles/0");
 

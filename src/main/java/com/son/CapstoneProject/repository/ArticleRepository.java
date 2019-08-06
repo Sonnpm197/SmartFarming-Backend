@@ -24,4 +24,6 @@ public interface ArticleRepository extends PagingAndSortingRepository<Article, L
 
     List<Article> findTop10ByOrderByUpvoteCountDesc();
 
+    Page<Article> findByCategory(String category, Pageable pageable);
+
 }
