@@ -21,6 +21,8 @@ import org.hibernate.search.query.dsl.QueryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -93,7 +95,7 @@ public class HibernateSearchRepository {
      * @return
      */
 
-    public Pagination search2(String searchedText, String className, String[] fields, String articleCategory, int pageIndex) {
+    public Pagination search2(String searchedText, String className, String[] fields, String articleCategory, String sortBy, int pageIndex) throws Exception {
         try {
             GenericClass genericClass = null;
 
@@ -130,7 +132,7 @@ public class HibernateSearchRepository {
                 }
 
                 // At the end of the loop return result
-                return returnFinalListByClassName(className, finalArticles, finalQuestions, finalTags, pageIndex);
+                return returnFinalListByClassName(className, finalArticles, finalQuestions, finalTags, pageIndex, sortBy);
 
             }
             // Else search with 'AND' operator
@@ -157,7 +159,7 @@ public class HibernateSearchRepository {
                 }
 
                 // At the end of the loop return result
-                return returnFinalListByClassName(className, finalArticles, finalQuestions, finalTags, pageIndex);
+                return returnFinalListByClassName(className, finalArticles, finalQuestions, finalTags, pageIndex, sortBy);
             }
         } catch (Exception e) {
             logger.error("An error has occurred", e);
@@ -219,23 +221,60 @@ public class HibernateSearchRepository {
                                                   List<Article> finalArticles,
                                                   List<Question> finalQuestions,
                                                   List<Tag> finalTags,
-                                                  int pageIndex) {
+                                                  int pageIndex,
+                                                  String sortBy) throws Exception {
+
+        String methodName = "HibernateSearchRepository.returnFinalListByClassName";
+
         // At the end of the loop return result
         if (ARTICLE.equalsIgnoreCase(className)) {
-            // Sort article by date
-            Collections.sort(finalArticles, (article1, article2) -> {
-                if (article1.getUtilTimestamp() != null && article2.getUtilTimestamp() != null) {
-                    if (article1.getUtilTimestamp().after(article2.getUtilTimestamp())) {
-                        return 1;
-                    } else if (article1.getUtilTimestamp().before(article2.getUtilTimestamp())) {
-                        return -1;
-                    } else {
-                        return 0;
-                    }
-                }
 
-                return 0;
-            });
+            if (SORT_DATE.equalsIgnoreCase(sortBy)) {
+                // Sort article by date
+                Collections.sort(finalArticles, (article1, article2) -> {
+                    if (article1.getUtilTimestamp() != null && article2.getUtilTimestamp() != null) {
+                        if (article1.getUtilTimestamp().after(article2.getUtilTimestamp())) {
+                            return -1;
+                        } else if (article1.getUtilTimestamp().before(article2.getUtilTimestamp())) {
+                            return 1;
+                        } else {
+                            return 0;
+                        }
+                    }
+
+                    return 0;
+                });
+            } else if (SORT_VIEW_COUNT.equalsIgnoreCase(sortBy)) {
+                Collections.sort(finalArticles, (article1, article2) -> {
+                    if (article1.getViewCount() >= 0 && article2.getViewCount() >= 0) {
+                        if (article1.getViewCount() > article2.getViewCount()) {
+                            return -1;
+                        } else if (article1.getViewCount() < article2.getViewCount()) {
+                            return 1;
+                        } else {
+                            return 0;
+                        }
+                    }
+
+                    return 0;
+                });
+            } else if (SORT_UPVOTE_COUNT.equalsIgnoreCase(sortBy)) {
+                Collections.sort(finalArticles, (article1, article2) -> {
+                    if (article1.getUpvoteCount() >= 0 && article2.getUpvoteCount() >= 0) {
+                        if (article1.getUpvoteCount() > article2.getUpvoteCount()) {
+                            return -1;
+                        } else if (article1.getUpvoteCount() < article2.getUpvoteCount()) {
+                            return 1;
+                        } else {
+                            return 0;
+                        }
+                    }
+
+                    return 0;
+                });
+            } else {
+                throw new Exception(methodName + " unknown type: " + sortBy);
+            }
 
             // Return by page index
             int start = pageIndex * ARTICLES_PER_PAGE;
@@ -272,19 +311,52 @@ public class HibernateSearchRepository {
             return articlePagination;
 
         } else if (QUESTION.equalsIgnoreCase(className)) {
-            Collections.sort(finalQuestions, (question1, question2) -> {
-                if (question1.getUtilTimestamp() != null && question2.getUtilTimestamp() != null) {
-                    if (question1.getUtilTimestamp().after(question2.getUtilTimestamp())) {
-                        return 1;
-                    } else if (question1.getUtilTimestamp().before(question2.getUtilTimestamp())) {
-                        return -1;
-                    } else {
-                        return 0;
-                    }
-                }
 
-                return 0;
-            });
+            if (SORT_DATE.equalsIgnoreCase(sortBy)) {
+                Collections.sort(finalQuestions, (question1, question2) -> {
+                    if (question1.getUtilTimestamp() != null && question2.getUtilTimestamp() != null) {
+                        if (question1.getUtilTimestamp().after(question2.getUtilTimestamp())) {
+                            return -1;
+                        } else if (question1.getUtilTimestamp().before(question2.getUtilTimestamp())) {
+                            return 1;
+                        } else {
+                            return 0;
+                        }
+                    }
+
+                    return 0;
+                });
+            } else if (SORT_VIEW_COUNT.equalsIgnoreCase(sortBy)) {
+                Collections.sort(finalQuestions, (question1, question2) -> {
+                    if (question1.getViewCount() >= 0 && question2.getViewCount() >= 0) {
+                        if (question1.getViewCount() > question2.getViewCount()) {
+                            return -1;
+                        } else if (question1.getViewCount() < question2.getViewCount()) {
+                            return 1;
+                        } else {
+                            return 0;
+                        }
+                    }
+
+                    return 0;
+                });
+            } else if (SORT_UPVOTE_COUNT.equalsIgnoreCase(sortBy)) {
+                Collections.sort(finalQuestions, (question1, question2) -> {
+                    if (question1.getUpvoteCount() >= 0 && question2.getUpvoteCount() >= 0) {
+                        if (question1.getUpvoteCount() > question2.getUpvoteCount()) {
+                            return -1;
+                        } else if (question1.getUpvoteCount() < question2.getUpvoteCount()) {
+                            return 1;
+                        } else {
+                            return 0;
+                        }
+                    }
+
+                    return 0;
+                });
+            } else {
+                throw new Exception(methodName + " unknown type: " + sortBy);
+            }
 
             // Return by page index
             int start = pageIndex * QUESTIONS_PER_PAGE;
@@ -321,15 +393,30 @@ public class HibernateSearchRepository {
 
             return questionPagination;
         } else if (TAG.equalsIgnoreCase(className)) {
-            Collections.sort(finalTags, (tag1, tag2) -> {
-                if (tag1.getReputation() > tag2.getReputation()) {
-                    return 1;
-                } else if (tag1.getReputation() < tag2.getReputation()) {
-                    return -1;
-                } else {
-                    return 0;
-                }
-            });
+
+            if (SORT_VIEW_COUNT.equalsIgnoreCase(sortBy)) {
+                Collections.sort(finalTags, (tag1, tag2) -> {
+                    if (tag1.getViewCount() > tag2.getViewCount()) {
+                        return -1;
+                    } else if (tag1.getViewCount() < tag2.getViewCount()) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
+            } else if (SORT_UPVOTE_COUNT.equalsIgnoreCase(sortBy)) {
+                Collections.sort(finalTags, (tag1, tag2) -> {
+                    if (tag1.getReputation() > tag2.getReputation()) {
+                        return -1;
+                    } else if (tag1.getReputation() < tag2.getReputation()) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
+            } else {
+                throw new Exception("Unknown type to findAllTags: " + sortBy);
+            }
 
             // Return by page index
             int start = pageIndex * TAGS_PER_PAGE;
