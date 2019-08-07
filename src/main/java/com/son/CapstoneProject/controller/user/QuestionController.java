@@ -210,7 +210,28 @@ public class QuestionController {
                     new String[]{"title", "content"},
                     null,
                     type,
-                    pageNumber);
+                    pageNumber,
+                    false
+            );
+        } catch (Exception e) {
+            logger.error("An error has occurred", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        }
+    }
+
+    @PostMapping("/searchQuestionsOnHomePage/{type}/{pageNumber}")
+    public QuestionPagination searchQuestionsOnHomePage(@RequestBody QuestionSearch questionSearch,
+                                              @PathVariable String type,
+                                              @PathVariable int pageNumber) {
+        try {
+            return (QuestionPagination) hibernateSearchRepository.search2(questionSearch.getTextSearch(),
+                    QUESTION,
+                    new String[]{"title", "content"},
+                    null,
+                    type,
+                    pageNumber,
+                    true
+            );
         } catch (Exception e) {
             logger.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
