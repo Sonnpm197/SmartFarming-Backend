@@ -260,12 +260,13 @@ public class AppUserControllerTest {
     })
     public void getAllQuestionsOfUser() {
 
-        String url = createURL(port, "/userDetail/getAllQuestionsOfUser/{userId}/{pageNumber}");
+        String url = createURL(port, "/userDetail/getAllQuestionsOfUser/{type}/{userId}/{pageNumber}");
 
         // URI (URL) parameters
-        Map<String, Integer> uriParams = new HashMap<>();
-        uriParams.put("userId", 1);
-        uriParams.put("pageNumber", 0);
+        Map<String, String> uriParams = new HashMap<>();
+        uriParams.put("userId", "1");
+        uriParams.put("pageNumber", "0");
+        uriParams.put("type", "date");
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
 
@@ -282,7 +283,7 @@ public class AppUserControllerTest {
         QuestionPagination questionPagination = response.getBody();
         List<Question> questions = questionPagination.getQa();
         Assert.assertEquals("title 5", questions.get(0).getTitle());
-        Assert.assertEquals("title 2", questions.get(1).getTitle());
+        Assert.assertEquals("title 4", questions.get(1).getTitle());
         Assert.assertEquals("title 3", questions.get(2).getTitle());
 //        Assert.assertEquals("title 1", questions.get(3).getTitle());
 //        Assert.assertEquals("title 4", questions.get(4).getTitle());

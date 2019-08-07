@@ -119,7 +119,7 @@ public class QuestionController {
     }
 
     @GetMapping("/viewQuestions/{type}/{pageNumber}")
-    public QuestionPagination viewQuestionsByDate(@PathVariable String type, @PathVariable int pageNumber) {
+    public QuestionPagination viewQuestions(@PathVariable String type, @PathVariable int pageNumber) {
         try {
             PageRequest pageNumWithElements;
 

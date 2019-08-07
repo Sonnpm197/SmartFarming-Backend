@@ -105,11 +105,12 @@ public class ArticleControllerTest {
             @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
     })
     public void viewArticlesByPageIndex() {
-        String url = createURL("/article/viewArticles/{pageNumber}");
+        String url = createURL("/article/viewArticles/{type}/{pageNumber}");
 
         // URI (URL) parameters
-        Map<String, Integer> uriParams = new HashMap<>();
-        uriParams.put("pageNumber", 0);
+        Map<String, String> uriParams = new HashMap<>();
+        uriParams.put("pageNumber", "0");
+        uriParams.put("type", "date");
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
 
@@ -215,12 +216,13 @@ public class ArticleControllerTest {
             @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
     })
     public void searchArticles() {
-        String url = createURL("/article/searchArticles/0");
+        String url = createURL("/article/searchArticles/{type}/0");
 
         String requestBody = CommonTest.readStringFromFile("src\\test\\resources\\json\\articleController\\searchArticle.json");
 
         // URI (URL) parameters
         Map<String, String> uriParams = new HashMap<>();
+        uriParams.put("type", "date");
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
 
@@ -372,9 +374,9 @@ public class ArticleControllerTest {
                 entity,
                 new ParameterizedTypeReference<ArticlePagination>() {
                 });
-        String expected = "10";
+        int expected = 10;
         System.out.println(">> Result: " + response.getBody());
-        Assert.assertEquals(expected, response.getBody().getArticlesByPageIndex().size());
+        Assert.assertTrue(expected == response.getBody().getArticlesByPageIndex().size());
     }
 
     @Test
@@ -390,8 +392,8 @@ public class ArticleControllerTest {
                 entity,
                 new ParameterizedTypeReference<ArticlePagination>() {
                 });
-        String expected = "10";
+        int expected = 10;
         System.out.println(">> Result: " + response.getBody());
-        Assert.assertEquals(expected, response.getBody().getArticlesByPageIndex().size());
+        Assert.assertTrue(expected == response.getBody().getArticlesByPageIndex().size());
     }
 }

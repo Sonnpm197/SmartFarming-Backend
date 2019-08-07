@@ -4,6 +4,7 @@ import com.son.CapstoneProject.Application;
 import com.son.CapstoneProject.controller.CommonTest;
 import com.son.CapstoneProject.entity.Answer;
 import com.son.CapstoneProject.entity.AppUserTag;
+import com.son.CapstoneProject.entity.Report;
 import com.son.CapstoneProject.entity.UserChartInfo;
 import com.son.CapstoneProject.entity.pagination.ReportPagination;
 import com.son.CapstoneProject.entity.pagination.TagPagination;
@@ -95,6 +96,34 @@ public class AdminControllerTest {
         Assert.assertEquals(1, reportPagination.getNumberOfPages()); // 2 reports = 1 page
     }
 
+    @Test
+    @SqlGroup({
+            @Sql("/sql/adminController/insert.sql"),
+            @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
+    })
+    public void viewOneReport() {
+        String url = createURL(port, "/admin/viewOneReport/1");
+
+        // URI (URL) parameters
+        Map<String, Integer> uriParams = new HashMap<>();
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
+
+        System.out.println(">>> Testing URI: " + builder.buildAndExpand(uriParams).toUri());
+
+        HttpEntity<String> entity = new HttpEntity<>(null, CommonTest.getHeaders("GET", frontEndUrl));
+        ResponseEntity<Report> response = CommonTest.getRestTemplate().exchange(
+                builder.buildAndExpand(uriParams).toUri(),
+                HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<Report>() {
+                });
+
+        Report report = response.getBody();
+        System.out.println(">> Result: " + report);
+        System.out.println();
+    }
+
     /**
      * Only search indexed tags
      */
@@ -104,13 +133,14 @@ public class AdminControllerTest {
             @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
     })
     public void searchTagsByPageIndex() {
-        String url = createURL(port, "/admin/searchTagsByPageIndex/{pageNumber}");
+        String url = createURL(port, "/admin/searchTagsByPageIndex/{type}/{pageNumber}");
 
         String requestBody = CommonTest.readStringFromFile("src\\test\\resources\\json\\adminController\\searchTag.json");
 
         // URI (URL) parameters
-        Map<String, Integer> uriParams = new HashMap<>();
-        uriParams.put("pageNumber", 0);
+        Map<String, String> uriParams = new HashMap<>();
+        uriParams.put("pageNumber", "0");
+        uriParams.put("type", "viewCount");
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
 
@@ -124,8 +154,8 @@ public class AdminControllerTest {
                 new ParameterizedTypeReference<TagPagination>() {
                 });
 
-        TagPagination reportPagination = response.getBody();
-        System.out.println(">> Result: " + reportPagination);
+        TagPagination tagPagination = response.getBody();
+        System.out.println(">> Result: " + tagPagination);
 //        Assert.assertEquals(1, reportPagination.getNumberOfPages()); // 2 reports = 1 page
 //        Assert.assertEquals("tagDescription 1");
     }
@@ -154,8 +184,8 @@ public class AdminControllerTest {
                 new ParameterizedTypeReference<List<AppUserTag>>() {
                 });
 
-        List<AppUserTag> reportPagination = response.getBody();
-        System.out.println(">> Result: " + reportPagination);
+        List<AppUserTag> appUserTags = response.getBody();
+        System.out.println(">> Result: " + appUserTags);
     }
 
     @Test

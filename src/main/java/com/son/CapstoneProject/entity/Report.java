@@ -34,7 +34,7 @@ public class Report {
     @Column(columnDefinition = "ntext")
     private String message;
 
-    @JsonBackReference
+//    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "questionId", foreignKey = @ForeignKey(name = "FK_REPORT_QUESTION"))
     private Question question;

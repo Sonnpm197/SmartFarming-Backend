@@ -112,6 +112,7 @@ public class Question implements Serializable {
 
     private Integer upvoteCount;
 
+    @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "question")
     private List<Report> reports;
 
