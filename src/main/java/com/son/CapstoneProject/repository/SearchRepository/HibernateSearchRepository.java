@@ -95,7 +95,8 @@ public class HibernateSearchRepository {
      * @return
      */
 
-    public Pagination search2(String searchedText, String className, String[] fields, String articleCategory, String sortBy, int pageIndex) throws Exception {
+    public Pagination search2(String searchedText, String className, String[] fields,
+                              String articleCategory, String sortBy, int pageIndex, boolean isHomepageSearch) throws Exception {
         try {
             GenericClass genericClass = null;
 
@@ -132,7 +133,7 @@ public class HibernateSearchRepository {
                 }
 
                 // At the end of the loop return result
-                return returnFinalListByClassName(className, finalArticles, finalQuestions, finalTags, pageIndex, sortBy);
+                return returnFinalListByClassName(className, finalArticles, finalQuestions, finalTags, pageIndex, sortBy, isHomepageSearch);
 
             }
             // Else search with 'AND' operator
@@ -159,7 +160,7 @@ public class HibernateSearchRepository {
                 }
 
                 // At the end of the loop return result
-                return returnFinalListByClassName(className, finalArticles, finalQuestions, finalTags, pageIndex, sortBy);
+                return returnFinalListByClassName(className, finalArticles, finalQuestions, finalTags, pageIndex, sortBy, isHomepageSearch);
             }
         } catch (Exception e) {
             logger.error("An error has occurred", e);
@@ -222,7 +223,8 @@ public class HibernateSearchRepository {
                                                   List<Question> finalQuestions,
                                                   List<Tag> finalTags,
                                                   int pageIndex,
-                                                  String sortBy) throws Exception {
+                                                  String sortBy,
+                                                  boolean isHomepageSearch) throws Exception {
 
         String methodName = "HibernateSearchRepository.returnFinalListByClassName";
 
@@ -276,9 +278,17 @@ public class HibernateSearchRepository {
                 throw new Exception(methodName + " unknown type: " + sortBy);
             }
 
+            int numberOfContentsPerPage = 0;
+
+            if (isHomepageSearch) {
+                numberOfContentsPerPage = HOME_PAGE_SEARCH_ARTICLES_PER_PAGE;
+            } else {
+                numberOfContentsPerPage = ARTICLES_PER_PAGE;
+            }
+
             // Return by page index
-            int start = pageIndex * ARTICLES_PER_PAGE;
-            int end = start + ARTICLES_PER_PAGE;
+            int start = pageIndex * numberOfContentsPerPage;
+            int end = start + numberOfContentsPerPage;
 
             List<Article> articlesByPageIndex = new ArrayList<>();
 
@@ -299,10 +309,10 @@ public class HibernateSearchRepository {
             }
 
             int numberOfPages = 0;
-            if (totalSize % ARTICLES_PER_PAGE == 0) {
-                numberOfPages = totalSize / ARTICLES_PER_PAGE;
+            if (totalSize % numberOfContentsPerPage == 0) {
+                numberOfPages = totalSize / numberOfContentsPerPage;
             } else {
-                numberOfPages = totalSize / ARTICLES_PER_PAGE + 1;
+                numberOfPages = totalSize / numberOfContentsPerPage + 1;
             }
 
             ArticlePagination articlePagination = new ArticlePagination();
@@ -358,9 +368,17 @@ public class HibernateSearchRepository {
                 throw new Exception(methodName + " unknown type: " + sortBy);
             }
 
+            int numberOfContentsPerPage = 0;
+
+            if (isHomepageSearch) {
+                numberOfContentsPerPage = HOME_PAGE_SEARCH_QUESTIONS_PER_PAGE;
+            } else {
+                numberOfContentsPerPage = QUESTIONS_PER_PAGE;
+            }
+
             // Return by page index
-            int start = pageIndex * QUESTIONS_PER_PAGE;
-            int end = start + QUESTIONS_PER_PAGE;
+            int start = pageIndex * numberOfContentsPerPage;
+            int end = start + numberOfContentsPerPage;
 
             List<Question> questionsByPageIndex = new ArrayList<>();
 
@@ -381,10 +399,10 @@ public class HibernateSearchRepository {
             }
 
             int numberOfPages = 0;
-            if (totalSize % QUESTIONS_PER_PAGE == 0) {
-                numberOfPages = totalSize / QUESTIONS_PER_PAGE;
+            if (totalSize % numberOfContentsPerPage == 0) {
+                numberOfPages = totalSize / numberOfContentsPerPage;
             } else {
-                numberOfPages = totalSize / QUESTIONS_PER_PAGE + 1;
+                numberOfPages = totalSize / numberOfContentsPerPage + 1;
             }
 
             QuestionPagination questionPagination = new QuestionPagination();
