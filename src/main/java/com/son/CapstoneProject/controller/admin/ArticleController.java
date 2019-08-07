@@ -157,7 +157,28 @@ public class ArticleController {
                     new String[]{"title", "content"},
                     articleSearch.getCategory(),
                     type,
-                    pageNumber
+                    pageNumber,
+                    false
+            );
+        } catch (Exception e) {
+            logger.error("An error has occurred", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        }
+    }
+
+    @PostMapping("/searchArticlesOnHomePage/{type}/{pageNumber}")
+    public ArticlePagination searchArticlesOnHomePage(@RequestBody ArticleSearch articleSearch,
+                                            @PathVariable String type,
+                                            @PathVariable int pageNumber) {
+        try {
+            return (ArticlePagination) hibernateSearchRepository.search2(
+                    articleSearch.getTextSearch(),
+                    ARTICLE,
+                    new String[]{"title", "content"},
+                    articleSearch.getCategory(),
+                    type,
+                    pageNumber,
+                    true
             );
         } catch (Exception e) {
             logger.error("An error has occurred", e);

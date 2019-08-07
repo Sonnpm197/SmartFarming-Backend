@@ -161,7 +161,8 @@ public class AdminController {
                     new String[]{"name", "description"},
                     null,
                     type,
-                    pageNumber
+                    pageNumber,
+                    false
             );
 
             return tagPagination;

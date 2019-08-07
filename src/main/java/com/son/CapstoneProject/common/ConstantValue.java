@@ -7,10 +7,10 @@ import java.util.List;
 public class ConstantValue {
 
     // GG cloud storage properties
-//    public static final String GOOGLE_CREDENTIALS_URL = "src\\main\\resources\\Test-Project-1-d0294f6a791f.json";
+    public static final String GOOGLE_CREDENTIALS_URL = "src\\main\\resources\\Test-Project-1-d0294f6a791f.json";
 
     // Production
-    public static final String GOOGLE_CREDENTIALS_URL = "C:\\Users\\sonnpmse04810\\Desktop\\Test-Project-1-d0294f6a791f.json";
+//    public static final String GOOGLE_CREDENTIALS_URL = "C:\\Users\\sonnpmse04810\\Desktop\\Test-Project-1-d0294f6a791f.json";
     public static final String GOOGLE_PROJECT_ID = "test-project-1-234610";
     // https://storage.cloud.google.com/[BUCKET_NAME]/[OBJECT_NAME]
     // To view on browsers
@@ -50,6 +50,9 @@ public class ConstantValue {
     public static final int TAGS_PER_PAGE = 5;
     public static final int USERS_PER_PAGE = 5;
     public static final int REPORTS_PER_PAGE = 5;
+
+    public static final int HOME_PAGE_SEARCH_QUESTIONS_PER_PAGE = 5;
+    public static final int HOME_PAGE_SEARCH_ARTICLES_PER_PAGE = 5;
 
     // Vote point
     public static final int ARTICLE_UPVOTE_POINT = 1;
