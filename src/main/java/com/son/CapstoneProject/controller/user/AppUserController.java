@@ -134,15 +134,15 @@ public class AppUserController {
             }
 
             if (!StringUtils.isNullOrEmpty(newSocialUserInformation.getFirstName())) {
-                oldSocialUserInformation.setEmail(newSocialUserInformation.getFirstName());
+                oldSocialUserInformation.setFirstName(newSocialUserInformation.getFirstName());
             }
 
             if (!StringUtils.isNullOrEmpty(newSocialUserInformation.getLastName())) {
-                oldSocialUserInformation.setEmail(newSocialUserInformation.getLastName());
+                oldSocialUserInformation.setLastName(newSocialUserInformation.getLastName());
             }
 
             if (!StringUtils.isNullOrEmpty(newSocialUserInformation.getPhotoUrl())) {
-                oldSocialUserInformation.setEmail(newSocialUserInformation.getPhotoUrl());
+                oldSocialUserInformation.setPhotoUrl(newSocialUserInformation.getPhotoUrl());
             }
 
             appUser.setSocialUser(oldSocialUserInformation);
