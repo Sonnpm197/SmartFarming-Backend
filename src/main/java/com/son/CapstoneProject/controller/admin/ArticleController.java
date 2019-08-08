@@ -117,10 +117,23 @@ public class ArticleController {
         }
     }
 
-    @PostMapping("/viewArticlesByCategory/{pageNumber}")
-    public ArticlePagination viewArticlesByCategory(@RequestBody ArticleSearch articleSearch, @PathVariable int pageNumber) {
+    @PostMapping("/viewArticlesByCategory/{type}/{pageNumber}")
+    public ArticlePagination viewArticlesByCategory(@RequestBody ArticleSearch articleSearch,
+                                                    @PathVariable String type,
+                                                    @PathVariable int pageNumber) {
         try {
-            PageRequest pageNumWithElements = PageRequest.of(pageNumber, ARTICLES_PER_PAGE, Sort.by("utilTimestamp").descending());
+            PageRequest pageNumWithElements;
+
+            if (SORT_DATE.equalsIgnoreCase(type)) {
+                pageNumWithElements = PageRequest.of(pageNumber, ARTICLES_PER_PAGE, Sort.by("utilTimestamp").descending());
+            } else if (SORT_VIEW_COUNT.equalsIgnoreCase(type)) {
+                pageNumWithElements = PageRequest.of(pageNumber, ARTICLES_PER_PAGE, Sort.by("viewCount").descending());
+            } else if (SORT_UPVOTE_COUNT.equalsIgnoreCase(type)) {
+                pageNumWithElements = PageRequest.of(pageNumber, ARTICLES_PER_PAGE, Sort.by("upvoteCount").descending());
+            } else {
+                throw new Exception("ArticleController.viewArticles unknown type: " + type);
+            }
+
             Page<Article> articlePage = articleRepository.findByCategory(articleSearch.getCategory(), pageNumWithElements);
             ArticlePagination articlePagination = new ArticlePagination();
             articlePagination.setArticlesByPageIndex(articlePage.getContent());
@@ -168,8 +181,8 @@ public class ArticleController {
 
     @PostMapping("/searchArticlesOnHomePage/{type}/{pageNumber}")
     public ArticlePagination searchArticlesOnHomePage(@RequestBody ArticleSearch articleSearch,
-                                            @PathVariable String type,
-                                            @PathVariable int pageNumber) {
+                                                      @PathVariable String type,
+                                                      @PathVariable int pageNumber) {
         try {
             return (ArticlePagination) hibernateSearchRepository.search2(
                     articleSearch.getTextSearch(),
