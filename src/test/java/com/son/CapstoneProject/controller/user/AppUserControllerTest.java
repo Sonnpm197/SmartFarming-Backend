@@ -318,4 +318,31 @@ public class AppUserControllerTest {
         Integer numberOfTags = response.getBody();
         Assert.assertEquals(Integer.valueOf(2), numberOfTags);
     }
+
+    @Test
+    @SqlGroup({
+            @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
+    })
+    public void getUserByIpAddress() {
+
+        String url = createURL(port, "/userDetail/getUserByIpAddress");
+
+        // URI (URL) parameters
+        Map<String, Integer> uriParams = new HashMap<>();
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
+
+        System.out.println(">>> Testing URI: " + builder.buildAndExpand(uriParams).toUri());
+
+        HttpEntity<String> entity = new HttpEntity<>(null, CommonTest.getHeaders("GET", frontEndUrl));
+        ResponseEntity<AppUser> response = CommonTest.getRestTemplate().exchange(
+                builder.buildAndExpand(uriParams).toUri(),
+                HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<AppUser>() {
+                });
+
+        AppUser appUser = response.getBody();
+        System.out.println();
+    }
 }

@@ -74,7 +74,7 @@ public class ControllerUtils {
 
         try {
             if (ipAddress == null) {
-                // TODO: logger
+                logger.error("ipAddress is null");
                 return null;
             }
 

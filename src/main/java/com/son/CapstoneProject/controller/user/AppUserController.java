@@ -2,6 +2,8 @@ package com.son.CapstoneProject.controller.user;
 
 import com.son.CapstoneProject.common.ConstantValue;
 import com.son.CapstoneProject.common.StringUtils;
+import com.son.CapstoneProject.configuration.HttpRequestResponseUtils;
+import com.son.CapstoneProject.controller.ControllerUtils;
 import com.son.CapstoneProject.entity.AppUserTag;
 import com.son.CapstoneProject.entity.Question;
 import com.son.CapstoneProject.entity.Tag;
@@ -24,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,6 +47,9 @@ public class AppUserController {
 
     @Autowired
     private QuestionRepository questionRepository;
+
+    @Autowired
+    private ControllerUtils controllerUtils;
 
     @GetMapping("/viewNumberOfPages")
     public long viewNumberOfPages() {
@@ -275,6 +281,17 @@ public class AppUserController {
                     .orElseThrow(() -> new Exception("Cannot find any users with id: " + userId));
             return appUserTagRepository.getTotalTagCount(appUser);
         } catch (Exception e) {
+            logger.error("An error has occurred", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        }
+    }
+
+    @GetMapping("/getUserByIpAddress")
+    public AppUser getUserByIpAddress(HttpServletRequest request) {
+        try {
+            return controllerUtils.saveOrReturnAnonymousUser(HttpRequestResponseUtils.getClientIpAddress(request));
+        } catch (
+                Exception e) {
             logger.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
