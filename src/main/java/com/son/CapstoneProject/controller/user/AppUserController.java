@@ -145,6 +145,10 @@ public class AppUserController {
                 oldSocialUserInformation.setPhotoUrl(newSocialUserInformation.getPhotoUrl());
             }
 
+            if (!StringUtils.isNullOrEmpty(newSocialUserInformation.getName())) {
+                oldSocialUserInformation.setName(newSocialUserInformation.getName());
+            }
+
             appUser.setSocialUser(oldSocialUserInformation);
             appUser.setCvUrl(updatedAppUser.getCvUrl());
             return appUserRepository.save(appUser);
