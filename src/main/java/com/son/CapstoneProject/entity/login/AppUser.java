@@ -1,6 +1,10 @@
 package com.son.CapstoneProject.entity.login;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.son.CapstoneProject.entity.Answer;
+import com.son.CapstoneProject.entity.Article;
+import com.son.CapstoneProject.entity.Question;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -69,6 +73,22 @@ public class AppUser {
 
     // Because we dont use Spring Social login => an user needs only 1 role
     private String role;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private java.util.Date createdTimeByUtilTimeStamp;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private java.util.Date lastActiveByUtilTimeStamp;
+
+    @JsonBackReference(value = "articleSubscriber")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "articleId", foreignKey = @ForeignKey(name = "FK_APPUSER_ARTICLESUB"))
+    private Article articleSubscriber;
+
+    @JsonBackReference(value = "questionSubscriber")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "questionId", foreignKey = @ForeignKey(name = "FK_APPUSER_QUESTIONSUB"))
+    private Question questionSubscriber;
 
     @Override
     public String toString() {

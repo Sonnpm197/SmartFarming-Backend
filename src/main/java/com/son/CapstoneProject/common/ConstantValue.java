@@ -45,11 +45,12 @@ public class ConstantValue {
     ));
 
     // Pagination
-    public static final int QUESTIONS_PER_PAGE = 3;
+    public static final int QUESTIONS_PER_PAGE = 10;
     public static final int ARTICLES_PER_PAGE = 12;
-    public static final int TAGS_PER_PAGE = 5;
-    public static final int USERS_PER_PAGE = 5;
+    public static final int TAGS_PER_PAGE = 10;
+    public static final int USERS_PER_PAGE = 10;
     public static final int REPORTS_PER_PAGE = 5;
+    public static final int NOTIFICATION_PER_PAGE = 10;
 
     public static final int HOME_PAGE_SEARCH_QUESTIONS_PER_PAGE = 5;
     public static final int HOME_PAGE_SEARCH_ARTICLES_PER_PAGE = 5;
@@ -87,6 +88,9 @@ public class ConstantValue {
     public static final String ANSWER = "answer";
     public static final String TAG = "tag";
     public static final String COMMENT = "comment";
+    public static final String SYSTEM_CHART_BY_DATE = "date";
+    public static final String SYSTEM_CHART_BY_MONTH = "month";
+    public static final String SYSTEM_CHART_BY_YEAR = "year";
 
     // Sort by values
     public static final String SORT_VIEW_COUNT = "viewCount";

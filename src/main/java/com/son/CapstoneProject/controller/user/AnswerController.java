@@ -6,10 +6,7 @@ import com.son.CapstoneProject.controller.ControllerUtils;
 import com.son.CapstoneProject.controller.admin.ArticleController;
 import com.son.CapstoneProject.entity.*;
 import com.son.CapstoneProject.entity.login.AppUser;
-import com.son.CapstoneProject.repository.AnswerRepository;
-import com.son.CapstoneProject.repository.AppUserTagRepository;
-import com.son.CapstoneProject.repository.CommentRepository;
-import com.son.CapstoneProject.repository.QuestionRepository;
+import com.son.CapstoneProject.repository.*;
 import com.son.CapstoneProject.repository.loginRepository.AppUserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +48,9 @@ public class AnswerController {
     @Autowired
     private AppUserTagRepository appUserTagRepository;
 
+    @Autowired
+    private NotificationRepository notificationRepository;
+
     @GetMapping("/test")
     public String test() {
         return "You only see this if you are an user";
@@ -71,6 +71,7 @@ public class AnswerController {
         try {
             String methodName = "UserController.addAnswerToQuestion";
 
+            // User who answers the question
             AppUser appUser = answer.getAppUser();
 
             controllerUtils.validateAppUser(appUser, methodName, false);
@@ -83,6 +84,51 @@ public class AnswerController {
             }
 
             answer.setUtilTimestamp(new Date());
+
+            // Send notification to the author
+            Question question = answer.getQuestion();
+            if (question == null || question.getQuestionId() == null) {
+                throw new Exception(methodName + " cannot find question in request body");
+            }
+
+            Question fullDataQuestion = questionRepository.findById(question.getQuestionId())
+                    .orElseThrow(() -> new Exception(methodName + " cannot find question with id: " + question.getQuestionId()));
+
+            AppUser authorOfTheQuestion = fullDataQuestion.getAppUser();
+
+            StringBuilder stringBuilder = new StringBuilder();
+            if (ConstantValue.Role.ANONYMOUS.getValue().equalsIgnoreCase(appUser.getRole())) {
+                stringBuilder.append("AnonymousUser")
+                        .append(appUser.getUserId());
+            } else {
+                if (appUser.getSocialUser() != null) {
+                    stringBuilder.append(appUser.getSocialUser().getName());
+                }
+            }
+
+            stringBuilder.append(" vừa trả lời câu hỏi: ")
+                    .append(fullDataQuestion.getTitle());
+
+            // Tt will send notifications to all other subscribers
+            List<AppUser> subscribers = fullDataQuestion.getSubscribers();
+            for (AppUser subscriber : subscribers) {
+                // Send notification to the author of the question
+                Notification notification = new Notification();
+                notification.setMessage(stringBuilder.toString());
+                notification.setAppUserReceiver(subscriber);
+                notification.setFromAdmin(false);
+                notification.setUtilTimestamp(new Date());
+                notification.setQuestion(fullDataQuestion);
+                notificationRepository.save(notification);
+            }
+
+            // If this user is new then add him as a subscriber
+            // Then add this user as a subscriber
+            if (!fullDataQuestion.getSubscribers().contains(appUser)) {
+                fullDataQuestion.getSubscribers().add(appUser);
+            }
+            answer.setQuestion(questionRepository.save(fullDataQuestion));
+
             return answerRepository.save(answer);
         } catch (Exception e) {
             logger.error("An error has occurred", e);
@@ -144,8 +190,8 @@ public class AnswerController {
     @DeleteMapping("/deleteAnswerToQuestion/{answerId}")
     @Transactional
     public Map<String, String> deleteAnswerToQuestion(/*@RequestBody AppUser appUser,*/
-                                                      @PathVariable Long answerId,
-                                                      HttpServletRequest request) {
+            @PathVariable Long answerId,
+            HttpServletRequest request) {
         try {
             String methodName = "UserController.deleteAnswerToQuestion";
 
@@ -257,8 +303,8 @@ public class AnswerController {
     @PutMapping("/unmarkAcceptedAnswerToQuestion/{questionId}/{answerId}")
     @Transactional
     public ResponseEntity<Answer> unmarkAcceptedAnswerToQuestion(/*@RequestBody AppUser questionAuthor,*/
-                                                                 @PathVariable Long questionId,
-                                                                 @PathVariable Long answerId) {
+            @PathVariable Long questionId,
+            @PathVariable Long answerId) {
         try {
             String methodName = "UserController.unmarkAcceptedAnswerToQuestion";
 

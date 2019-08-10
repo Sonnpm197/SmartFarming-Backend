@@ -275,6 +275,13 @@ public class QuestionController {
 
             // add date
             question.setUtilTimestamp(new Date());
+
+            // Add this user as a subscriber
+            if (!question.getSubscribers().contains(appUser)) {
+                question.getSubscribers().add(appUser);
+            }
+
+            // Then save the question
             question = questionRepository.save(question);
 
             // Note: this uploaded file are already saved on GG Cloud

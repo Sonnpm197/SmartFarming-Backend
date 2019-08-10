@@ -1,5 +1,6 @@
 package com.son.CapstoneProject.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.son.CapstoneProject.entity.login.AppUser;
 import lombok.Getter;
@@ -11,6 +12,7 @@ import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
 import org.hibernate.search.annotations.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -74,6 +76,10 @@ public class Article {
     private Integer upvoteCount;
 
     private int viewCount;
+
+    @JsonIgnore
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "articleSubscriber")
+    private List<AppUser> subscribers = new ArrayList<>();
 
     @Override
     public boolean equals(Object o) {

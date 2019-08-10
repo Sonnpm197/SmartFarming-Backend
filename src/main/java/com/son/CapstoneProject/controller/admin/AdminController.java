@@ -4,6 +4,9 @@ import com.son.CapstoneProject.configuration.HttpRequestResponseUtils;
 import com.son.CapstoneProject.controller.ControllerUtils;
 import com.son.CapstoneProject.controller.FileController;
 import com.son.CapstoneProject.entity.*;
+import com.son.CapstoneProject.entity.adminChart.SystemChartInfo;
+import com.son.CapstoneProject.entity.adminChart.SystemChartParams;
+import com.son.CapstoneProject.entity.adminChart.UserChartInfo;
 import com.son.CapstoneProject.entity.login.AppUser;
 import com.son.CapstoneProject.entity.pagination.ReportPagination;
 import com.son.CapstoneProject.entity.pagination.TagPagination;
@@ -72,6 +75,9 @@ public class AdminController {
 
     @Autowired
     private EditedQuestionRepository editedQuestionRepository;
+
+    @Autowired
+    private NotificationRepository notificationRepository;
 
     @GetMapping("/test")
     public String test() {
@@ -258,54 +264,42 @@ public class AdminController {
         }
     }
 
+    private void selectDistinctDateFromList(List<Date> dateList, List<String> distinctDate) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        for (Date date : dateList) {
+            if (date == null) {
+                continue;
+            }
+
+            String dateByText = simpleDateFormat.format(date);
+            if (!distinctDate.contains(dateByText)) {
+                distinctDate.add(dateByText);
+            }
+        }
+    }
+
     @GetMapping("/userChartInfo/{userId}")
     public List<UserChartInfo> detailUserActivitiesByDays(@PathVariable Long userId) {
         try {
             AppUser appUser = appUserRepository.findById(userId)
                     .orElseThrow(() -> new Exception("Cannot find any users with this id: " + userId));
 
-            List<Question> questionsByUserId = questionRepository.findByAppUser_UserId(userId);
-            List<Answer> answersByUserId = answerRepository.findByAppUser_UserId(userId);
-            List<Comment> commentsByUserId = commentRepository.findByAppUser_UserId(userId);
+//            List<Question> questionsByUserId = questionRepository.findByAppUser_UserId(userId);
+//            List<Answer> answersByUserId = answerRepository.findByAppUser_UserId(userId);
+//            List<Comment> commentsByUserId = commentRepository.findByAppUser_UserId(userId);
+
+            // Optimise performance
+            List<Date> questionDateByAppUser = questionRepository.findUtilTimeStampByAppUser(appUser);
+            List<Date> answerDateByAppUser = answerRepository.findUtilTimeStampByAppUser(appUser);
+            List<Date> commentDateByAppUser = commentRepository.findUtilTimeStampByAppUser(appUser);
 
             // Get distinct list date (from 00:00 - 24.00)
             List<String> distinctDate = new ArrayList<>();
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            for (Question question : questionsByUserId) {
-                Date date = question.getUtilTimestamp();
-                if (date == null) {
-                    continue;
-                }
 
-                String dateByText = simpleDateFormat.format(date);
-                if (!distinctDate.contains(dateByText)) {
-                    distinctDate.add(dateByText);
-                }
-            }
-
-            for (Answer answer : answersByUserId) {
-                Date date = answer.getUtilTimestamp();
-                if (date == null) {
-                    continue;
-                }
-
-                String dateByText = simpleDateFormat.format(date);
-                if (!distinctDate.contains(dateByText)) {
-                    distinctDate.add(dateByText);
-                }
-            }
-
-            for (Comment comment : commentsByUserId) {
-                Date date = comment.getUtilTimestamp();
-                if (date == null) {
-                    continue;
-                }
-
-                String dateByText = simpleDateFormat.format(date);
-                if (!distinctDate.contains(dateByText)) {
-                    distinctDate.add(dateByText);
-                }
-            }
+            // Select distinct dates by format
+            selectDistinctDateFromList(questionDateByAppUser, distinctDate);
+            selectDistinctDateFromList(answerDateByAppUser, distinctDate);
+            selectDistinctDateFromList(commentDateByAppUser, distinctDate);
 
             List<UserChartInfo> userChartInfoByDate = new ArrayList<>();
             SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
@@ -361,6 +355,396 @@ public class AdminController {
             }
 
             return userChartInfoByDate;
+        } catch (Exception e) {
+            logger.error("An error has occurred", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        }
+    }
+
+    @PostMapping("/systemChartInfo/date")
+    public List<SystemChartInfo> systemChartInfoByDate(@RequestBody SystemChartParams systemChartParams) {
+        try {
+            List<SystemChartInfo> listSystemChartInfo = new ArrayList<>();
+
+            SimpleDateFormat sdf_yyyyMMdd = new SimpleDateFormat("yyyy-MM-dd");
+            Date startDate = sdf_yyyyMMdd.parse(systemChartParams.getStartTime());
+
+            for (int i = 0; i <= systemChartParams.getPeriod(); i++) {
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(startDate);
+                calendar.add(Calendar.DATE, i);  // number of days to add
+                Date dateNeedToFind = sdf_yyyyMMdd.parse(sdf_yyyyMMdd.format(calendar.getTime()));  // dt is now the new date
+
+                // Then search data within this date (00:00 -> 23:59)
+                SimpleDateFormat sdf_yyyyMMdd_HHmm = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                Date startTime = sdf_yyyyMMdd_HHmm.parse(sdf_yyyyMMdd.format(dateNeedToFind) + " 00:00");
+                Date endTime = sdf_yyyyMMdd_HHmm.parse(sdf_yyyyMMdd.format(dateNeedToFind) + " 23:59");
+
+                // Then create an object of that date
+                SystemChartInfo systemChartInfo = new SystemChartInfo();
+                systemChartInfo.setChartByDate(sdf_yyyyMMdd.format(dateNeedToFind));
+
+                //================================== Adding total viewCount ======================================//
+
+                // Then adding info in this date
+                Integer questionTotalView = questionRepository.findTotalViewOfQuestionsByUtilTimestampBetween(startTime, endTime);
+                Integer articleTotalView = articleRepository.findTotalViewOfArticlesByUtilTimestampBetween(startTime, endTime);
+
+                int questionTotalViewInteger = 0;
+                int articleTotalViewInteger = 0;
+
+                if (questionTotalView != null) {
+                    questionTotalViewInteger = questionTotalView;
+                }
+
+                if (articleTotalView != null) {
+                    articleTotalViewInteger = articleTotalView;
+                }
+
+                // Then add total view count
+                systemChartInfo.setTotalViewCount(questionTotalViewInteger + articleTotalViewInteger);
+
+                //================================== Adding total upvote ======================================//
+
+                // Then adding info in this date
+                Integer articleTotalUpvote = articleRepository.findTotalUpvoteOfArticlesByUtilTimestampBetween(startTime, endTime);
+                Integer questionTotalUpvote = questionRepository.findTotalUpvoteOfQuestionsByUtilTimestampBetween(startTime, endTime);
+                Integer answerTotalUpvote = answerRepository.findTotalUpvoteOfAnswersByUtilTimestampBetween(startTime, endTime);
+                Integer commentTotalUpvote = commentRepository.findTotalUpvoteOfCommentsByUtilTimestampBetween(startTime, endTime);
+
+                // Then create an object of that date
+                int articleTotalUpvoteInteger = 0;
+                int questionTotalUpvoteInteger = 0;
+                int answerTotalUpvoteInteger = 0;
+                int commentTotalUpvoteInteger = 0;
+
+                if (articleTotalUpvote != null) {
+                    articleTotalUpvoteInteger = articleTotalUpvote;
+                }
+
+                if (questionTotalUpvote != null) {
+                    questionTotalUpvoteInteger = questionTotalUpvote;
+                }
+
+                if (answerTotalUpvote != null) {
+                    answerTotalUpvoteInteger = answerTotalUpvote;
+                }
+
+                if (commentTotalUpvote != null) {
+                    commentTotalUpvoteInteger = commentTotalUpvote;
+                }
+
+                // Then add total upvote count
+                systemChartInfo.setTotalUpvoteCount(articleTotalUpvoteInteger + questionTotalUpvoteInteger + answerTotalUpvoteInteger + commentTotalUpvoteInteger);
+
+                //================================== Adding total new account ======================================//
+                // new accounts = from previous week to startTime
+
+                // Then adding info in this date
+                Calendar calendar2 = Calendar.getInstance();
+                calendar2.setTime(startTime);
+                calendar2.add(Calendar.DATE, -7);
+                Date lastWeekStartPoint = sdf_yyyyMMdd.parse(sdf_yyyyMMdd.format(calendar2.getTime()));
+
+                // =================================================================================From (7 days ago) to (the time we're counting)
+                Integer totalNewAccounts = appUserRepository.findTotalNewAccountsByUtilTimestampBetween(lastWeekStartPoint, startTime);
+
+                int totalNewAccountsInteger = 0;
+
+                if (totalNewAccounts != null) {
+                    totalNewAccountsInteger = totalNewAccounts;
+                }
+
+                // Then add total view count
+                systemChartInfo.setTotalNewAccount(totalNewAccountsInteger);
+
+                //================================== Adding total inactive account (in one month) ======================================//
+                // Then adding info in this date
+                Calendar calendar3 = Calendar.getInstance();
+                calendar3.setTime(startTime);
+                calendar3.add(Calendar.DATE, -30);
+                Date lastMonthStartPoint = sdf_yyyyMMdd.parse(sdf_yyyyMMdd.format(calendar3.getTime()));
+                Integer totalInactiveAccounts = appUserRepository.findTotalInactiveAccountsByUtilTimestampBefore(lastMonthStartPoint);
+
+                int totalInactiveAccountsInteger = 0;
+
+                if (totalInactiveAccounts != null) {
+                    totalInactiveAccountsInteger = totalInactiveAccounts;
+                }
+
+                // Then add total view count
+                systemChartInfo.setTotalInactiveAccount(totalInactiveAccountsInteger);
+
+                listSystemChartInfo.add(systemChartInfo);
+            }
+
+            return listSystemChartInfo;
+        } catch (Exception e) {
+            logger.error("An error has occurred", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        }
+    }
+
+    @PostMapping("/systemChartInfo/month")
+    public List<SystemChartInfo> systemChartInfoByMonth(@RequestBody SystemChartParams systemChartParams) {
+        try {
+            List<SystemChartInfo> listSystemChartInfo = new ArrayList<>();
+
+            SimpleDateFormat sdf_yyyyMM = new SimpleDateFormat("yyyy-MM");
+
+            // Start time does not contain date
+            Date startDate = sdf_yyyyMM.parse(systemChartParams.getStartTime());
+
+            for (int i = 0; i <= systemChartParams.getPeriod(); i++) {
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(startDate);
+                calendar.add(Calendar.MONTH, i);  // number of days to add
+                Date dateNeedToFind = sdf_yyyyMM.parse(sdf_yyyyMM.format(calendar.getTime()));  // dt is now the new date
+
+                SystemChartInfo systemChartInfo = new SystemChartInfo();
+                systemChartInfo.setChartByMonth(sdf_yyyyMM.format(dateNeedToFind));
+
+                Calendar calendarDateNeedToFind = Calendar.getInstance();
+                calendarDateNeedToFind.setTime(dateNeedToFind);
+
+                //================================== Adding total viewCount ======================================//
+
+                // Then adding info in this date
+                Integer articleTotalView = articleRepository.findTotalViewOfArticlesByYearAndMonth(
+                        calendarDateNeedToFind.get(Calendar.YEAR),
+                        calendarDateNeedToFind.get(Calendar.MONTH) + 1);
+
+                Integer questionTotalView = questionRepository.findTotalViewOfQuestionsByYearAndMonth(
+                        calendarDateNeedToFind.get(Calendar.YEAR),
+                        calendarDateNeedToFind.get(Calendar.MONTH) + 1);
+
+                int questionTotalViewInteger = 0;
+                int articleTotalViewInteger = 0;
+
+                if (questionTotalView != null) {
+                    questionTotalViewInteger = questionTotalView;
+                }
+
+                if (articleTotalView != null) {
+                    articleTotalViewInteger = articleTotalView;
+                }
+
+                // Then add total view count
+                systemChartInfo.setTotalViewCount(questionTotalViewInteger + articleTotalViewInteger);
+
+                //================================== Adding total upvote ======================================//
+
+                // Then adding info in this date
+                Integer articleTotalUpvote = articleRepository.findTotalUpvoteOfArticlesByYearAndMonth(
+                        calendarDateNeedToFind.get(Calendar.YEAR),
+                        calendarDateNeedToFind.get(Calendar.MONTH) + 1);
+
+                Integer questionTotalUpvote = questionRepository.findTotalUpvoteOfQuestionsByYearAndMonth(
+                        calendarDateNeedToFind.get(Calendar.YEAR),
+                        calendarDateNeedToFind.get(Calendar.MONTH) + 1);
+
+                Integer answerTotalUpvote = answerRepository.findTotalUpvoteOfAnswersByYearAndMonth(
+                        calendarDateNeedToFind.get(Calendar.YEAR),
+                        calendarDateNeedToFind.get(Calendar.MONTH) + 1);
+
+                Integer commentTotalUpvote = commentRepository.findTotalUpvoteOfCommentsByYearAndMonth(
+                        calendarDateNeedToFind.get(Calendar.YEAR),
+                        calendarDateNeedToFind.get(Calendar.MONTH) + 1);
+
+                // Then create an object of that date
+                int articleTotalUpvoteInteger = 0;
+                int questionTotalUpvoteInteger = 0;
+                int answerTotalUpvoteInteger = 0;
+                int commentTotalUpvoteInteger = 0;
+
+                if (articleTotalUpvote != null) {
+                    articleTotalUpvoteInteger = articleTotalUpvote;
+                }
+
+                if (questionTotalUpvote != null) {
+                    questionTotalUpvoteInteger = questionTotalUpvote;
+                }
+
+                if (answerTotalUpvote != null) {
+                    answerTotalUpvoteInteger = answerTotalUpvote;
+                }
+
+                if (commentTotalUpvote != null) {
+                    commentTotalUpvoteInteger = commentTotalUpvote;
+                }
+
+                // Then add total upvote count
+                systemChartInfo.setTotalUpvoteCount(articleTotalUpvoteInteger + questionTotalUpvoteInteger + answerTotalUpvoteInteger + commentTotalUpvoteInteger);
+
+                //================================== Adding total new account ======================================//
+                // new accounts = from previous week to startTime
+
+                // Then adding info in this date
+                Calendar calendar2 = Calendar.getInstance();
+                calendar2.setTime(dateNeedToFind);
+                calendar2.add(Calendar.DATE, -7);
+                Date lastWeekStartPoint = sdf_yyyyMM.parse(sdf_yyyyMM.format(calendar2.getTime()));
+
+                // =================================================================================From (7 days ago) to (the time we're counting)
+                Integer totalNewAccounts = appUserRepository.findTotalNewAccountsByUtilTimestampBetween(lastWeekStartPoint, dateNeedToFind);
+
+                int totalNewAccountsInteger = 0;
+
+                if (totalNewAccounts != null) {
+                    totalNewAccountsInteger = totalNewAccounts;
+                }
+
+                // Then add total view count
+                systemChartInfo.setTotalNewAccount(totalNewAccountsInteger);
+
+                //================================== Adding total inactive account (in one month) ======================================//
+                // Then adding info in this date
+                Calendar calendar3 = Calendar.getInstance();
+                calendar3.setTime(dateNeedToFind);
+                calendar3.add(Calendar.MONTH, -1);
+                Date lastMonthStartPoint = sdf_yyyyMM.parse(sdf_yyyyMM.format(calendar3.getTime()));
+                Integer totalInactiveAccounts = appUserRepository.findTotalInactiveAccountsByUtilTimestampBefore(lastMonthStartPoint);
+
+                int totalInactiveAccountsInteger = 0;
+
+                if (totalInactiveAccounts != null) {
+                    totalInactiveAccountsInteger = totalInactiveAccounts;
+                }
+
+                // Then add total view count
+                systemChartInfo.setTotalInactiveAccount(totalInactiveAccountsInteger);
+
+                listSystemChartInfo.add(systemChartInfo);
+            }
+
+            return listSystemChartInfo;
+        } catch (Exception e) {
+            logger.error("An error has occurred", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        }
+    }
+
+    @PostMapping("/systemChartInfo/year")
+    public List<SystemChartInfo> systemChartInfoByYear(@RequestBody SystemChartParams systemChartParams) {
+        try {
+            List<SystemChartInfo> listSystemChartInfo = new ArrayList<>();
+
+            SimpleDateFormat sdf_yyyy = new SimpleDateFormat("yyyy");
+
+            // Start time does not contain date
+            Date startDate = sdf_yyyy.parse(systemChartParams.getStartTime());
+
+            for (int i = 0; i <= systemChartParams.getPeriod(); i++) {
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(startDate);
+                calendar.add(Calendar.YEAR, i);  // number of days to add
+                Date dateNeedToFind = sdf_yyyy.parse(sdf_yyyy.format(calendar.getTime()));  // dt is now the new date
+
+                SystemChartInfo systemChartInfo = new SystemChartInfo();
+                systemChartInfo.setChartByYear(sdf_yyyy.format(dateNeedToFind));
+
+                Calendar calendarDateNeedToFind = Calendar.getInstance();
+                calendarDateNeedToFind.setTime(dateNeedToFind);
+
+                //================================== Adding total viewCount ======================================//
+
+                // Then adding info in this date
+                Integer articleTotalView = articleRepository.findTotalViewOfArticlesByYear(calendarDateNeedToFind.get(Calendar.YEAR));
+
+                Integer questionTotalView = questionRepository.findTotalViewOfQuestionsByYear(calendarDateNeedToFind.get(Calendar.YEAR));
+
+                int questionTotalViewInteger = 0;
+                int articleTotalViewInteger = 0;
+
+                if (questionTotalView != null) {
+                    questionTotalViewInteger = questionTotalView;
+                }
+
+                if (articleTotalView != null) {
+                    articleTotalViewInteger = articleTotalView;
+                }
+
+                // Then add total view count
+                systemChartInfo.setTotalViewCount(questionTotalViewInteger + articleTotalViewInteger);
+
+                //================================== Adding total upvote ======================================//
+
+                // Then adding info in this date
+                Integer articleTotalUpvote = articleRepository.findTotalUpvoteOfArticlesByYear(calendarDateNeedToFind.get(Calendar.YEAR));
+
+                Integer questionTotalUpvote = questionRepository.findTotalUpvoteOfQuestionsByYear(calendarDateNeedToFind.get(Calendar.YEAR));
+
+                Integer answerTotalUpvote = answerRepository.findTotalUpvoteOfAnswersByYear(calendarDateNeedToFind.get(Calendar.YEAR));
+
+                Integer commentTotalUpvote = commentRepository.findTotalUpvoteOfCommentsByYear(calendarDateNeedToFind.get(Calendar.YEAR));
+
+                // Then create an object of that date
+                int articleTotalUpvoteInteger = 0;
+                int questionTotalUpvoteInteger = 0;
+                int answerTotalUpvoteInteger = 0;
+                int commentTotalUpvoteInteger = 0;
+
+                if (articleTotalUpvote != null) {
+                    articleTotalUpvoteInteger = articleTotalUpvote;
+                }
+
+                if (questionTotalUpvote != null) {
+                    questionTotalUpvoteInteger = questionTotalUpvote;
+                }
+
+                if (answerTotalUpvote != null) {
+                    answerTotalUpvoteInteger = answerTotalUpvote;
+                }
+
+                if (commentTotalUpvote != null) {
+                    commentTotalUpvoteInteger = commentTotalUpvote;
+                }
+
+                // Then add total upvote count
+                systemChartInfo.setTotalUpvoteCount(articleTotalUpvoteInteger + questionTotalUpvoteInteger + answerTotalUpvoteInteger + commentTotalUpvoteInteger);
+
+                //================================== Adding total new account ======================================//
+                // new accounts = from previous week to startTime
+
+                // Then adding info in this date
+                Calendar calendar2 = Calendar.getInstance();
+                calendar2.setTime(dateNeedToFind);
+                calendar2.add(Calendar.DATE, -7);
+                Date lastWeekStartPoint = sdf_yyyy.parse(sdf_yyyy.format(calendar2.getTime()));
+
+                // =================================================================================From (7 days ago) to (the time we're counting)
+                Integer totalNewAccounts = appUserRepository.findTotalNewAccountsByUtilTimestampBetween(lastWeekStartPoint, dateNeedToFind);
+
+                int totalNewAccountsInteger = 0;
+
+                if (totalNewAccounts != null) {
+                    totalNewAccountsInteger = totalNewAccounts;
+                }
+
+                // Then add total view count
+                systemChartInfo.setTotalNewAccount(totalNewAccountsInteger);
+
+                //================================== Adding total inactive account (in one month) ======================================//
+                // Then adding info in this date
+                Calendar calendar3 = Calendar.getInstance();
+                calendar3.setTime(dateNeedToFind);
+                calendar3.add(Calendar.MONTH, -1);
+                Date lastMonthStartPoint = sdf_yyyy.parse(sdf_yyyy.format(calendar3.getTime()));
+                Integer totalInactiveAccounts = appUserRepository.findTotalInactiveAccountsByUtilTimestampBefore(lastMonthStartPoint);
+
+                int totalInactiveAccountsInteger = 0;
+
+                if (totalInactiveAccounts != null) {
+                    totalInactiveAccountsInteger = totalInactiveAccounts;
+                }
+
+                // Then add total view count
+                systemChartInfo.setTotalInactiveAccount(totalInactiveAccountsInteger);
+
+                listSystemChartInfo.add(systemChartInfo);
+            }
+
+            return listSystemChartInfo;
         } catch (Exception e) {
             logger.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
@@ -432,6 +816,15 @@ public class AdminController {
                 reportRepository.delete(report);
             }
 
+            // Notify the author of the question
+            AppUser authorOfThisQuestion = question.getAppUser();
+            Notification notification = new Notification();
+            notification.setUtilTimestamp(new Date());
+            notification.setFromAdmin(true);
+            notification.setAppUserReceiver(authorOfThisQuestion);
+            notification.setMessage("Admin vừa xóa câu hỏi của bạn với tiêu đề: " + question.getTitle() + " do vi phạm nội quy diễn đàn.");
+            notificationRepository.save(notification);
+
             // Then remove the question
             questionRepository.delete(question);
 
@@ -454,8 +847,8 @@ public class AdminController {
     @DeleteMapping("/deleteAnswerToQuestion/{answerId}")
     @Transactional
     public Map<String, String> deleteAnswerToQuestion(/*@RequestBody AppUser appUser,*/
-                                                      @PathVariable Long answerId,
-                                                      HttpServletRequest request) {
+            @PathVariable Long answerId,
+            HttpServletRequest request) {
         try {
             String methodName = "Admin.deleteAnswerToQuestion";
 
@@ -478,6 +871,15 @@ public class AdminController {
                 Comment comment = commentIterator.next();
                 commentRepository.delete(comment);
             }
+
+            // Notify the author of the question
+            AppUser authorOfThisQuestion = answer.getAppUser();
+            Notification notification = new Notification();
+            notification.setUtilTimestamp(new Date());
+            notification.setFromAdmin(true);
+            notification.setAppUserReceiver(authorOfThisQuestion);
+            notification.setMessage("Admin vừa xóa câu trả lời của bạn: " + answer.getContent() + " do vi phạm nội quy diễn đàn.");
+            notificationRepository.save(notification);
 
             // Then remove the answer
             answerRepository.delete(answer);
@@ -517,6 +919,15 @@ public class AdminController {
             } else {
                 controllerUtils.validateAppUser(appUser, methodName, true);
             }
+
+            // Notify the author of the question
+            AppUser authorOfThisQuestion = comment.getAppUser();
+            Notification notification = new Notification();
+            notification.setUtilTimestamp(new Date());
+            notification.setFromAdmin(true);
+            notification.setAppUserReceiver(authorOfThisQuestion);
+            notification.setMessage("Admin vừa xóa bình luận của bạn: " + comment.getContent() + " do vi phạm nội quy diễn đàn.");
+            notificationRepository.save(notification);
 
             commentRepository.delete(comment);
 

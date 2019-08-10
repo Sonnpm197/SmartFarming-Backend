@@ -51,4 +51,6 @@ public class Comment implements Serializable {
 
     @ElementCollection
     private List<Long> upvotedUserIds;
+
+    private Integer upvoteCount;
 }

@@ -1,10 +1,15 @@
 package com.son.CapstoneProject.controller.user;
 
+import com.son.CapstoneProject.common.ConstantValue;
 import com.son.CapstoneProject.configuration.HttpRequestResponseUtils;
 import com.son.CapstoneProject.controller.ControllerUtils;
+import com.son.CapstoneProject.entity.Article;
 import com.son.CapstoneProject.entity.Comment;
+import com.son.CapstoneProject.entity.Notification;
 import com.son.CapstoneProject.entity.login.AppUser;
+import com.son.CapstoneProject.repository.ArticleRepository;
 import com.son.CapstoneProject.repository.CommentRepository;
+import com.son.CapstoneProject.repository.NotificationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +23,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -31,7 +37,13 @@ public class CommentController {
     private CommentRepository commentRepository;
 
     @Autowired
+    private ArticleRepository articleRepository;
+
+    @Autowired
     private ControllerUtils controllerUtils;
+
+    @Autowired
+    private NotificationRepository notificationRepository;
 
     @GetMapping("/test")
     public String test() {
@@ -53,6 +65,7 @@ public class CommentController {
         try {
             String methodName = "UserController.addComment";
 
+            // User who comments
             AppUser appUser = comment.getAppUser();
 
             controllerUtils.validateAppUser(appUser, methodName, false);
@@ -62,6 +75,46 @@ public class CommentController {
                 comment.setAppUser(appUser);
             } else {
                 controllerUtils.validateAppUser(appUser, methodName, true);
+            }
+
+            // When this user comment on an article, that means he is subscribing
+            if (comment.getArticle() != null && comment.getArticle().getArticleId() != null) {
+                Long articleId = comment.getArticle().getArticleId();
+                // Check this article
+                Article article = articleRepository.findById(articleId)
+                        .orElseThrow(() -> new Exception(methodName + " cannot find any article with id: " + articleId));
+
+                // Create a message of this user
+                StringBuilder stringBuilder = new StringBuilder();
+                if (ConstantValue.Role.ANONYMOUS.getValue().equalsIgnoreCase(appUser.getRole())) {
+                    stringBuilder.append("AnonymousUser")
+                            .append(appUser.getUserId());
+                } else {
+                    if (appUser.getSocialUser() != null) {
+                        stringBuilder.append(appUser.getSocialUser().getName());
+                    }
+                }
+
+                stringBuilder.append(" vừa trả lời bài viết: ")
+                        .append(article.getTitle());
+
+                // Tt will send notifications to all other subscribers
+                List<AppUser> subscribers = article.getSubscribers();
+                for (AppUser subscriber: subscribers) {
+                    Notification notification = new Notification();
+                    notification.setUtilTimestamp(new Date());
+                    notification.setArticle(article);
+                    notification.setFromAdmin(false);
+                    notification.setAppUserReceiver(subscriber);
+                    notification.setMessage(stringBuilder.toString());
+                    notificationRepository.save(notification);
+                }
+
+                // Then add this user as a subscriber
+                if (!article.getSubscribers().contains(appUser)) {
+                    article.getSubscribers().add(appUser);
+                }
+                comment.setArticle(articleRepository.save(article));
             }
 
             comment.setUtilTimestamp(new Date());

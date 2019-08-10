@@ -1,4 +1,4 @@
-package com.son.CapstoneProject.entity;
+package com.son.CapstoneProject.entity.adminChart;
 
 import lombok.*;
 

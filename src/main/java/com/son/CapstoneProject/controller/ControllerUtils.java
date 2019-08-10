@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -94,7 +95,10 @@ public class ControllerUtils {
             // Check if this anonymous user existed
             AppUser appUserByIpAddress = appUserRepository.findByIpAddress(ipAddress);
             if (appUserByIpAddress != null) {
-                return appUserByIpAddress;
+
+                // Set last active date
+                appUserByIpAddress.setLastActiveByUtilTimeStamp(new Date());
+                return appUserRepository.save(appUserByIpAddress);
             }
 
             // Else if we cannot find user by ip address => create new one
@@ -105,6 +109,10 @@ public class ControllerUtils {
             newAppUser.setAnonymous(true);
             newAppUser.setIpAddress(ipAddress);
             newAppUser.setRole(ConstantValue.Role.ANONYMOUS.getValue());
+
+            // Set created date and active date
+            newAppUser.setCreatedTimeByUtilTimeStamp(new Date());
+            newAppUser.setLastActiveByUtilTimeStamp(new Date());
             return appUserRepository.save(newAppUser);
         } catch (Exception e) {
             logger.error("An error has occurred", e);

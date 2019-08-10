@@ -201,11 +201,13 @@ public class UpvoteController {
             } else if (ANSWER.equalsIgnoreCase(type) && answer != null) {
 
                 answer.setUpvotedUserIds(appUserList);
+                answer.setUpvoteCount(appUserList.size());
                 answerRepository.save(answer);
 
             } else if (COMMENT.equalsIgnoreCase(type) && comment != null) {
 
                 comment.setUpvotedUserIds(appUserList);
+                comment.setUpvoteCount(appUserList.size());
                 commentRepository.save(comment);
 
             }

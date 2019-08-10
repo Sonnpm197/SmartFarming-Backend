@@ -2,10 +2,10 @@ package com.son.CapstoneProject.controller.admin;
 
 import com.son.CapstoneProject.Application;
 import com.son.CapstoneProject.controller.CommonTest;
-import com.son.CapstoneProject.entity.Answer;
 import com.son.CapstoneProject.entity.AppUserTag;
 import com.son.CapstoneProject.entity.Report;
-import com.son.CapstoneProject.entity.UserChartInfo;
+import com.son.CapstoneProject.entity.adminChart.SystemChartInfo;
+import com.son.CapstoneProject.entity.adminChart.UserChartInfo;
 import com.son.CapstoneProject.entity.pagination.ReportPagination;
 import com.son.CapstoneProject.entity.pagination.TagPagination;
 import org.junit.Assert;
@@ -248,5 +248,98 @@ public class AdminControllerTest {
 //        Assert.assertEquals(1, infoAt2ndOfMarch.getTotalQuestionReputation());
 //        Assert.assertEquals(1, infoAt2ndOfMarch.getTotalAnswerReputation());
 //        Assert.assertEquals(1, infoAt2ndOfMarch.getTotalCommentReputation());
+    }
+
+    @Test
+    @SqlGroup({
+            @Sql("/sql/adminController/systemChartInfo.sql"),
+            @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
+    })
+    public void systemChartInfo() {
+        String url = createURL(port, "/admin/systemChartInfo/date");
+
+        String filePath = "src\\test\\resources\\json\\adminController\\systemChartParamsByDate.json";
+
+        // URI (URL) parameters
+        Map<String, Integer> uriParams = new HashMap<>();
+
+        String requestBody = CommonTest.readStringFromFile(filePath);
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
+
+        System.out.println(">>> Testing URI: " + builder.buildAndExpand(uriParams).toUri());
+
+        HttpEntity<String> entity = new HttpEntity<>(requestBody, CommonTest.getHeaders("POST", frontEndUrl));
+        ResponseEntity<List<SystemChartInfo>> response = CommonTest.getRestTemplate().exchange(
+                builder.buildAndExpand(uriParams).toUri(),
+                HttpMethod.POST,
+                entity,
+                new ParameterizedTypeReference<List<SystemChartInfo>>() {
+                });
+
+        List<SystemChartInfo> result = response.getBody();
+        System.out.println(">> Result: " + result);
+    }
+
+    @Test
+    @SqlGroup({
+            @Sql("/sql/adminController/systemChartInfo.sql"),
+            @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
+    })
+    public void systemChartInfoByMonth() {
+        String url = createURL(port, "/admin/systemChartInfo/month");
+
+        String filePath = "src\\test\\resources\\json\\adminController\\systemChartParamsByMonth.json";
+
+        // URI (URL) parameters
+        Map<String, Integer> uriParams = new HashMap<>();
+
+        String requestBody = CommonTest.readStringFromFile(filePath);
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
+
+        System.out.println(">>> Testing URI: " + builder.buildAndExpand(uriParams).toUri());
+
+        HttpEntity<String> entity = new HttpEntity<>(requestBody, CommonTest.getHeaders("POST", frontEndUrl));
+        ResponseEntity<List<SystemChartInfo>> response = CommonTest.getRestTemplate().exchange(
+                builder.buildAndExpand(uriParams).toUri(),
+                HttpMethod.POST,
+                entity,
+                new ParameterizedTypeReference<List<SystemChartInfo>>() {
+                });
+
+        List<SystemChartInfo> result = response.getBody();
+        System.out.println(">> Result: " + result);
+    }
+
+    @Test
+    @SqlGroup({
+            @Sql("/sql/adminController/systemChartInfo.sql"),
+            @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
+    })
+    public void systemChartInfoByYear() {
+        String url = createURL(port, "/admin/systemChartInfo/year");
+
+        String filePath = "src\\test\\resources\\json\\adminController\\systemChartParamsByYear.json";
+
+        // URI (URL) parameters
+        Map<String, Integer> uriParams = new HashMap<>();
+
+        String requestBody = CommonTest.readStringFromFile(filePath);
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
+
+        System.out.println(">>> Testing URI: " + builder.buildAndExpand(uriParams).toUri());
+
+        HttpEntity<String> entity = new HttpEntity<>(requestBody, CommonTest.getHeaders("POST", frontEndUrl));
+        ResponseEntity<List<SystemChartInfo>> response = CommonTest.getRestTemplate().exchange(
+                builder.buildAndExpand(uriParams).toUri(),
+                HttpMethod.POST,
+                entity,
+                new ParameterizedTypeReference<List<SystemChartInfo>>() {
+                });
+
+        List<SystemChartInfo> result = response.getBody();
+        System.out.println(">> Result: " + result);
     }
 }

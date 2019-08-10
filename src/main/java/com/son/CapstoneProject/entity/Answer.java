@@ -49,5 +49,7 @@ public class Answer implements Serializable {
     @ElementCollection
     private List<Long> upvotedUserIds;
 
+    private Integer upvoteCount;
+
     private boolean isAccepted;
 }

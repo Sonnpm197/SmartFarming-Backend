@@ -14,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Date;
+
 @RestController
 @CrossOrigin(origins = {"${front-end.settings.cross-origin.url}"})
 public class LoginController {
@@ -64,6 +66,11 @@ public class LoginController {
             if (existedSocialUser != null) {
                 Long socialUserInformationId = existedSocialUser.getSocialUserId();
                 AppUser appUser = appUserRepository.findBySocialUser_SocialUserId(socialUserInformationId);
+
+                // Update last active date
+                appUser.setLastActiveByUtilTimeStamp(new Date());
+                appUser = appUserRepository.save(appUser);
+
                 return ResponseEntity.ok(appUser);
             }
 
@@ -81,6 +88,10 @@ public class LoginController {
             } else {
                 appUser.setRole(ConstantValue.Role.USER.getValue());
             }
+
+            // When creating new user set created date + last active date
+            appUser.setCreatedTimeByUtilTimeStamp(new Date());
+            appUser.setLastActiveByUtilTimeStamp(new Date());
 
             return ResponseEntity.ok(appUserRepository.save(appUser));
         } catch (Exception e) {

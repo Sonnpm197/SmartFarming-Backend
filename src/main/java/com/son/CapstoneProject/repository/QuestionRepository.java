@@ -22,6 +22,9 @@ public interface QuestionRepository extends PagingAndSortingRepository<Question,
 
     List<Question> findByAppUser_UserId(Long userId);
 
+    @Query("select q.utilTimestamp from Question q where q.appUser = :appUser")
+    List<Date> findUtilTimeStampByAppUser(@Param("appUser") AppUser appUser);
+
     List<Question> findTop5ByAppUser_UserIdOrderByViewCountDesc(Long userId);
 
     List<Question> findTop5ByAppUser_UserIdOrderByUpvoteCountDesc(Long userId);
@@ -50,4 +53,34 @@ public interface QuestionRepository extends PagingAndSortingRepository<Question,
 
     // Find full to count pages
     List<Question> findByTags_tagId(Long tagId);
+
+    @Query("select sum(q.viewCount) from Question q where q.utilTimestamp >= :startDateTime and q.utilTimestamp <= :endDateTime")
+    Integer findTotalViewOfQuestionsByUtilTimestampBetween(@Param("startDateTime") Date startDateTime, @Param("endDateTime") Date endDateTime);
+
+    @Query("select sum(q.upvoteCount) from Question q where q.utilTimestamp >= :startDateTime and q.utilTimestamp <= :endDateTime")
+    Integer findTotalUpvoteOfQuestionsByUtilTimestampBetween(@Param("startDateTime") Date startDateTime, @Param("endDateTime") Date endDateTime);
+
+    @Query(
+            value = "select sum(q.view_count) from Question q where year(q.util_timestamp) = :yearParam and month(q.util_timestamp) = :monthParam",
+            nativeQuery=true
+    )
+    Integer findTotalViewOfQuestionsByYearAndMonth(@Param("yearParam") int yearParam, @Param("monthParam") int monthParam);
+
+    @Query(
+            value = "select sum(q.upvote_count) from Question q where year(q.util_timestamp) = :yearParam and month(q.util_timestamp) = :monthParam",
+            nativeQuery=true
+    )
+    Integer findTotalUpvoteOfQuestionsByYearAndMonth(@Param("yearParam") int yearParam, @Param("monthParam") int monthParam);
+
+    @Query(
+            value = "select sum(q.view_count) from Question q where year(q.util_timestamp) = :yearParam",
+            nativeQuery=true
+    )
+    Integer findTotalViewOfQuestionsByYear(@Param("yearParam") int yearParam);
+
+    @Query(
+            value = "select sum(q.upvote_count) from Question q where year(q.util_timestamp) = :yearParam",
+            nativeQuery=true
+    )
+    Integer findTotalUpvoteOfQuestionsByYear(@Param("yearParam") int yearParam);
 }

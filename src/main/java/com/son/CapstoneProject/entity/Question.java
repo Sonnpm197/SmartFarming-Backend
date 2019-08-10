@@ -116,6 +116,10 @@ public class Question implements Serializable {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "question")
     private List<Report> reports;
 
+    @JsonIgnore
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "questionSubscriber")
+    private List<AppUser> subscribers = new ArrayList<>();
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
