@@ -139,8 +139,10 @@ public class ViewCountingService {
                 // Increase view count in AppUserTag
                 for (Tag tag : tags) {
                     AppUserTag appUserTag = appUserTagRepository.findAppUserTagByAppUser_UserIdAndTag_TagId(questionAuthor.getUserId(), tag.getTagId());
-                    appUserTag.setViewCount(appUserTag.getViewCount() + VIEW_COUNT);
-                    appUserTagRepository.save(appUserTag);
+                    if (appUserTag != null) {
+                        appUserTag.setViewCount(appUserTag.getViewCount() + VIEW_COUNT);
+                        appUserTagRepository.save(appUserTag);
+                    }
                 }
 
             }

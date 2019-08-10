@@ -81,9 +81,11 @@ public class AppUser {
     @Temporal(TemporalType.TIMESTAMP)
     private java.util.Date lastActiveByUtilTimeStamp;
 
+    @JsonBackReference(value = "subscribedArticles")
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "subscribers")
     private List<Article> subscribedArticles;
 
+    @JsonBackReference(value = "subscribedQuestions")
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "subscribers")
     private List<Question> subscribedQuestions;
 
