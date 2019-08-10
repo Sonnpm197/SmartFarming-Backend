@@ -63,7 +63,7 @@ public class ViewCountingService {
 //        } catch (InterruptedException e) {
 //            e.printStackTrace();
 //        }
-        System.out.println("ViewCountingService.countView get called");
+//        System.out.println("ViewCountingService.countView get called");
         Map<String, Long> ipAddressWithTime = contentIdWithIpAddressAndTime.get(id);
         Long currentTime = System.currentTimeMillis();
 
@@ -133,8 +133,11 @@ public class ViewCountingService {
 
                 // Increase total view for user (question only)
                 AppUser questionAuthor = question.getAppUser();
-                questionAuthor.setViewCount(questionAuthor.getViewCount() + VIEW_COUNT);
-                appUserRepository.save(questionAuthor);
+
+                if (Role.USER.getValue().equalsIgnoreCase(questionAuthor.getRole())) {
+                    questionAuthor.setViewCount(questionAuthor.getViewCount() + VIEW_COUNT);
+                    appUserRepository.save(questionAuthor);
+                }
 
                 // Increase view count in AppUserTag
                 for (Tag tag : tags) {
@@ -142,6 +145,14 @@ public class ViewCountingService {
                     if (appUserTag != null) {
                         appUserTag.setViewCount(appUserTag.getViewCount() + VIEW_COUNT);
                         appUserTagRepository.save(appUserTag);
+                    } else {
+                        if (Role.USER.getValue().equalsIgnoreCase(questionAuthor.getRole())) {
+                            appUserTag = new AppUserTag();
+                            appUserTag.setTag(tag);
+                            appUserTag.setAppUser(questionAuthor);
+                            appUserTag.setViewCount(VIEW_COUNT);
+                            appUserTagRepository.save(appUserTag);
+                        }
                     }
                 }
 

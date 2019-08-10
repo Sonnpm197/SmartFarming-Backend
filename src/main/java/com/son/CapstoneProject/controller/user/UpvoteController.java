@@ -306,24 +306,22 @@ public class UpvoteController {
                         appUserTag.setReputation(0);
                     } else {
                         // Only increase reputation for user
-//                        if (!isAdmin && !appUser.isAnonymous()) {
                         if (Role.USER.getValue().equalsIgnoreCase(appUser.getRole())) {
                             appUserTag.setReputation(appUserTag.getReputation() + updatedPoint);
                         }
                     }
                     appUserTagRepository.save(appUserTag);
                 } else {
-                    // Add new
-                    AppUserTag newAppUserTag = new AppUserTag();
-                    newAppUserTag.setAppUser(appUser);
-                    newAppUserTag.setTag(tag);
                     // Only increase reputation for user
                     // By default reputation is 0
-//                    if (!isAdmin) {
                     if (Role.USER.getValue().equalsIgnoreCase(appUser.getRole())) {
+                        // Add new
+                        AppUserTag newAppUserTag = new AppUserTag();
+                        newAppUserTag.setAppUser(appUser);
+                        newAppUserTag.setTag(tag);
                         newAppUserTag.setReputation(1);
+                        appUserTagRepository.save(newAppUserTag);
                     }
-                    appUserTagRepository.save(newAppUserTag);
                 }
             }
         }
