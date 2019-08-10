@@ -300,4 +300,44 @@ public class AppUserController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
+
+    @GetMapping("/linkingAppUserToTags")
+    public String linkingAppUserToTags() {
+        try {
+
+            // First select all appUsers
+            List<AppUser> appUsers = appUserRepository.findAll();
+
+            for (AppUser appUser : appUsers) {
+
+                // Select all list questions of that users
+                List<Question> questionsByUserId = questionRepository.findByAppUser_UserId(appUser.getUserId());
+
+                List<Tag> listDistinctTags = new ArrayList<>();
+                for (Question question : questionsByUserId) {
+                    List<Tag> tags = question.getTags();
+
+                    for (Tag tag : tags) {
+                        if (!listDistinctTags.contains(tag)) {
+                            listDistinctTags.add(tag);
+                        }
+                    }
+                }
+
+                // Now merge it into AppUserTag
+                for (Tag tag : listDistinctTags) {
+                    AppUserTag appUserTag = new AppUserTag();
+                    appUserTag.setAppUser(appUser);
+                    appUserTag.setTag(tag);
+                    appUserTagRepository.save(appUserTag);
+                }
+
+            }
+
+            return "Please wait about 10 seconds for this method. Don't rush";
+        } catch (Exception e) {
+            logger.error("An error has occurred", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        }
+    }
 }
