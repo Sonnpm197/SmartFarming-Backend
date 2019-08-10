@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -80,21 +81,17 @@ public class AppUser {
     @Temporal(TemporalType.TIMESTAMP)
     private java.util.Date lastActiveByUtilTimeStamp;
 
-    @JsonBackReference(value = "articleSubscriber")
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "articleId", foreignKey = @ForeignKey(name = "FK_APPUSER_ARTICLESUB"))
-    private Article articleSubscriber;
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "subscribers")
+    private List<Article> subscribedArticles;
 
-    @JsonBackReference(value = "questionSubscriber")
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "questionId", foreignKey = @ForeignKey(name = "FK_APPUSER_QUESTIONSUB"))
-    private Question questionSubscriber;
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "subscribers")
+    private List<Question> subscribedQuestions;
 
     @Override
     public String toString() {
         return "{" +
-                    "\"userId\":" + "\"" + userId + "\"" +
-                    ", \"reputation\":" + "\"" + reputation + "\"" +
+                "\"userId\":" + "\"" + userId + "\"" +
+                ", \"reputation\":" + "\"" + reputation + "\"" +
                 "}";
     }
 

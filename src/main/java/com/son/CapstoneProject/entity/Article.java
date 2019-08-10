@@ -77,8 +77,8 @@ public class Article {
 
     private int viewCount;
 
-    @JsonIgnore
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "articleSubscriber")
+//    @JsonIgnore
+    @ManyToMany(fetch = FetchType.LAZY)
     private List<AppUser> subscribers = new ArrayList<>();
 
     @Override

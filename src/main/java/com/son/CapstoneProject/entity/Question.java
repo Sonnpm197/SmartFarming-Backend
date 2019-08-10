@@ -116,8 +116,8 @@ public class Question implements Serializable {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "question")
     private List<Report> reports;
 
-    @JsonIgnore
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "questionSubscriber")
+//    @JsonIgnore
+    @ManyToMany(fetch = FetchType.LAZY)
     private List<AppUser> subscribers = new ArrayList<>();
 
     @Override
