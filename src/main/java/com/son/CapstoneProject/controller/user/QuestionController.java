@@ -268,8 +268,15 @@ public class QuestionController {
                 question.setAppUser(appUser);
                 // logger.info(methodName + ": created anonymous user " + appUser);
             } else {
-                // If they has logged in
+                // If they has logged in, ìf RB has no request body then it will throw an exception here
                 controllerUtils.validateAppUser(appUser, methodName, true);
+
+                Long userId = appUser.getUserId();
+
+                // Receive full data here
+                appUser = appUserRepository.findById(userId)
+                        .orElseThrow(() -> new Exception(methodName + ": cannot find any user with id: " + userId));
+
             }
 
             // Save tags first (distinct name)
