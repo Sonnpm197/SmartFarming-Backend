@@ -10,6 +10,7 @@ import com.son.CapstoneProject.entity.login.AppUser;
 import com.son.CapstoneProject.repository.ArticleRepository;
 import com.son.CapstoneProject.repository.CommentRepository;
 import com.son.CapstoneProject.repository.NotificationRepository;
+import com.son.CapstoneProject.repository.loginRepository.AppUserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,9 @@ public class CommentController {
     @Autowired
     private NotificationRepository notificationRepository;
 
+    @Autowired
+    private AppUserRepository appUserRepository;
+
     @GetMapping("/test")
     public String test() {
         return "You only see this if you are an user";
@@ -75,6 +79,11 @@ public class CommentController {
                 comment.setAppUser(appUser);
             } else {
                 controllerUtils.validateAppUser(appUser, methodName, true);
+
+                // Get full data from request
+                Long appUserId = appUser.getUserId();
+                appUser = appUserRepository.findById(appUserId)
+                        .orElseThrow(() -> new Exception(methodName + ": cannot find any user of this comment by id: " + appUserId));
             }
 
             // When this user comment on an article, that means he is subscribing
@@ -100,7 +109,10 @@ public class CommentController {
 
                 // Tt will send notifications to all other subscribers
                 List<AppUser> subscribers = article.getSubscribers();
-                for (AppUser subscriber: subscribers) {
+                for (AppUser subscriber : subscribers) {
+                    if (subscriber.equals(appUser)) {
+                        continue;
+                    }
                     Notification notification = new Notification();
                     notification.setUtilTimestamp(new Date());
                     notification.setArticle(article);

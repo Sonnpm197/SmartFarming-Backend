@@ -81,6 +81,11 @@ public class AnswerController {
                 answer.setAppUser(appUser);
             } else {
                 controllerUtils.validateAppUser(appUser, methodName, true);
+
+                // Get full data from request
+                Long appUserId = appUser.getUserId();
+                appUser = appUserRepository.findById(appUserId)
+                        .orElseThrow(() -> new Exception(methodName + ": cannot find any user of this answer by id: " + appUserId));
             }
 
             answer.setUtilTimestamp(new Date());
@@ -112,6 +117,9 @@ public class AnswerController {
             // Tt will send notifications to all other subscribers
             List<AppUser> subscribers = fullDataQuestion.getSubscribers();
             for (AppUser subscriber : subscribers) {
+                if (subscriber.equals(appUser)) {
+                    continue; // do not send notification to you
+                }
                 // Send notification to the author of the question
                 Notification notification = new Notification();
                 notification.setMessage(stringBuilder.toString());
