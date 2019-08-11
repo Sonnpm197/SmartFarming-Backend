@@ -170,7 +170,7 @@ public class NotificationController {
     }
 
     @GetMapping("/viewOneNotification/{notificationId}")
-    public Notification seenNotification(@PathVariable Long notificationId) {
+    public Notification viewOneNotification(@PathVariable Long notificationId) {
         try {
             // Update seen data
             Notification notification = notificationRepository.findById(notificationId)
