@@ -758,13 +758,13 @@ public class AdminController {
      */
     @DeleteMapping("/deleteQuestion/{questionId}")
     @Transactional
-    public Map<String, String> deleteQuestion(@RequestBody AppUser appUser,
+    public Map<String, String> deleteQuestion(/*@RequestBody AppUser appUser,*/
                                               @PathVariable Long questionId,
                                               HttpServletRequest request) {
         try {
             String methodName = "AdminController.deleteQuestion";
 
-            controllerUtils.validateAppUser(appUser, methodName, true);
+//            controllerUtils.validateAppUser(appUser, methodName, true);
 
             Question question = questionRepository.findById(questionId)
                     .orElseThrow(() -> new Exception(methodName + ": Not found question with id: " + questionId));
@@ -902,7 +902,7 @@ public class AdminController {
      */
     @DeleteMapping("/deleteComment/{id}")
     @Transactional
-    public Map<String, String> deleteComment(@RequestBody AppUser appUser,
+    public Map<String, String> deleteComment(/*@RequestBody AppUser appUser,*/
                                              @PathVariable Long id,
                                              HttpServletRequest request) {
         try {
@@ -911,14 +911,14 @@ public class AdminController {
             Comment comment = commentRepository.findById(id)
                     .orElseThrow(() -> new Exception(methodName + ": Found no answer with id: " + id));
 
-            controllerUtils.validateAppUser(appUser, methodName, false);
-
-            if (appUser.isAnonymous()) {
-                appUser = controllerUtils.saveOrReturnAnonymousUser(HttpRequestResponseUtils.getClientIpAddress(request));
-                comment.setAppUser(appUser);
-            } else {
-                controllerUtils.validateAppUser(appUser, methodName, true);
-            }
+//            controllerUtils.validateAppUser(appUser, methodName, false);
+//
+//            if (appUser.isAnonymous()) {
+//                appUser = controllerUtils.saveOrReturnAnonymousUser(HttpRequestResponseUtils.getClientIpAddress(request));
+//                comment.setAppUser(appUser);
+//            } else {
+//                controllerUtils.validateAppUser(appUser, methodName, true);
+//            }
 
             // Notify the author of the question
             AppUser authorOfThisQuestion = comment.getAppUser();

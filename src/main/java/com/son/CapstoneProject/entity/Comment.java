@@ -26,7 +26,7 @@ public class Comment implements Serializable {
     @Column(columnDefinition = "ntext")
     private String content;
 
-    @JsonBackReference(value = "appUser")
+//    @JsonBackReference(value = "appUser")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId", foreignKey = @ForeignKey(name = "FK_COMMENT_APPUSER"))
     private AppUser appUser;
