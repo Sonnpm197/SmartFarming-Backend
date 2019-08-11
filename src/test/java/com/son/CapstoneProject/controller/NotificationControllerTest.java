@@ -179,11 +179,11 @@ public class NotificationControllerTest {
 
     @Test
     @SqlGroup({
-            @Sql("/sql/notificationController/seenNotification.sql"),
+            @Sql("/sql/notificationController/viewOneNotification.sql"),
             @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
     })
-    public void seenNotification() {
-        String url = createURL(port, "/notification/seenNotification/{id}");
+    public void viewOneNotification() {
+        String url = createURL(port, "/notification/viewOneNotification/{id}");
 
         // URI (URL) parameters
         Map<String, String> uriParams = new HashMap<>();

@@ -169,7 +169,7 @@ public class NotificationController {
         }
     }
 
-    @GetMapping("/seenNotification/{notificationId}")
+    @GetMapping("/viewOneNotification/{notificationId}")
     public Notification seenNotification(@PathVariable Long notificationId) {
         try {
             // Update seen data
