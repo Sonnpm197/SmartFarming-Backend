@@ -182,7 +182,7 @@ public class CommentController {
      */
     @DeleteMapping("/deleteComment/{id}")
     @Transactional
-    public Map<String, String> deleteComment(@RequestBody AppUser appUser,
+    public Map<String, String> deleteComment(/*@RequestBody AppUser appUser,*/
                                              @PathVariable Long id,
                                              HttpServletRequest request) {
         try {
@@ -191,21 +191,21 @@ public class CommentController {
             Comment comment = commentRepository.findById(id)
                     .orElseThrow(() -> new Exception(methodName + ": Found no answer with id: " + id));
 
-            controllerUtils.validateAppUser(appUser, methodName, false);
-
-            if (appUser.isAnonymous()) {
-                appUser = controllerUtils.saveOrReturnAnonymousUser(HttpRequestResponseUtils.getClientIpAddress(request));
-                comment.setAppUser(appUser);
-            } else {
-                controllerUtils.validateAppUser(appUser, methodName, true);
-            }
-
-            // Cannot delete other questions
-            if (!appUser.getUserId().equals(comment.getAppUser().getUserId())) {
-                String message = methodName + ": You cannot delete others' comment";
-                // logger.info(message);
-                throw new Exception(message);
-            }
+//            controllerUtils.validateAppUser(appUser, methodName, false);
+//
+//            if (appUser.isAnonymous()) {
+//                appUser = controllerUtils.saveOrReturnAnonymousUser(HttpRequestResponseUtils.getClientIpAddress(request));
+//                comment.setAppUser(appUser);
+//            } else {
+//                controllerUtils.validateAppUser(appUser, methodName, true);
+//            }
+//
+//            // Cannot delete other questions
+//            if (!appUser.getUserId().equals(comment.getAppUser().getUserId())) {
+//                String message = methodName + ": You cannot delete others' comment";
+//                // logger.info(message);
+//                throw new Exception(message);
+//            }
 
             commentRepository.delete(comment);
 
