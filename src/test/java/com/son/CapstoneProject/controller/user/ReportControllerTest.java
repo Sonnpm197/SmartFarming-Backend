@@ -4,6 +4,7 @@ import com.son.CapstoneProject.Application;
 import com.son.CapstoneProject.controller.CommonTest;
 import com.son.CapstoneProject.entity.UserAndReportTime;
 import com.son.CapstoneProject.entity.pagination.QuestionPagination;
+import com.son.CapstoneProject.entity.pagination.UserAndReportTimePagination;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,24 +43,25 @@ public class ReportControllerTest {
             @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
     })
     public void findListUsersAndReportTime() {
-        String url = createURL(port, "/report/findListUsersAndReportTime");
+        String url = createURL(port, "/report/findListUsersAndReportTime/{pageNumber}");
 
         // URI (URL) parameters
         Map<String, String> uriParams = new HashMap<>();
+        uriParams.put("pageNumber", "0");
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
 
         System.out.println(">>> Testing URI: " + builder.buildAndExpand(uriParams).toUri());
 
         HttpEntity<String> entity = new HttpEntity<>(null, CommonTest.getHeaders("GET", frontEndUrl));
-        ResponseEntity<List<UserAndReportTime>> response = CommonTest.getRestTemplate().exchange(
+        ResponseEntity<UserAndReportTimePagination> response = CommonTest.getRestTemplate().exchange(
                 builder.buildAndExpand(uriParams).toUri(),
                 HttpMethod.GET,
                 entity,
-                new ParameterizedTypeReference<List<UserAndReportTime>>() {
+                new ParameterizedTypeReference<UserAndReportTimePagination>() {
                 });
 
-        List<UserAndReportTime> questionList = response.getBody();
+        UserAndReportTimePagination questionList = response.getBody();
         System.out.println(">> Result: " + questionList);
         System.out.println();
     }

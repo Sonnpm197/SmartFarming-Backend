@@ -20,14 +20,29 @@ public interface ReportRepository extends PagingAndSortingRepository<Report, Lon
     Page<Report> findAll(Pageable pageable);
 
     @Query(
-            value = "select au.user_id as userId, au.role as role, su.name as fullName, count(r.report_id) as 'numberOfReports'\n" +
-                    "from app_user au\n" +
-                    "       left join social_user su on au.social_id = su.social_user_id\n" +
-                    "       join report r on au.user_id = r.user_id\n" +
-                    "group by au.user_id, au.role, su.name;",
+            value = "select *\n" +
+                    "from (select row_number() over(order by au.user_id) as rowIndex,\n" +
+                    "             au.user_id,\n" +
+                    "             au.role,\n" +
+                    "             su.name,\n" +
+                    "             count(r.report_id) as 'number_of_reports'\n" +
+                    "      from app_user au\n" +
+                    "             left join social_user su on au.social_id = su.social_user_id\n" +
+                    "             join report r on au.user_id = r.user_id\n" +
+                    "      group by au.user_id, au.role, su.name) as sub\n" +
+                    "where sub.rowIndex >= :startRow and sub.rowIndex <= :endRow",
             nativeQuery=true
     )
-    List<Object[]> findListUsersAndReportTime();
+    List<Object[]> findListUsersAndReportTime(@Param("startRow") int startRow, @Param("endRow") int endRow);
+
+    @Query(
+            value = "select count(distinct au.user_id)\n" +
+                    "from app_user au\n" +
+                    "       join report r on au.user_id = r.user_id\n" +
+                    "group by au.user_id",
+            nativeQuery=true
+    )
+    Integer findTotalReportedUsers();
 
     List<Report> findByAppUser_UserId(Long userId);
 

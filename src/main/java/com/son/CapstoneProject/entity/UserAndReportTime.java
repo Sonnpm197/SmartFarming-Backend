@@ -11,6 +11,7 @@ import lombok.Setter;
 @Setter
 public class UserAndReportTime {
 
+    private String rowIndex;
     private String userId;
     private String role;
     private String fullName;

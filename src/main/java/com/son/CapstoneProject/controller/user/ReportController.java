@@ -5,6 +5,7 @@ import com.son.CapstoneProject.configuration.HttpRequestResponseUtils;
 import com.son.CapstoneProject.controller.ControllerUtils;
 import com.son.CapstoneProject.entity.*;
 import com.son.CapstoneProject.entity.login.AppUser;
+import com.son.CapstoneProject.entity.pagination.UserAndReportTimePagination;
 import com.son.CapstoneProject.repository.ArticleRepository;
 import com.son.CapstoneProject.repository.CommentRepository;
 import com.son.CapstoneProject.repository.NotificationRepository;
@@ -22,6 +23,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
+
+import static com.son.CapstoneProject.common.ConstantValue.REPORTS_PER_PAGE;
 
 @RestController
 @RequestMapping("/report")
@@ -41,23 +44,38 @@ public class ReportController {
         return "You only see this if you are an user";
     }
 
-    @GetMapping("/findListUsersAndReportTime")
-    public List<UserAndReportTime> findListUsersAndReportTime() {
+    @GetMapping("/findListUsersAndReportTime/{pageNumber}")
+    public UserAndReportTimePagination findListUsersAndReportTime(@PathVariable int pageNumber) {
         try {
             String methodName = "ReportController.findListUsersAndReportTime";
-            List<Object[]> results =  reportRepository.findListUsersAndReportTime();
+
+            int startRow = pageNumber * REPORTS_PER_PAGE + 1; // from >= 1
+            int endRow = startRow + REPORTS_PER_PAGE - 1; // to <= 10
+
+            List<Object[]> results =  reportRepository.findListUsersAndReportTime(startRow, endRow);
 
             List<UserAndReportTime> userAndReportTimes = new ArrayList<>();
             for (Object[] row: results) {
                 UserAndReportTime userAndReportTime = new UserAndReportTime();
-                userAndReportTime.setUserId(row[0] == null ? null : row[0].toString());
-                userAndReportTime.setRole(row[1] == null ? null : row[1].toString());
-                userAndReportTime.setFullName(row[2] == null ? null : row[2].toString());
-                userAndReportTime.setNumberOfReports(row[3] == null ? null : row[3].toString());
+                userAndReportTime.setRowIndex(row[0] == null ? null : row[0].toString());
+                userAndReportTime.setUserId(row[1] == null ? null : row[1].toString());
+                userAndReportTime.setRole(row[2] == null ? null : row[2].toString());
+                userAndReportTime.setFullName(row[3] == null ? null : row[3].toString());
+                userAndReportTime.setNumberOfReports(row[4] == null ? null : row[4].toString());
                 userAndReportTimes.add(userAndReportTime);
             }
 
-            return userAndReportTimes;
+            UserAndReportTimePagination userAndReportTimePagination = new UserAndReportTimePagination();
+            userAndReportTimePagination.setUserAndReportTimes(userAndReportTimes);
+
+            int numberOfReportedUsers = reportRepository.findTotalReportedUsers();
+            if (numberOfReportedUsers % REPORTS_PER_PAGE == 0) {
+                userAndReportTimePagination.setNumberOfPages(numberOfReportedUsers / REPORTS_PER_PAGE);
+            } else {
+                userAndReportTimePagination.setNumberOfPages(numberOfReportedUsers / REPORTS_PER_PAGE + 1);
+            }
+
+            return userAndReportTimePagination;
         } catch (Exception e) {
             logger.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
