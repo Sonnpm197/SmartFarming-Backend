@@ -24,7 +24,7 @@ public class Report {
     @GeneratedValue
     private Long reportId;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId", foreignKey = @ForeignKey(name = "FK_REPORT_APPUSER"))
     private AppUser appUser;
 

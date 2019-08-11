@@ -1,14 +1,17 @@
 package com.son.CapstoneProject.entity.login;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.son.CapstoneProject.entity.Answer;
 import com.son.CapstoneProject.entity.Article;
 import com.son.CapstoneProject.entity.Question;
+import com.son.CapstoneProject.entity.Report;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
