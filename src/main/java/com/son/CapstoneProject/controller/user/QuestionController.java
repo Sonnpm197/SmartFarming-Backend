@@ -82,6 +82,11 @@ public class QuestionController {
         return "You only see this if you are an user";
     }
 
+    @GetMapping("/testNumber")
+    public int testNumber() {
+        return 1;
+    }
+
     @GetMapping("/viewNumberOfQuestions")
     public long viewNumberOfQuestions() {
         try {

@@ -116,7 +116,7 @@ public class CommentController {
                     Notification notification = new Notification();
                     notification.setUtilTimestamp(new Date());
                     notification.setArticle(article);
-                    notification.setFromAdmin(false);
+//                    notification.setFromAdmin(false);
                     notification.setAppUserReceiver(subscriber);
                     notification.setMessage(stringBuilder.toString());
                     notificationRepository.save(notification);

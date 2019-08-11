@@ -1,17 +1,14 @@
 package com.son.CapstoneProject.controller;
 
-import com.son.CapstoneProject.common.ConstantValue;
-import com.son.CapstoneProject.configuration.HttpRequestResponseUtils;
 import com.son.CapstoneProject.entity.Article;
-import com.son.CapstoneProject.entity.Comment;
 import com.son.CapstoneProject.entity.Notification;
 import com.son.CapstoneProject.entity.Question;
 import com.son.CapstoneProject.entity.login.AppUser;
 import com.son.CapstoneProject.entity.pagination.NotificationPagination;
 import com.son.CapstoneProject.repository.ArticleRepository;
-import com.son.CapstoneProject.repository.CommentRepository;
 import com.son.CapstoneProject.repository.NotificationRepository;
 import com.son.CapstoneProject.repository.QuestionRepository;
+import com.son.CapstoneProject.repository.loginRepository.AppUserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,17 +16,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.son.CapstoneProject.common.ConstantValue.NOTIFICATION_PER_PAGE;
 
@@ -41,19 +32,16 @@ public class NotificationController {
     private static final Logger logger = LoggerFactory.getLogger(NotificationController.class);
 
     @Autowired
-    private CommentRepository commentRepository;
-
-    @Autowired
     private ArticleRepository articleRepository;
 
     @Autowired
     private QuestionRepository questionRepository;
 
     @Autowired
-    private NotificationRepository notificationRepository;
+    private AppUserRepository appUserRepository;
 
     @Autowired
-    private ControllerUtils controllerUtils;
+    private NotificationRepository notificationRepository;
 
     @GetMapping("/test")
     public String test() {
@@ -121,15 +109,30 @@ public class NotificationController {
     public NotificationPagination viewNotificationsByPageIndex(@PathVariable Long userId, @PathVariable int pageNumber) {
         try {
             logger.info("pageNumber: {}", pageNumber);
-            PageRequest pageNumWithElements = PageRequest.of(pageNumber, NOTIFICATION_PER_PAGE, Sort.by("utilTimestamp"));
+            PageRequest pageNumWithElements = PageRequest.of(pageNumber, NOTIFICATION_PER_PAGE, Sort.by("utilTimestamp").descending());
             Page<Notification> notificationPage = notificationRepository.findByAppUserReceiver_UserId(userId, pageNumWithElements);
+
+            List<Notification> notifications = notificationPage.getContent();
+
+            List<Notification> modifiableNotifications = new ArrayList<Notification>(notifications);
+            Collections.sort(modifiableNotifications, new Comparator<Notification>() {
+                @Override
+                public int compare(Notification o1, Notification o2) {
+                    if (o1.isSeen() && !o2.isSeen()) {
+                        return 1;
+                    } else if (!o1.isSeen() && o2.isSeen()) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
+                }
+            });
 
             // Return pagination objects
             NotificationPagination notificationPagination = new NotificationPagination();
-            notificationPagination.setNotificationsByPageIndex(notificationPage.getContent());
+            notificationPagination.setNotificationsByPageIndex(modifiableNotifications);
 
-            List<Notification> notifications = notificationPage.getContent();
-            int numberOfNotifications = notifications.size();
+            int numberOfNotifications = modifiableNotifications.size();
 
             if (numberOfNotifications % NOTIFICATION_PER_PAGE == 0) {
                 logger.info("numberOfNotificationPages : {}", numberOfNotifications / NOTIFICATION_PER_PAGE);
@@ -140,10 +143,10 @@ public class NotificationController {
             }
 
             // Update seen data
-            for (Notification notification : notifications) {
-                notification.setSeen(true);
-                notificationRepository.save(notification);
-            }
+//            for (Notification notification : notifications) {
+//                notification.setSeen(true);
+//                notificationRepository.save(notification);
+//            }
 
             return notificationPagination;
         } catch (Exception e) {
@@ -152,4 +155,32 @@ public class NotificationController {
         }
     }
 
+    @GetMapping("/viewNumberOfUnseenNotification/{userId}")
+    public int viewNumberOfUnseenNotification(@PathVariable Long userId) {
+        try {
+
+            AppUser appUser = appUserRepository.findById(userId)
+                    .orElseThrow(() -> new Exception("NotificationController. viewNumberOfUnseenNotification: Cannot find any User with id: " + userId));
+
+            return notificationRepository.getTotalUnseenNotificationByUser(false, appUser);
+        } catch (Exception e) {
+            logger.error("An error has occurred", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        }
+    }
+
+    @GetMapping("/seenNotification/{notificationId}")
+    public Notification seenNotification(@PathVariable Long notificationId) {
+        try {
+            // Update seen data
+            Notification notification = notificationRepository.findById(notificationId)
+                    .orElseThrow(() -> new Exception("Cannot find notification with id: " + notificationId));
+
+            notification.setSeen(true);
+            return notificationRepository.save(notification);
+        } catch (Exception e) {
+            logger.error("An error has occurred", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        }
+    }
 }

@@ -124,7 +124,7 @@ public class AnswerController {
                 Notification notification = new Notification();
                 notification.setMessage(stringBuilder.toString());
                 notification.setAppUserReceiver(subscriber);
-                notification.setFromAdmin(false);
+//                notification.setFromAdmin(false);
                 notification.setUtilTimestamp(new Date());
                 notification.setQuestion(fullDataQuestion);
                 notificationRepository.save(notification);

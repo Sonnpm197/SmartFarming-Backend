@@ -117,7 +117,8 @@ public class Question implements Serializable {
     private List<Report> reports;
 
 //    @JsonIgnore
-    @ManyToMany(fetch = FetchType.LAZY)
+//    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<AppUser> subscribers = new ArrayList<>();
 
     @Override

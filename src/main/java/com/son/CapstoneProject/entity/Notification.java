@@ -22,26 +22,23 @@ public class Notification {
     @GeneratedValue
     private Long notificationId;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId", foreignKey = @ForeignKey(name = "FK_NOTIFICATION_APPUSER"))
     private AppUser appUserReceiver;
 
     @Column(columnDefinition = "ntext")
     private String message;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "questionId", foreignKey = @ForeignKey(name = "FK_NOTIFICATION_QUESTION"))
     private Question question;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "articleId", foreignKey = @ForeignKey(name = "FK_NOTIFICATION_QUESTION"))
     private Article article;
 
     @Temporal(TemporalType.TIMESTAMP)
     private java.util.Date utilTimestamp;
 
-    // This is for delete Question, Answer, Comment from admin
-    private boolean isFromAdmin;
-
-    private boolean isSeen;
+    private boolean seen;
 }
