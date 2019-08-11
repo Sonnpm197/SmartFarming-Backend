@@ -1,5 +1,6 @@
 package com.son.CapstoneProject.controller.admin;
 
+import com.son.CapstoneProject.common.ConstantValue;
 import com.son.CapstoneProject.configuration.HttpRequestResponseUtils;
 import com.son.CapstoneProject.controller.ControllerUtils;
 import com.son.CapstoneProject.controller.FileController;
@@ -358,6 +359,38 @@ public class ArticleController {
             articlePagination.setArticlesByPageIndex(articleRepository.findTop10ByOrderByUtilTimestampDesc());
             articlePagination.setNumberOfPages(1);
             return articlePagination;
+        } catch (Exception e) {
+            logger.error("An error has occurred", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        }
+    }
+
+    @GetMapping("/usersCommentResubscribeArticles")
+    public void usersCommentResubscribeArticles() {
+        try {
+            List<Article> articles = articleRepository.findAll();
+
+            for (Article article: articles) {
+
+                // Get distince subscibers of that article
+                List<Comment> comments = article.getComments();
+                List<AppUser> distinctAppUsers = new ArrayList<>();
+                for (Comment comment: comments) {
+                    AppUser appUser = comment.getAppUser();
+
+                    // Because admin post articles so he does not need to sub
+                    if (!Role.ADMIN.getValue().equalsIgnoreCase(appUser.getRole())) {
+                        if (!distinctAppUsers.contains(appUser)) {
+                            distinctAppUsers.add(appUser);
+                        }
+                    }
+                }
+
+                // Then make them subscribe
+                article.setSubscribers(distinctAppUsers);
+                articleRepository.save(article);
+            }
+
         } catch (Exception e) {
             logger.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);

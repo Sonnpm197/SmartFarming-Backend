@@ -14,6 +14,8 @@ import java.util.List;
 @Repository
 public interface ArticleRepository extends PagingAndSortingRepository<Article, Long> {
 
+    List<Article> findAll();
+
     Page<Article> findAll(Pageable pageable);
 
     @Query("select sum(a.viewCount) from Article a")

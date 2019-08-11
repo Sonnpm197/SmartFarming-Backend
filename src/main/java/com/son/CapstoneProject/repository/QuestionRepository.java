@@ -16,6 +16,8 @@ import java.util.List;
 @Repository
 public interface QuestionRepository extends PagingAndSortingRepository<Question, Long> {
 
+    List<Question> findAll();
+
     Page<Question> findAll(Pageable pageable);
 
     Page<Question> findByAppUser_UserId(Long userId, Pageable pageable);

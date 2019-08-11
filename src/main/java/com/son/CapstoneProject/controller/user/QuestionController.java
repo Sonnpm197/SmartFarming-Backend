@@ -721,4 +721,30 @@ public class QuestionController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
+
+    @GetMapping("/usersAnswerResubscribeQuestion")
+    public void usersCommentResubscribeArticles() {
+        try {
+            List<Question> questions = questionRepository.findAll();
+
+            for (Question question : questions) {
+                // Get distinct subscribers of that article
+                List<Answer> answers = question.getAnswers();
+                List<AppUser> distinctAppUsers = new ArrayList<>();
+                for (Answer answer : answers) {
+                    AppUser appUser = answer.getAppUser();
+                    if (!distinctAppUsers.contains(appUser)) {
+                        distinctAppUsers.add(appUser);
+                    }
+                }
+
+                // Then make them subscribe
+                question.setSubscribers(distinctAppUsers);
+                questionRepository.save(question);
+            }
+        } catch (Exception e) {
+            logger.error("An error has occurred", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        }
+    }
 }
