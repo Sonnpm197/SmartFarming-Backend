@@ -2,7 +2,9 @@ package com.son.CapstoneProject.controller.user;
 
 import com.son.CapstoneProject.entity.Tag;
 import com.son.CapstoneProject.entity.pagination.TagPagination;
+import com.son.CapstoneProject.entity.search.TagSearch;
 import com.son.CapstoneProject.repository.TagRepository;
+import com.son.CapstoneProject.repository.searchRepository.HibernateSearchRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +15,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
-import static com.son.CapstoneProject.common.ConstantValue.SORT_UPVOTE_COUNT;
-import static com.son.CapstoneProject.common.ConstantValue.SORT_VIEW_COUNT;
-import static com.son.CapstoneProject.common.ConstantValue.TAGS_PER_PAGE;
+import static com.son.CapstoneProject.common.ConstantValue.*;
 
 @RestController
 @RequestMapping("/tag")
@@ -28,6 +31,9 @@ public class TagController {
 
     @Autowired
     private TagRepository tagRepository;
+
+    @Autowired
+    private HibernateSearchRepository hibernateSearchRepository;
 
     @GetMapping("/viewTop5TagsByViewCount")
     public TagPagination findTop5ByOrderByViewCount() {
@@ -79,6 +85,26 @@ public class TagController {
             }
 
             List<Tag> tags = tagPage.getContent();
+
+            // Get 7 days ago
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(new Date());
+            calendar.add(Calendar.DATE, -7);
+            String searchDate = sdf.format(calendar.getTime());
+
+            // Then count view 7 days ago
+            for (Tag tag : tags) {
+                Object[] viewCountQuestionAndArticle =
+                        tagRepository.countTotalQuestionViewAndArticleViewBeforeDate(searchDate, tag.getTagId());
+
+                int questionViewCountOneWeekAgo = viewCountQuestionAndArticle[0] == null ? 0 : Integer.parseInt(viewCountQuestionAndArticle[0].toString());
+                int articleViewCountOneWeekAgo = viewCountQuestionAndArticle[1] == null ? 0 : Integer.parseInt(viewCountQuestionAndArticle[1].toString());
+
+                tag.setViewCountOneWeekAgo(questionViewCountOneWeekAgo + articleViewCountOneWeekAgo);
+                tagRepository.save(tag);
+            }
+
             int size = tags.size();
             int numberOfPages;
 
@@ -92,6 +118,20 @@ public class TagController {
             tagPagination.setTagsByPageIndex(tags);
             tagPagination.setNumberOfPages(numberOfPages);
             return tagPagination;
+        } catch (Exception e) {
+            logger.error("An error has occurred", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        }
+    }
+
+    @PostMapping("/searchTagsWhileTyping")
+    public TagPagination searchTagsByPageIndex(@RequestBody TagSearch tagSearch) {
+        try {
+            return (TagPagination) hibernateSearchRepository.recommendTagNameWhileTyping(
+                    tagSearch.getTextSearch(),
+                    TAG,
+                    "name" // search tag by name
+            );
         } catch (Exception e) {
             logger.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);

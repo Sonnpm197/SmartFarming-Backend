@@ -10,6 +10,7 @@ import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
 import org.apache.lucene.analysis.miscellaneous.ASCIIFoldingFilterFactory;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
 import org.hibernate.search.annotations.*;
+import org.hibernate.search.annotations.Index;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -51,8 +52,8 @@ public class Article {
     @Column(columnDefinition = "nvarchar(50)")
     private String category;
 
-    // Author
-    @OneToOne(fetch = FetchType.LAZY)
+    // Many articles can be posted by an admin
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId", foreignKey = @ForeignKey(name = "FK_ARTICLE_APPUSER"))
     private AppUser appUser;
 

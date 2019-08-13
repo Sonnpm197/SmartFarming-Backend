@@ -38,26 +38,40 @@ public interface ArticleRepository extends PagingAndSortingRepository<Article, L
 
     @Query(
             value = "select sum(q.view_count) from Article q where year(q.util_timestamp) = :yearParam and month(q.util_timestamp) = :monthParam",
-            nativeQuery=true
+            nativeQuery = true
     )
     Integer findTotalViewOfArticlesByYearAndMonth(@Param("yearParam") int yearParam, @Param("monthParam") int monthParam);
 
     @Query(
             value = "select sum(q.upvote_count) from Article q where year(q.util_timestamp) = :yearParam and month(q.util_timestamp) = :monthParam",
-            nativeQuery=true
+            nativeQuery = true
     )
     Integer findTotalUpvoteOfArticlesByYearAndMonth(@Param("yearParam") int yearParam, @Param("monthParam") int monthParam);
 
     @Query(
             value = "select sum(q.view_count) from Article q where year(q.util_timestamp) = :yearParam",
-            nativeQuery=true
+            nativeQuery = true
     )
     Integer findTotalViewOfArticlesByYear(@Param("yearParam") int yearParam);
 
     @Query(
             value = "select sum(q.upvote_count) from Article q where year(q.util_timestamp) = :yearParam",
-            nativeQuery=true
+            nativeQuery = true
     )
     Integer findTotalUpvoteOfArticlesByYear(@Param("yearParam") int yearParam);
+
+    // For paging purpose
+    Page<Article> findByTags_tagId(Long tagId, Pageable pageable);
+
+    // Count number of article by tagId
+    @Query(
+            value = "select count(a.article_id) from article a join article_tags ats\n" +
+                    "                        on a.article_id = ats.articles_article_id\n" +
+                    "where ats.tags_tag_id = :tagId",
+            nativeQuery = true
+    )
+    Integer countNumberOfArticlesByTagId(@Param("tagId") Long tagId);
+
+    Article findTopByTags_tagIdOrderByViewCountDescUpvoteCountDesc(Long tagId);
 
 }

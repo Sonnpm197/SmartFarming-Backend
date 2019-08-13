@@ -176,7 +176,7 @@ public class QuestionController {
 
             // Return pagination objects
             QuestionPagination questionPagination = new QuestionPagination();
-            long numberOfQuestionsByTagId = questionRepository.findByTags_tagId(tagId).size();
+            long numberOfQuestionsByTagId = questionRepository.countNumberOfQuestionsByTagId(tagId);
             long numberOfPages = 0;
             if (numberOfQuestionsByTagId % QUESTIONS_PER_PAGE == 0) {
                 numberOfPages = numberOfQuestionsByTagId / QUESTIONS_PER_PAGE;
@@ -194,14 +194,15 @@ public class QuestionController {
         }
     }
 
-    @GetMapping("/viewQuestion/{id}")
-    public Question viewQuestionById(@PathVariable Long id, HttpServletRequest request) {
+    @GetMapping("/viewQuestion/{userId}/{contentId}")
+    public Question viewQuestionById(@PathVariable Long userId, @PathVariable Long contentId, HttpServletRequest request) {
         try {
             String ipAddress = HttpRequestResponseUtils.getClientIpAddress(request);
             // Execute asynchronously
-            countingService.countView(id, ipAddress, QUESTION);
-            return questionRepository.findById(id)
-                    .orElseThrow(() -> new Exception("Not found"));
+//            countingService.countViewByIpAddress(contentId, ipAddress, QUESTION);
+            countingService.countViewByUserId(contentId, userId, QUESTION);
+            return questionRepository.findById(contentId)
+                    .orElseThrow(() -> new Exception("QuestionController.viewQuestionById: Not found any question with id: " + contentId));
         } catch (Exception e) {
             logger.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
@@ -742,6 +743,56 @@ public class QuestionController {
                 question.setSubscribers(distinctAppUsers);
                 questionRepository.save(question);
             }
+        } catch (Exception e) {
+            logger.error("An error has occurred", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        }
+    }
+
+    @GetMapping("/viewRelatedQuestions/{questionId}")
+    public List<Question> viewRelatedQuestions(@PathVariable Long questionId) {
+        try {
+            Question question = questionRepository.findById(questionId)
+                    .orElseThrow(() -> new Exception("QuestionController.viewRelatedQuestions: cannot find any article with id: " + questionId));
+
+            List<Tag> tagsByQuestionId = tagRepository.findByQuestions_questionId(questionId);
+            List<Question> recommendedQuestions = new ArrayList<>();
+
+            if (tagsByQuestionId != null) {
+                for (Tag tag: tagsByQuestionId) {
+                    Question relatedQuestion = questionRepository.findTopByTags_tagIdOrderByViewCountDescUpvoteCountDesc(tag.getTagId());
+                    if (relatedQuestion != null && !recommendedQuestions.contains(relatedQuestion)) {
+                        recommendedQuestions.add(relatedQuestion);
+                    }
+                }
+            }
+
+            return recommendedQuestions;
+        } catch (Exception e) {
+            logger.error("An error has occurred", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        }
+    }
+
+    @GetMapping("/viewRelatedUsersByQuestion/{questionId}")
+    public List<AppUserTag> viewRelatedUsersByQuestion(@PathVariable Long questionId) {
+        try {
+            Question question = questionRepository.findById(questionId)
+                    .orElseThrow(() -> new Exception("QuestionController.viewRelatedUsersByQuestion: cannot find any question with id: " + questionId));
+
+            List<Tag> tagsByQuestionId = tagRepository.findByQuestions_questionId(questionId);
+            List<AppUserTag> recommendedUsers = new ArrayList<>();
+
+            if (tagsByQuestionId != null) {
+                for (Tag tag: tagsByQuestionId) {
+                    AppUserTag appUserTag = appUserTagRepository.findTopByTag_TagIdOrderByViewCountDescReputationDesc(tag.getTagId());
+                    if (appUserTag != null && !recommendedUsers.contains(appUserTag)) {
+                        recommendedUsers.add(appUserTag);
+                    }
+                }
+            }
+
+            return recommendedUsers;
         } catch (Exception e) {
             logger.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);

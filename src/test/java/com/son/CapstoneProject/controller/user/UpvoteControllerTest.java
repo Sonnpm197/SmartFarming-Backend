@@ -142,9 +142,12 @@ public class UpvoteControllerTest {
 
         // Check author of that question
         Assert.assertEquals(0, appUserRepository.findById(3L).get().getReputation());
+
+        // Article posted by admin so he wont get points
+
         // Check AppUserTag
-        Assert.assertEquals(0, appUserTagRepository.findAppUserTagByAppUser_UserIdAndTag_TagId(3L, 0L).getReputation());
-        Assert.assertEquals(0, appUserTagRepository.findAppUserTagByAppUser_UserIdAndTag_TagId(3L, 1L).getReputation());
+        Assert.assertNull(appUserTagRepository.findAppUserTagByAppUser_UserIdAndTag_TagId(3L, 0L));
+        Assert.assertNull(appUserTagRepository.findAppUserTagByAppUser_UserIdAndTag_TagId(3L, 1L));
 
         // Check tags
         Assert.assertEquals(1, tagRepository.findById(0L).get().getReputation());
@@ -167,8 +170,8 @@ public class UpvoteControllerTest {
         // Check author of that question
         Assert.assertEquals(0, appUserRepository.findById(3L).get().getReputation());
         // Check AppUserTag
-        Assert.assertEquals(0, appUserTagRepository.findAppUserTagByAppUser_UserIdAndTag_TagId(3L, 0L).getReputation());
-        Assert.assertEquals(0, appUserTagRepository.findAppUserTagByAppUser_UserIdAndTag_TagId(3L, 1L).getReputation());
+        Assert.assertNull(appUserTagRepository.findAppUserTagByAppUser_UserIdAndTag_TagId(3L, 0L));
+        Assert.assertNull(appUserTagRepository.findAppUserTagByAppUser_UserIdAndTag_TagId(3L, 1L));
 
         // Check tags
         Assert.assertEquals(0, tagRepository.findById(0L).get().getReputation());

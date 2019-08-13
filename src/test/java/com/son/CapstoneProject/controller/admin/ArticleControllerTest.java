@@ -184,7 +184,7 @@ public class ArticleControllerTest {
             @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
     })
     public void viewArticlesByCategory() {
-        String url = createURL("/article/viewArticlesByCategory/0");
+        String url = createURL("/article/viewArticlesByCategory/date/0");
 
         String requestBody = CommonTest.readStringFromFile("src\\test\\resources\\json\\articleController\\searchArticle.json");
 

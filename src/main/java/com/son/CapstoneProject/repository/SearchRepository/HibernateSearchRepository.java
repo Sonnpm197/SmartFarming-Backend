@@ -10,9 +10,11 @@ import com.son.CapstoneProject.entity.pagination.Pagination;
 import com.son.CapstoneProject.entity.pagination.QuestionPagination;
 import com.son.CapstoneProject.entity.pagination.TagPagination;
 import com.son.CapstoneProject.entity.search.GenericClass;
+import com.son.CapstoneProject.repository.TagRepository;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.SortField;
 import org.hibernate.Cache;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.FullTextQuery;
@@ -27,10 +29,8 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Index;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import static com.son.CapstoneProject.common.ConstantValue.*;
 
@@ -45,6 +45,9 @@ public class HibernateSearchRepository {
     @Autowired
     private EntityManager entityManager;
 
+    @Autowired
+    private TagRepository tagRepository;
+
     private FullTextQuery getJpaQuery(org.apache.lucene.search.Query luceneQuery, GenericClass genericClass) {
         FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
         return fullTextEntityManager.createFullTextQuery(luceneQuery, genericClass.getMyType());
@@ -58,33 +61,6 @@ public class HibernateSearchRepository {
                 .get();
     }
 
-    /*
-     * it relieves the programmer of having to use transaction.begin() and commit(). If you
-     * have a method that calls two DAO methods which normally would each have a transaction.begin and
-     * transaction.commit encompassing the real operations and call them it would result in two transactions
-     * ( and there might be rollback issues if the previous dao method was supposed to be rolled back too).
-     * But if you use @transactional on your method then al those DAO calls will be wrapped in a single begin()-
-     * commit() cycle. Of course in case you use @transactional the DAOs must not use the begin() and commit() methods
-     * */
-//    @Transactional
-//    public List search(String searchedText, GenericClass genericClass, String[] fields) {
-//        try {
-//            org.apache.lucene.search.Query luceneQuery = getQueryBuilder(genericClass)
-//                    .keyword()
-//                    .onFields(fields) // list to vararg
-//                    .matching(searchedText)
-//                    .createQuery();
-//
-//            FullTextQuery jpaFullTextQuery = getJpaQuery(luceneQuery, genericClass);
-//
-//            return jpaFullTextQuery.getResultList();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//
-//        return new ArrayList<>();
-//    }
-
     /**
      * This method is used to search for title or content
      * Example: cay sen -> search "cay" AND "sen"
@@ -94,7 +70,6 @@ public class HibernateSearchRepository {
      * @param searchedText
      * @return
      */
-
     public Pagination search2(String searchedText, String className, String[] fields,
                               String articleCategory, String sortBy, int pageIndex, boolean isHomepageSearch) throws Exception {
         try {
@@ -108,16 +83,12 @@ public class HibernateSearchRepository {
                 genericClass = new GenericClass(Tag.class);
             }
 
-            List<Article> finalArticles = new ArrayList<>();
-            List<Question> finalQuestions = new ArrayList<>();
-            List<Tag> finalTags = new ArrayList<>();
-
             // If it starts with double quotes then search exactly
             if (searchedText.startsWith("\"") && searchedText.endsWith("\"")) {
 
                 // Search for each field
+                List<org.apache.lucene.search.Query> queryList = new ArrayList<>();
                 for (String field : fields) {
-                    List<org.apache.lucene.search.Query> queryList = new ArrayList<>();
                     org.apache.lucene.search.Query phraseQuery = getQueryBuilder(genericClass)
                             .phrase()
                             .withSlop(0) // match exactly
@@ -125,42 +96,44 @@ public class HibernateSearchRepository {
                             .sentence(searchedText)
                             .createQuery();
                     queryList.add(phraseQuery);
-
-                    addDistinctValueToList(
-                            finalArticles, finalQuestions, finalTags,
-                            queryList, className, genericClass, articleCategory);
-
                 }
 
                 // At the end of the loop return result
-                return returnFinalListByClassName(className, finalArticles, finalQuestions, finalTags, pageIndex, sortBy, isHomepageSearch);
+                return returnFinalListByClassName(queryList,
+                        className,
+                        genericClass,
+                        articleCategory,
+                        sortBy,
+                        pageIndex,
+                        isHomepageSearch,
+                        true);
 
             }
             // Else search with 'AND' operator
             else {
                 String[] arrKeywords = searchedText.split(" ");
 
-                for (String field : fields) {
-                    List<org.apache.lucene.search.Query> queryList = new ArrayList<>();
-                    for (String keyword : arrKeywords) {
-                        if (!StringUtils.isNullOrEmpty(keyword)) {
-                            org.apache.lucene.search.Query query = getQueryBuilder(genericClass)
-                                    .keyword()
-                                    .onField(field)
-                                    .matching(keyword.trim())
-                                    .createQuery();
-                            queryList.add(query);
-                        }
+                List<org.apache.lucene.search.Query> queryList = new ArrayList<>();
+                for (String keyword : arrKeywords) {
+                    if (!StringUtils.isNullOrEmpty(keyword)) {
+                        org.apache.lucene.search.Query query = getQueryBuilder(genericClass)
+                                .keyword()
+                                .onFields(fields)
+                                .matching(keyword.trim())
+                                .createQuery();
+                        queryList.add(query);
                     }
-
-                    addDistinctValueToList(
-                            finalArticles, finalQuestions, finalTags,
-                            queryList, className, genericClass, articleCategory);
-
                 }
 
                 // At the end of the loop return result
-                return returnFinalListByClassName(className, finalArticles, finalQuestions, finalTags, pageIndex, sortBy, isHomepageSearch);
+                return returnFinalListByClassName(queryList,
+                        className,
+                        genericClass,
+                        articleCategory,
+                        sortBy,
+                        pageIndex,
+                        isHomepageSearch,
+                        false);
             }
         } catch (Exception e) {
             logger.error("An error has occurred", e);
@@ -169,13 +142,23 @@ public class HibernateSearchRepository {
     }
 
 
-    private void addDistinctValueToList(List<Article> finalArticles,
-                                        List<Question> finalQuestions,
-                                        List<Tag> finalTags,
-                                        List<Query> queryList, String className, GenericClass genericClass, String articleCategory) {
+    private Pagination returnFinalListByClassName(
+            List<Query> queryList,
+            String className,
+            GenericClass genericClass,
+            String articleCategory,
+            String sortBy,
+            int pageIndex,
+            boolean isHomepageSearch,
+            boolean isDoubleQuote) throws Exception {
 
-        // Search in category of article
-        // Only search with not null article
+        String methodName = "HibernateSearchRepository.returnFinalListByClassName";
+
+        List<Article> finalArticles = new ArrayList<>();
+        List<Question> finalQuestions = new ArrayList<>();
+        List<Tag> finalTags = new ArrayList<>();
+
+        // Search in category of article (Only with not null article)
         if (articleCategory != null && articleCategory.trim().length() > 0) {
             org.apache.lucene.search.Query querySearchForArticleCategory = getQueryBuilder(genericClass)
                     .keyword()
@@ -189,10 +172,36 @@ public class HibernateSearchRepository {
         BooleanQuery.Builder finalQueryBuilder = new BooleanQuery.Builder();
 
         for (org.apache.lucene.search.Query query : queryList) {
-            finalQueryBuilder.add(query, BooleanClause.Occur.MUST);
+            if (isDoubleQuote) {
+                finalQueryBuilder.add(query, BooleanClause.Occur.SHOULD);
+            } else {
+                finalQueryBuilder.add(query, BooleanClause.Occur.MUST);
+            }
         }
 
         FullTextQuery fullTextQuery = getJpaQuery(finalQueryBuilder.build(), genericClass);
+        if (ARTICLE.equalsIgnoreCase(className)) {
+            if (!isHomepageSearch) {
+                fullTextQuery.setFirstResult(pageIndex * ARTICLES_PER_PAGE); // start from this element
+                fullTextQuery.setMaxResults(ARTICLES_PER_PAGE); // number of element
+            } else {
+                fullTextQuery.setFirstResult(pageIndex * HOME_PAGE_SEARCH_ARTICLES_PER_PAGE); // start from this element
+                fullTextQuery.setMaxResults(HOME_PAGE_SEARCH_ARTICLES_PER_PAGE); // number of element
+            }
+        } else if (QUESTION.equalsIgnoreCase(className)) {
+            if (!isHomepageSearch) {
+                fullTextQuery.setFirstResult(pageIndex * QUESTIONS_PER_PAGE); // start from this element
+                fullTextQuery.setMaxResults(QUESTIONS_PER_PAGE); // number of element
+            } else {
+                fullTextQuery.setFirstResult(pageIndex * HOME_PAGE_SEARCH_QUESTIONS_PER_PAGE); // start from this element
+                fullTextQuery.setMaxResults(HOME_PAGE_SEARCH_QUESTIONS_PER_PAGE); // number of element
+            }
+        } else if (TAG.equalsIgnoreCase(className)) {
+            fullTextQuery.setFirstResult(pageIndex * TAGS_PER_PAGE); // start from this element
+            fullTextQuery.setMaxResults(TAGS_PER_PAGE); // number of element
+        }
+
+        int totalSize = fullTextQuery.getResultSize();
 
         if (ARTICLE.equalsIgnoreCase(className)) {
             List<Article> articles = (List<Article>) fullTextQuery.getResultList();
@@ -216,23 +225,10 @@ public class HibernateSearchRepository {
                 }
             }
         }
-    }
-
-    private Pagination returnFinalListByClassName(String className,
-                                                  List<Article> finalArticles,
-                                                  List<Question> finalQuestions,
-                                                  List<Tag> finalTags,
-                                                  int pageIndex,
-                                                  String sortBy,
-                                                  boolean isHomepageSearch) throws Exception {
-
-        String methodName = "HibernateSearchRepository.returnFinalListByClassName";
 
         // At the end of the loop return result
         if (ARTICLE.equalsIgnoreCase(className)) {
-
             if (SORT_DATE.equalsIgnoreCase(sortBy)) {
-                // Sort article by date
                 Collections.sort(finalArticles, (article1, article2) -> {
                     if (article1.getUtilTimestamp() != null && article2.getUtilTimestamp() != null) {
                         if (article1.getUtilTimestamp().after(article2.getUtilTimestamp())) {
@@ -243,7 +239,6 @@ public class HibernateSearchRepository {
                             return 0;
                         }
                     }
-
                     return 0;
                 });
             } else if (SORT_VIEW_COUNT.equalsIgnoreCase(sortBy)) {
@@ -257,7 +252,6 @@ public class HibernateSearchRepository {
                             return 0;
                         }
                     }
-
                     return 0;
                 });
             } else if (SORT_UPVOTE_COUNT.equalsIgnoreCase(sortBy)) {
@@ -271,7 +265,6 @@ public class HibernateSearchRepository {
                             return 0;
                         }
                     }
-
                     return 0;
                 });
             } else {
@@ -286,28 +279,6 @@ public class HibernateSearchRepository {
                 numberOfContentsPerPage = ARTICLES_PER_PAGE;
             }
 
-            // Return by page index
-            int start = pageIndex * numberOfContentsPerPage;
-            int end = start + numberOfContentsPerPage;
-
-            List<Article> articlesByPageIndex = new ArrayList<>();
-
-            int totalSize = finalArticles.size();
-
-            // If start = 5 or 6
-            // Array has 0, 1, 2, 3, 4 => error
-            if (totalSize <= start) {
-                return new ArticlePagination();
-            } else {
-                for (int i = start; i < end; i++) {
-                    try {
-                        articlesByPageIndex.add(finalArticles.get(i));
-                    } catch (IndexOutOfBoundsException e) {
-                        break;
-                    }
-                }
-            }
-
             int numberOfPages = 0;
             if (totalSize % numberOfContentsPerPage == 0) {
                 numberOfPages = totalSize / numberOfContentsPerPage;
@@ -316,12 +287,11 @@ public class HibernateSearchRepository {
             }
 
             ArticlePagination articlePagination = new ArticlePagination();
-            articlePagination.setArticlesByPageIndex(articlesByPageIndex);
+            articlePagination.setArticlesByPageIndex(finalArticles);
             articlePagination.setNumberOfPages(numberOfPages);
+
             return articlePagination;
-
         } else if (QUESTION.equalsIgnoreCase(className)) {
-
             if (SORT_DATE.equalsIgnoreCase(sortBy)) {
                 Collections.sort(finalQuestions, (question1, question2) -> {
                     if (question1.getUtilTimestamp() != null && question2.getUtilTimestamp() != null) {
@@ -333,7 +303,6 @@ public class HibernateSearchRepository {
                             return 0;
                         }
                     }
-
                     return 0;
                 });
             } else if (SORT_VIEW_COUNT.equalsIgnoreCase(sortBy)) {
@@ -347,7 +316,6 @@ public class HibernateSearchRepository {
                             return 0;
                         }
                     }
-
                     return 0;
                 });
             } else if (SORT_UPVOTE_COUNT.equalsIgnoreCase(sortBy)) {
@@ -361,7 +329,6 @@ public class HibernateSearchRepository {
                             return 0;
                         }
                     }
-
                     return 0;
                 });
             } else {
@@ -376,28 +343,6 @@ public class HibernateSearchRepository {
                 numberOfContentsPerPage = QUESTIONS_PER_PAGE;
             }
 
-            // Return by page index
-            int start = pageIndex * numberOfContentsPerPage;
-            int end = start + numberOfContentsPerPage;
-
-            List<Question> questionsByPageIndex = new ArrayList<>();
-
-            int totalSize = finalQuestions.size();
-
-            // If start = 5 or 6
-            // Array has 0, 1, 2, 3, 4 => error
-            if (totalSize <= start) {
-                return new QuestionPagination();
-            } else {
-                for (int i = start; i < end; i++) {
-                    try {
-                        questionsByPageIndex.add(finalQuestions.get(i));
-                    } catch (IndexOutOfBoundsException e) {
-                        break;
-                    }
-                }
-            }
-
             int numberOfPages = 0;
             if (totalSize % numberOfContentsPerPage == 0) {
                 numberOfPages = totalSize / numberOfContentsPerPage;
@@ -406,17 +351,41 @@ public class HibernateSearchRepository {
             }
 
             QuestionPagination questionPagination = new QuestionPagination();
-            questionPagination.setQa(questionsByPageIndex);
+            questionPagination.setQa(finalQuestions);
             questionPagination.setNumberOfPages(numberOfPages);
 
             return questionPagination;
+
         } else if (TAG.equalsIgnoreCase(className)) {
 
+            // Get 7 days ago
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(new Date());
+            calendar.add(Calendar.DATE, -7);
+            String searchDate = sdf.format(calendar.getTime());
+
+            // Then count view 7 days ago
+            for (Tag tag : finalTags) {
+                Object[] viewCountQuestionAndArticle =
+                        tagRepository.countTotalQuestionViewAndArticleViewBeforeDate(searchDate, tag.getTagId());
+
+                int questionViewCountOneWeekAgo = viewCountQuestionAndArticle[0] == null ? 0 : Integer.parseInt(viewCountQuestionAndArticle[0].toString());
+                int articleViewCountOneWeekAgo = viewCountQuestionAndArticle[1] == null ? 0 : Integer.parseInt(viewCountQuestionAndArticle[1].toString());
+
+                tag.setViewCountOneWeekAgo(questionViewCountOneWeekAgo + articleViewCountOneWeekAgo);
+                tagRepository.save(tag);
+            }
+
+            // Sort by which tags differ from those from one week ago the most
             if (SORT_VIEW_COUNT.equalsIgnoreCase(sortBy)) {
                 Collections.sort(finalTags, (tag1, tag2) -> {
-                    if (tag1.getViewCount() > tag2.getViewCount()) {
+                    int tag1viewCountDifference = tag1.getViewCount() - tag1.getViewCountOneWeekAgo();
+                    int tag2viewCountDifference = tag2.getViewCount() - tag2.getViewCountOneWeekAgo();
+
+                    if (tag1viewCountDifference > tag2viewCountDifference) {
                         return -1;
-                    } else if (tag1.getViewCount() < tag2.getViewCount()) {
+                    } else if (tag1viewCountDifference < tag2viewCountDifference) {
                         return 1;
                     } else {
                         return 0;
@@ -436,28 +405,6 @@ public class HibernateSearchRepository {
                 throw new Exception("Unknown type to findAllTags: " + sortBy);
             }
 
-            // Return by page index
-            int start = pageIndex * TAGS_PER_PAGE;
-            int end = start + TAGS_PER_PAGE;
-
-            List<Tag> tagsByPageIndex = new ArrayList<>();
-
-            int totalSize = finalTags.size();
-
-            // If start = 5 or 6
-            // Array has 0, 1, 2, 3, 4 => error
-            if (totalSize <= start) {
-                return new TagPagination();
-            } else {
-                for (int i = start; i < end; i++) {
-                    try {
-                        tagsByPageIndex.add(finalTags.get(i));
-                    } catch (IndexOutOfBoundsException e) {
-                        break;
-                    }
-                }
-            }
-
             int numberOfPages = 0;
             if (totalSize % TAGS_PER_PAGE == 0) {
                 numberOfPages = totalSize / TAGS_PER_PAGE;
@@ -466,7 +413,7 @@ public class HibernateSearchRepository {
             }
 
             TagPagination tagPagination = new TagPagination();
-            tagPagination.setTagsByPageIndex(tagsByPageIndex);
+            tagPagination.setTagsByPageIndex(finalTags);
             tagPagination.setNumberOfPages(numberOfPages);
 
             return tagPagination;
@@ -474,4 +421,106 @@ public class HibernateSearchRepository {
         return new Pagination();
     }
 
+    public Pagination recommendTagNameWhileTyping(String searchedText, String className, String field) throws Exception {
+        try {
+            GenericClass genericClass = null;
+
+            if (TAG.equalsIgnoreCase(className)) {
+                genericClass = new GenericClass(Tag.class);
+            } else {
+                throw new Exception("HibernateSearchRepository.recommendTagsWhileTyping: Unknown className: " + className);
+            }
+
+            List<Tag> finalTags = new ArrayList<>();
+
+            // If it starts with double quotes then search exactly
+            if (searchedText.startsWith("\"") && searchedText.endsWith("\"")) {
+
+                List<org.apache.lucene.search.Query> queryList = new ArrayList<>();
+                // Search for each field
+                org.apache.lucene.search.Query phraseQuery = getQueryBuilder(genericClass)
+                        .phrase()
+                        .withSlop(0) // match exactly
+                        .onField(field)
+                        .sentence(searchedText)
+                        .createQuery();
+                queryList.add(phraseQuery);
+
+                // At the end of the loop return result
+                return returnFinalListRecommendedTag(className, finalTags, queryList, genericClass);
+
+            }
+            // Else search with 'AND' operator
+            else {
+                String[] arrKeywords = searchedText.split(" ");
+
+                List<org.apache.lucene.search.Query> queryList = new ArrayList<>();
+                for (String keyword : arrKeywords) {
+                    if (!StringUtils.isNullOrEmpty(keyword)) {
+                        org.apache.lucene.search.Query query = getQueryBuilder(genericClass)
+                                .keyword()
+                                .onField(field)
+                                .matching(keyword.trim())
+                                .createQuery();
+                        queryList.add(query);
+                    }
+                }
+
+                // At the end of the loop return result
+                return returnFinalListRecommendedTag(className, finalTags, queryList, genericClass);
+            }
+        } catch (Exception e) {
+            logger.error("An error has occurred", e);
+            throw e;
+        }
+    }
+
+    private Pagination returnFinalListRecommendedTag(String className,
+                                                     List<Tag> finalTags,
+                                                     List<Query> queryList,
+                                                     GenericClass genericClass) throws Exception {
+
+        String methodName = "HibernateSearchRepository.returnFinalListRecommendedTag";
+
+        // Build an "and" finalQuery
+        BooleanQuery.Builder finalQueryBuilder = new BooleanQuery.Builder();
+
+        for (org.apache.lucene.search.Query query : queryList) {
+            finalQueryBuilder.add(query, BooleanClause.Occur.MUST);
+        }
+
+        FullTextQuery fullTextQuery = getJpaQuery(finalQueryBuilder.build(), genericClass);
+        fullTextQuery.setFirstResult(0);
+        fullTextQuery.setMaxResults(5);
+
+        if (TAG.equalsIgnoreCase(className)) {
+            List<Tag> tags = (List<Tag>) fullTextQuery.getResultList();
+            for (Tag tag : tags) {
+                if (!finalTags.contains(tag)) {
+                    finalTags.add(tag);
+                }
+            }
+        }
+
+        // At the end of the loop return result
+        if (TAG.equalsIgnoreCase(className)) {
+            // Sort by both view count and reputation
+            Collections.sort(finalTags, (tag1, tag2) -> {
+                if (tag1.getViewCount() > tag2.getViewCount()) {
+                    return -1;
+                } else if (tag1.getViewCount() < tag2.getViewCount()) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            });
+
+            TagPagination tagPagination = new TagPagination();
+            tagPagination.setTagsByPageIndex(finalTags);
+            tagPagination.setNumberOfPages(1);
+
+            return tagPagination;
+        }
+        return new Pagination();
+    }
 }

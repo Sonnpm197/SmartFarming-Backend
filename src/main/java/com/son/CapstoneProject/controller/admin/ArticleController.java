@@ -4,16 +4,11 @@ import com.son.CapstoneProject.common.ConstantValue;
 import com.son.CapstoneProject.configuration.HttpRequestResponseUtils;
 import com.son.CapstoneProject.controller.ControllerUtils;
 import com.son.CapstoneProject.controller.FileController;
-import com.son.CapstoneProject.entity.Article;
-import com.son.CapstoneProject.entity.Comment;
-import com.son.CapstoneProject.entity.Tag;
-import com.son.CapstoneProject.entity.UploadedFile;
+import com.son.CapstoneProject.entity.*;
 import com.son.CapstoneProject.entity.login.AppUser;
 import com.son.CapstoneProject.entity.pagination.ArticlePagination;
 import com.son.CapstoneProject.entity.search.ArticleSearch;
-import com.son.CapstoneProject.repository.ArticleRepository;
-import com.son.CapstoneProject.repository.CommentRepository;
-import com.son.CapstoneProject.repository.UploadedFileRepository;
+import com.son.CapstoneProject.repository.*;
 import com.son.CapstoneProject.repository.searchRepository.HibernateSearchRepository;
 import com.son.CapstoneProject.service.ViewCountingService;
 import org.slf4j.Logger;
@@ -45,6 +40,9 @@ public class ArticleController {
     private ArticleRepository articleRepository;
 
     @Autowired
+    private TagRepository tagRepository;
+
+    @Autowired
     private HibernateSearchRepository hibernateSearchRepository;
 
     @Autowired
@@ -61,6 +59,9 @@ public class ArticleController {
 
     @Autowired
     private CommentRepository commentRepository;
+
+    @Autowired
+    private AppUserTagRepository appUserTagRepository;
 
     @GetMapping("/viewNumberOfArticles")
     public long viewNumberOfArticles() {
@@ -146,14 +147,15 @@ public class ArticleController {
         }
     }
 
-    @GetMapping("/viewArticle/{id}")
-    public Article viewArticle(@PathVariable Long id, HttpServletRequest request) {
+    @GetMapping("/viewArticle/{userId}/{contentId}")
+    public Article viewArticle(@PathVariable Long userId, @PathVariable Long contentId, HttpServletRequest request) {
         try {
             String ipAddress = HttpRequestResponseUtils.getClientIpAddress(request);
             // Execute asynchronously
-            countingService.countView(id, ipAddress, ARTICLE);
-            return articleRepository.findById(id)
-                    .orElseThrow(() -> new Exception("ArticleController.viewArticle: Not found any article with id: " + id));
+//            countingService.countViewByIpAddress(contentId, ipAddress, ARTICLE);
+            countingService.countViewByUserId(contentId, userId, ARTICLE);
+            return articleRepository.findById(contentId)
+                    .orElseThrow(() -> new Exception("ArticleController.viewArticle: Not found any article with id: " + contentId));
         } catch (Exception e) {
             logger.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
@@ -391,6 +393,98 @@ public class ArticleController {
                 articleRepository.save(article);
             }
 
+        } catch (Exception e) {
+            logger.error("An error has occurred", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        }
+    }
+
+    @GetMapping("/viewArticlesByTag/{type}/{tagId}/{pageNumber}")
+    public ArticlePagination viewArticlesByTag(@PathVariable String type, @PathVariable Long tagId, @PathVariable int pageNumber) {
+        try {
+            String methodName = "Article.viewQuestionsByTag: ";
+
+            tagRepository.findById(tagId)
+                    .orElseThrow(() -> new Exception(methodName + "cannot find any tags by tagid: " + tagId));
+
+            PageRequest pageNumWithElements;
+
+            if (SORT_DATE.equalsIgnoreCase(type)) {
+                pageNumWithElements = PageRequest.of(pageNumber, ARTICLES_PER_PAGE, Sort.by("utilTimestamp").descending());
+            } else if (SORT_VIEW_COUNT.equalsIgnoreCase(type)) {
+                pageNumWithElements = PageRequest.of(pageNumber, ARTICLES_PER_PAGE, Sort.by("viewCount").descending());
+            } else if (SORT_UPVOTE_COUNT.equalsIgnoreCase(type)) {
+                pageNumWithElements = PageRequest.of(pageNumber, ARTICLES_PER_PAGE, Sort.by("upvoteCount").descending());
+            } else {
+                throw new Exception(methodName + " unknown type: " + type);
+            }
+
+            Page<Article> articles = articleRepository.findByTags_tagId(tagId, pageNumWithElements);
+
+            // Return pagination objects
+            ArticlePagination articlePagination = new ArticlePagination();
+            long numberOfQuestionsByTagId = articleRepository.countNumberOfArticlesByTagId(tagId);
+            long numberOfPages = 0;
+            if (numberOfQuestionsByTagId % ARTICLES_PER_PAGE == 0) {
+                numberOfPages = numberOfQuestionsByTagId / ARTICLES_PER_PAGE;
+            } else {
+                numberOfPages = (numberOfQuestionsByTagId / ARTICLES_PER_PAGE) + 1;
+            }
+
+            articlePagination.setArticlesByPageIndex(articles.getContent());
+            articlePagination.setNumberOfPages(Integer.parseInt("" + numberOfPages));
+
+            return articlePagination;
+        } catch (Exception e) {
+            logger.error("An error has occurred", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        }
+    }
+
+    @GetMapping("/viewRelatedArticles/{articleId}")
+    public List<Article> viewRelatedArticles(@PathVariable Long articleId) {
+        try {
+            Article article = articleRepository.findById(articleId)
+                    .orElseThrow(() -> new Exception("ArticleController.viewRelatedArticles: cannot find any article with id: " + articleId));
+
+            List<Tag> tagsByArticleId = tagRepository.findByArticles_articleId(articleId);
+            List<Article> recommendedArticles = new ArrayList<>();
+
+            if (tagsByArticleId != null) {
+                for (Tag tag: tagsByArticleId) {
+                    Article relatedArticle = articleRepository.findTopByTags_tagIdOrderByViewCountDescUpvoteCountDesc(tag.getTagId());
+                    if (relatedArticle != null && !recommendedArticles.contains(relatedArticle)) {
+                        recommendedArticles.add(relatedArticle);
+                    }
+                }
+            }
+
+            return recommendedArticles;
+        } catch (Exception e) {
+            logger.error("An error has occurred", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        }
+    }
+
+    @GetMapping("/viewRelatedUsersByArticle/{articleId}")
+    public List<AppUserTag> viewRelatedUsersByArticle(@PathVariable Long articleId) {
+        try {
+            Article article = articleRepository.findById(articleId)
+                    .orElseThrow(() -> new Exception("ArticleController.viewRelatedUsersByArticle: cannot find any article with id: " + articleId));
+
+            List<Tag> tagsByArticleId = tagRepository.findByArticles_articleId(articleId);
+            List<AppUserTag> recommendedUsers = new ArrayList<>();
+
+            if (tagsByArticleId != null) {
+                for (Tag tag: tagsByArticleId) {
+                    AppUserTag appUserTag = appUserTagRepository.findTopByTag_TagIdOrderByViewCountDescReputationDesc(tag.getTagId());
+                    if (appUserTag != null && !recommendedUsers.contains(appUserTag)) {
+                        recommendedUsers.add(appUserTag);
+                    }
+                }
+            }
+
+            return recommendedUsers;
         } catch (Exception e) {
             logger.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);

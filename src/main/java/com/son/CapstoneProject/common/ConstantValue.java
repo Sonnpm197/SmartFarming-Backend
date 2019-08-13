@@ -46,7 +46,7 @@ public class ConstantValue {
 
     // Pagination
     public static final int QUESTIONS_PER_PAGE = 10;
-    public static final int ARTICLES_PER_PAGE = 12;
+    public static final int ARTICLES_PER_PAGE = 10;
     public static final int TAGS_PER_PAGE = 10;
     public static final int USERS_PER_PAGE = 10;
     public static final int REPORTS_PER_PAGE = 10;
@@ -54,6 +54,9 @@ public class ConstantValue {
 
     public static final int HOME_PAGE_SEARCH_QUESTIONS_PER_PAGE = 5;
     public static final int HOME_PAGE_SEARCH_ARTICLES_PER_PAGE = 5;
+
+    public static final int RECOMMENDED_QUESTIONS_PER_PAGE = 10;
+    public static final int RECOMMENDED_ARTICLES_PER_PAGE = 10;
 
     // Vote point
     public static final int ARTICLE_UPVOTE_POINT = 1;
@@ -74,6 +77,8 @@ public class ConstantValue {
 
     // Count view
     public static final int INCREASE_COUNT_PER_MINUTES = 15;
+
+    public static final int INCREASE_COUNT_PER_MINUTES_FOR_TEST = 1;
 
     public static final int MAXIMUM_TIME_SAVED_FOR_IP_IN_HOUR = 24;
 

@@ -26,4 +26,6 @@ public interface AppUserTagRepository extends PagingAndSortingRepository<AppUser
 
     @Query("select count(a.appUserTagId) from AppUserTag a where a.appUser = :appUser")
     Integer getTotalTagCount(@Param("appUser") AppUser appUser);
+
+    AppUserTag findTopByTag_TagIdOrderByViewCountDescReputationDesc(Long tagId);
 }

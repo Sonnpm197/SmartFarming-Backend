@@ -164,7 +164,7 @@ public class AdminController {
             TagPagination tagPagination = (TagPagination) hibernateSearchRepository.search2(
                     tagSearch.getTextSearch(),
                     TAG,
-                    new String[]{"name", "description"},
+                    new String[]{"name"}, // search tag by name
                     null,
                     type,
                     pageNumber,

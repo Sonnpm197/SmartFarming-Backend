@@ -114,7 +114,7 @@ public class QuestionControllerTest {
                 HttpMethod.GET,
                 entity,
                 String.class);
-        String expected = "2"; // 5 questions, 3 questions per page => 2 pages
+        String expected = "1"; // 5 questions, 3 questions per page => 2 pages
         System.out.println(">> Result: " + response.getBody());
         Assert.assertEquals(expected, response.getBody());
     }

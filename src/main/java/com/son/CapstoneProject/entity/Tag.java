@@ -39,9 +39,9 @@ public class Tag {
     @Column(columnDefinition = "nvarchar(255)")
     private String name;
 
-    @Analyzer(definition = "TagCustomAnalyzer")
-    @Field(store = Store.YES)
-    @Column(columnDefinition = "ntext")
+//    @Analyzer(definition = "TagCustomAnalyzer")
+//    @Field(store = Store.YES)
+//    @Column(columnDefinition = "ntext")
     private String description;
 
 //    @JsonIgnore
@@ -57,6 +57,8 @@ public class Tag {
     private int reputation;
 
     private int viewCount;
+
+    private Integer viewCountOneWeekAgo;
 
     @Override
     public boolean equals(Object o) {

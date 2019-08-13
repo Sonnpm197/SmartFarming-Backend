@@ -53,8 +53,14 @@ public interface QuestionRepository extends PagingAndSortingRepository<Question,
     // For paging purpose
     Page<Question> findByTags_tagId(Long tagId, Pageable pageable);
 
-    // Find full to count pages
-    List<Question> findByTags_tagId(Long tagId);
+    // Count number of question by tagId
+    @Query(
+            value = "select count(q.question_id) from question q join question_tags qt\n" +
+                    "                        on q.question_id = qt.questions_question_id\n" +
+                    "where qt.tags_tag_id = :tagId",
+            nativeQuery=true
+    )
+    Integer countNumberOfQuestionsByTagId(@Param("tagId") Long tagId);
 
     @Query("select sum(q.viewCount) from Question q where q.utilTimestamp >= :startDateTime and q.utilTimestamp <= :endDateTime")
     Integer findTotalViewOfQuestionsByUtilTimestampBetween(@Param("startDateTime") Date startDateTime, @Param("endDateTime") Date endDateTime);
@@ -85,4 +91,6 @@ public interface QuestionRepository extends PagingAndSortingRepository<Question,
             nativeQuery=true
     )
     Integer findTotalUpvoteOfQuestionsByYear(@Param("yearParam") int yearParam);
+
+    Question findTopByTags_tagIdOrderByViewCountDescUpvoteCountDesc(Long tagId);
 }
