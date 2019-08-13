@@ -147,15 +147,15 @@ public class ArticleController {
         }
     }
 
-    @GetMapping("/viewArticle/{userId}/{contentId}")
-    public Article viewArticle(@PathVariable Long userId, @PathVariable Long contentId, HttpServletRequest request) {
+    @GetMapping("/viewArticle/{userId}/{articleId}")
+    public Article viewArticle(@PathVariable Long userId, @PathVariable Long articleId, HttpServletRequest request) {
         try {
             String ipAddress = HttpRequestResponseUtils.getClientIpAddress(request);
             // Execute asynchronously
 //            countingService.countViewByIpAddress(contentId, ipAddress, ARTICLE);
-            countingService.countViewByUserId(contentId, userId, ARTICLE);
-            return articleRepository.findById(contentId)
-                    .orElseThrow(() -> new Exception("ArticleController.viewArticle: Not found any article with id: " + contentId));
+            countingService.countViewByUserId(articleId, userId, ARTICLE);
+            return articleRepository.findById(articleId)
+                    .orElseThrow(() -> new Exception("ArticleController.viewArticle: Not found any article with id: " + articleId));
         } catch (Exception e) {
             logger.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);

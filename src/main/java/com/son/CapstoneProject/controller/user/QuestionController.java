@@ -194,15 +194,15 @@ public class QuestionController {
         }
     }
 
-    @GetMapping("/viewQuestion/{userId}/{contentId}")
-    public Question viewQuestionById(@PathVariable Long userId, @PathVariable Long contentId, HttpServletRequest request) {
+    @GetMapping("/viewQuestion/{userId}/{questionId}")
+    public Question viewQuestionById(@PathVariable Long userId, @PathVariable Long questionId, HttpServletRequest request) {
         try {
             String ipAddress = HttpRequestResponseUtils.getClientIpAddress(request);
             // Execute asynchronously
 //            countingService.countViewByIpAddress(contentId, ipAddress, QUESTION);
-            countingService.countViewByUserId(contentId, userId, QUESTION);
-            return questionRepository.findById(contentId)
-                    .orElseThrow(() -> new Exception("QuestionController.viewQuestionById: Not found any question with id: " + contentId));
+            countingService.countViewByUserId(questionId, userId, QUESTION);
+            return questionRepository.findById(questionId)
+                    .orElseThrow(() -> new Exception("QuestionController.viewQuestionById: Not found any question with id: " + questionId));
         } catch (Exception e) {
             logger.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
