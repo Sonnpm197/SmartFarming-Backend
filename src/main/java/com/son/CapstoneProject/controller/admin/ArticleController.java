@@ -442,7 +442,7 @@ public class ArticleController {
     }
 
     @GetMapping("/viewRelatedArticles/{articleId}")
-    public List<Article> viewRelatedArticles(@PathVariable Long articleId) {
+    public ArticlePagination viewRelatedArticles(@PathVariable Long articleId) {
         try {
             Article article = articleRepository.findById(articleId)
                     .orElseThrow(() -> new Exception("ArticleController.viewRelatedArticles: cannot find any article with id: " + articleId));
@@ -459,7 +459,19 @@ public class ArticleController {
                 }
             }
 
-            return recommendedArticles;
+            int numberOfRecommendedArticle = recommendedArticles.size();
+            int numberOfPages = 0;
+            if (numberOfRecommendedArticle % ARTICLES_PER_PAGE == 0) {
+                numberOfPages = numberOfRecommendedArticle / ARTICLES_PER_PAGE;
+            } else {
+                numberOfPages = (numberOfRecommendedArticle / ARTICLES_PER_PAGE) + 1;
+            }
+
+            ArticlePagination articlePagination = new ArticlePagination();
+            articlePagination.setArticlesByPageIndex(recommendedArticles);
+            articlePagination.setNumberOfPages(numberOfPages);
+
+            return articlePagination;
         } catch (Exception e) {
             logger.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);

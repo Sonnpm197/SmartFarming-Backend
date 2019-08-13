@@ -623,4 +623,32 @@ public class QuestionControllerTest {
         Report report = response.getBody();
         Assert.assertTrue(reportRepository.findById(report.getReportId()).isPresent());
     }
+
+    @Test
+    @SqlGroup({
+            @Sql("/sql/questionController/find_related_questions.sql"),
+            @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
+    })
+    public void viewRelatedQuestions() {
+        String url = createURL(port, "/question/viewRelatedQuestions/1");
+
+        // URI (URL) parameters
+        Map<String, String> uriParams = new HashMap<>();
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
+
+        System.out.println(">>> Testing URI: " + builder.buildAndExpand(uriParams).toUri());
+
+        HttpEntity<String> entity = new HttpEntity<>(null, CommonTest.getHeaders("GET", frontEndUrl));
+        ResponseEntity<QuestionPagination> response = CommonTest.getRestTemplate().exchange(
+                builder.buildAndExpand(uriParams).toUri(),
+                HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<QuestionPagination>() {
+                });
+
+        QuestionPagination questionList = response.getBody();
+        System.out.println(">> Result: " + questionList);
+        Assert.assertTrue(questionList.getQa().size() == 1);
+    }
 }

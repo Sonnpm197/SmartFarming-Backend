@@ -396,4 +396,58 @@ public class ArticleControllerTest {
         System.out.println(">> Result: " + response.getBody());
         Assert.assertTrue(expected == response.getBody().getArticlesByPageIndex().size());
     }
+
+    @Test
+    @SqlGroup({
+            @Sql("/sql/articleController/find_articles_by_tags.sql"),
+            @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
+    })
+    public void findArticlesByTag() {
+        String url = createURL("/article/viewArticlesByTag/date/0/0");
+
+        // URI (URL) parameters
+        Map<String, String> uriParams = new HashMap<>();
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
+
+        System.out.println(">>> Testing URI: " + builder.buildAndExpand(uriParams).toUri());
+
+        HttpEntity<String> entity = new HttpEntity<>(null, CommonTest.getHeaders("GET", frontEndUrl));
+        ResponseEntity<ArticlePagination> response = CommonTest.getRestTemplate().exchange(
+                builder.buildAndExpand(uriParams).toUri(),
+                HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<ArticlePagination>() {
+                });
+
+        System.out.println(">> Result: " + response.getBody());
+        Assert.assertTrue(response.getBody().getArticlesByPageIndex().size() == 1);
+    }
+
+    @Test
+    @SqlGroup({
+            @Sql("/sql/articleController/find_related_article.sql"),
+            @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
+    })
+    public void viewRelatedArticles() {
+        String url = createURL("/article/viewRelatedArticles/1");
+
+        // URI (URL) parameters
+        Map<String, String> uriParams = new HashMap<>();
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
+
+        System.out.println(">>> Testing URI: " + builder.buildAndExpand(uriParams).toUri());
+
+        HttpEntity<String> entity = new HttpEntity<>(null, CommonTest.getHeaders("GET", frontEndUrl));
+        ResponseEntity<ArticlePagination> response = CommonTest.getRestTemplate().exchange(
+                builder.buildAndExpand(uriParams).toUri(),
+                HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<ArticlePagination>() {
+                });
+
+        System.out.println(">> Result: " + response.getBody());
+        Assert.assertTrue(response.getBody().getArticlesByPageIndex().size() == 1);
+    }
 }

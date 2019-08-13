@@ -750,7 +750,7 @@ public class QuestionController {
     }
 
     @GetMapping("/viewRelatedQuestions/{questionId}")
-    public List<Question> viewRelatedQuestions(@PathVariable Long questionId) {
+    public QuestionPagination viewRelatedQuestions(@PathVariable Long questionId) {
         try {
             Question question = questionRepository.findById(questionId)
                     .orElseThrow(() -> new Exception("QuestionController.viewRelatedQuestions: cannot find any article with id: " + questionId));
@@ -767,7 +767,19 @@ public class QuestionController {
                 }
             }
 
-            return recommendedQuestions;
+            int numberOfRecommendedQuestion = recommendedQuestions.size();
+            int numberOfPages = 0;
+            if (numberOfRecommendedQuestion % QUESTIONS_PER_PAGE == 0) {
+                numberOfPages = numberOfRecommendedQuestion / QUESTIONS_PER_PAGE;
+            } else {
+                numberOfPages = (numberOfRecommendedQuestion / QUESTIONS_PER_PAGE) + 1;
+            }
+
+            QuestionPagination questionPagination = new QuestionPagination();
+            questionPagination.setQa(recommendedQuestions);
+            questionPagination.setNumberOfPages(numberOfPages);
+
+            return questionPagination;
         } catch (Exception e) {
             logger.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
