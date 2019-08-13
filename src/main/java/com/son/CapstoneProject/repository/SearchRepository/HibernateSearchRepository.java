@@ -367,11 +367,11 @@ public class HibernateSearchRepository {
 
             // Then count view 7 days ago
             for (Tag tag : finalTags) {
-                Object[] viewCountQuestionAndArticle =
+                List<Object[]> viewCountQuestionAndArticle =
                         tagRepository.countTotalQuestionViewAndArticleViewBeforeDate(searchDate, tag.getTagId());
 
-                int questionViewCountOneWeekAgo = viewCountQuestionAndArticle[0] == null ? 0 : Integer.parseInt(viewCountQuestionAndArticle[0].toString());
-                int articleViewCountOneWeekAgo = viewCountQuestionAndArticle[1] == null ? 0 : Integer.parseInt(viewCountQuestionAndArticle[1].toString());
+                int questionViewCountOneWeekAgo = viewCountQuestionAndArticle.get(0)[0] == null ? 0 : Integer.parseInt(viewCountQuestionAndArticle.get(0)[0].toString());
+                int articleViewCountOneWeekAgo = viewCountQuestionAndArticle.get(0)[1] == null ? 0 : Integer.parseInt(viewCountQuestionAndArticle.get(0)[1].toString());
 
                 tag.setViewCountOneWeekAgo(questionViewCountOneWeekAgo + articleViewCountOneWeekAgo);
                 tagRepository.save(tag);

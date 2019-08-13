@@ -43,5 +43,5 @@ public interface TagRepository extends PagingAndSortingRepository<Tag, Long> {
                     "      where a.util_timestamp <= :utilTimeStamp and ats.tags_tag_id = :tagId) as t2",
             nativeQuery = true
     )
-    Object[] countTotalQuestionViewAndArticleViewBeforeDate(@Param("utilTimeStamp") String utilTimeStamp, @Param("tagId") Long tagId);
+    List<Object[]> countTotalQuestionViewAndArticleViewBeforeDate(@Param("utilTimeStamp") String utilTimeStamp, @Param("tagId") Long tagId);
 }
