@@ -72,6 +72,12 @@ public interface ArticleRepository extends PagingAndSortingRepository<Article, L
     )
     Integer countNumberOfArticlesByTagId(@Param("tagId") Long tagId);
 
-    Article findTopByTags_tagIdOrderByViewCountDescUpvoteCountDesc(Long tagId);
+    @Query(
+            value = "select count(q.article_id) from Article q where q.category = :category",
+            nativeQuery = true
+    )
+    Integer findNumberOfArticlesByCategory(@Param("category") String category);
+
+    Article findTopByTags_tagIdAndArticleIdNotOrderByViewCountDescUpvoteCountDesc(Long tagId, Long articleId);
 
 }

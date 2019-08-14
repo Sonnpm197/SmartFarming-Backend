@@ -58,7 +58,7 @@ public interface QuestionRepository extends PagingAndSortingRepository<Question,
             value = "select count(q.question_id) from question q join question_tags qt\n" +
                     "                        on q.question_id = qt.questions_question_id\n" +
                     "where qt.tags_tag_id = :tagId",
-            nativeQuery=true
+            nativeQuery = true
     )
     Integer countNumberOfQuestionsByTagId(@Param("tagId") Long tagId);
 
@@ -70,27 +70,33 @@ public interface QuestionRepository extends PagingAndSortingRepository<Question,
 
     @Query(
             value = "select sum(q.view_count) from Question q where year(q.util_timestamp) = :yearParam and month(q.util_timestamp) = :monthParam",
-            nativeQuery=true
+            nativeQuery = true
     )
     Integer findTotalViewOfQuestionsByYearAndMonth(@Param("yearParam") int yearParam, @Param("monthParam") int monthParam);
 
     @Query(
             value = "select sum(q.upvote_count) from Question q where year(q.util_timestamp) = :yearParam and month(q.util_timestamp) = :monthParam",
-            nativeQuery=true
+            nativeQuery = true
     )
     Integer findTotalUpvoteOfQuestionsByYearAndMonth(@Param("yearParam") int yearParam, @Param("monthParam") int monthParam);
 
     @Query(
             value = "select sum(q.view_count) from Question q where year(q.util_timestamp) = :yearParam",
-            nativeQuery=true
+            nativeQuery = true
     )
     Integer findTotalViewOfQuestionsByYear(@Param("yearParam") int yearParam);
 
     @Query(
             value = "select sum(q.upvote_count) from Question q where year(q.util_timestamp) = :yearParam",
-            nativeQuery=true
+            nativeQuery = true
     )
     Integer findTotalUpvoteOfQuestionsByYear(@Param("yearParam") int yearParam);
 
-    Question findTopByTags_tagIdOrderByViewCountDescUpvoteCountDesc(Long tagId);
+    Question findTopByTags_tagIdAndQuestionIdNotOrderByViewCountDescUpvoteCountDesc(Long tagId, Long questionId);
+
+    @Query(
+            value = "select count(q.question_id) from question q where q.user_id = :userId",
+            nativeQuery = true
+    )
+    Integer countNumberOfQuestionsByUserId(@Param("userId") Long userId);
 }

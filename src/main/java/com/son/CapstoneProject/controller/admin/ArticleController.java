@@ -139,7 +139,21 @@ public class ArticleController {
             Page<Article> articlePage = articleRepository.findByCategory(articleSearch.getCategory(), pageNumWithElements);
             ArticlePagination articlePagination = new ArticlePagination();
             articlePagination.setArticlesByPageIndex(articlePage.getContent());
-            articlePagination.setNumberOfPages(Integer.parseInt("" + viewNumberOfPages()));
+
+            Integer numberOfArticlesByCategory = articleRepository.findNumberOfArticlesByCategory(articleSearch.getCategory());
+
+            int numberOfArticlesByInt = 0;
+            if (numberOfArticlesByCategory == null) {
+                numberOfArticlesByInt = 0;
+            } else {
+                numberOfArticlesByInt = numberOfArticlesByCategory;
+            }
+
+            if (numberOfArticlesByInt % ARTICLES_PER_PAGE == 0) {
+                articlePagination.setNumberOfPages(numberOfArticlesByInt / ARTICLES_PER_PAGE);
+            } else {
+                articlePagination.setNumberOfPages(numberOfArticlesByInt / ARTICLES_PER_PAGE + 1);
+            }
             return articlePagination;
         } catch (Exception e) {
             logger.error("An error has occurred", e);
@@ -372,12 +386,12 @@ public class ArticleController {
         try {
             List<Article> articles = articleRepository.findAll();
 
-            for (Article article: articles) {
+            for (Article article : articles) {
 
                 // Get distince subscibers of that article
                 List<Comment> comments = article.getComments();
                 List<AppUser> distinctAppUsers = new ArrayList<>();
-                for (Comment comment: comments) {
+                for (Comment comment : comments) {
                     AppUser appUser = comment.getAppUser();
 
                     // Because admin post articles so he does not need to sub
@@ -451,8 +465,8 @@ public class ArticleController {
             List<Article> recommendedArticles = new ArrayList<>();
 
             if (tagsByArticleId != null) {
-                for (Tag tag: tagsByArticleId) {
-                    Article relatedArticle = articleRepository.findTopByTags_tagIdOrderByViewCountDescUpvoteCountDesc(tag.getTagId());
+                for (Tag tag : tagsByArticleId) {
+                    Article relatedArticle = articleRepository.findTopByTags_tagIdAndArticleIdNotOrderByViewCountDescUpvoteCountDesc(tag.getTagId(), originArticle.getArticleId());
                     if (relatedArticle != null && !relatedArticle.equals(originArticle) && !recommendedArticles.contains(relatedArticle)) {
                         recommendedArticles.add(relatedArticle);
                     }
@@ -488,7 +502,7 @@ public class ArticleController {
             List<AppUserTag> recommendedUsers = new ArrayList<>();
 
             if (tagsByArticleId != null) {
-                for (Tag tag: tagsByArticleId) {
+                for (Tag tag : tagsByArticleId) {
                     AppUserTag appUserTag = appUserTagRepository.findTopByTag_TagIdOrderByViewCountDescReputationDesc(tag.getTagId());
                     if (appUserTag != null && !recommendedUsers.contains(appUserTag)) {
                         recommendedUsers.add(appUserTag);

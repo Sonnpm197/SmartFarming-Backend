@@ -260,7 +260,7 @@ public class AppUserController {
             Page<Question> questionPage = questionRepository.findByAppUser_UserId(userId, pageNumWithElements);
 
             int numberOfPages = 0;
-            int resultTagsSize = questionPage.getContent().size();
+            int resultTagsSize = questionRepository.countNumberOfQuestionsByUserId(userId);
 
             if (resultTagsSize % QUESTIONS_PER_PAGE == 0) {
                 numberOfPages = resultTagsSize / QUESTIONS_PER_PAGE;

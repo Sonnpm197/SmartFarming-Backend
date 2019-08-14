@@ -760,7 +760,7 @@ public class QuestionController {
 
             if (tagsByQuestionId != null) {
                 for (Tag tag: tagsByQuestionId) {
-                    Question relatedQuestion = questionRepository.findTopByTags_tagIdOrderByViewCountDescUpvoteCountDesc(tag.getTagId());
+                    Question relatedQuestion = questionRepository.findTopByTags_tagIdAndQuestionIdNotOrderByViewCountDescUpvoteCountDesc(tag.getTagId(), originQuestion.getQuestionId());
                     if (relatedQuestion != null && !relatedQuestion.equals(originQuestion) && !recommendedQuestions.contains(relatedQuestion)) {
                         recommendedQuestions.add(relatedQuestion);
                     }
