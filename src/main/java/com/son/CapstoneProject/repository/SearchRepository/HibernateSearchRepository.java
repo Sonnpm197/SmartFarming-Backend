@@ -357,34 +357,44 @@ public class HibernateSearchRepository {
 
         } else if (TAG.equalsIgnoreCase(className)) {
 
-            // Get 7 days ago
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(new Date());
-            calendar.add(Calendar.DATE, -7);
-            String searchDate = sdf.format(calendar.getTime());
-
-            // Then count view 7 days ago
-            for (Tag tag : finalTags) {
-                List<Object[]> viewCountQuestionAndArticle =
-                        tagRepository.countTotalQuestionViewAndArticleViewBeforeDate(searchDate, tag.getTagId());
-
-                int questionViewCountOneWeekAgo = viewCountQuestionAndArticle.get(0)[0] == null ? 0 : Integer.parseInt(viewCountQuestionAndArticle.get(0)[0].toString());
-                int articleViewCountOneWeekAgo = viewCountQuestionAndArticle.get(0)[1] == null ? 0 : Integer.parseInt(viewCountQuestionAndArticle.get(0)[1].toString());
-
-                tag.setViewCountOneWeekAgo(questionViewCountOneWeekAgo + articleViewCountOneWeekAgo);
-                tagRepository.save(tag);
-            }
+//            // Get 7 days ago
+//            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//            Calendar calendar = Calendar.getInstance();
+//            calendar.setTime(new Date());
+//            calendar.add(Calendar.DATE, -7);
+//            String searchDate = sdf.format(calendar.getTime());
+//
+//            // Then count view 7 days ago
+//            for (Tag tag : finalTags) {
+//                List<Object[]> viewCountQuestionAndArticle =
+//                        tagRepository.countTotalQuestionViewAndArticleViewBeforeDate(searchDate, tag.getTagId());
+//
+//                int questionViewCountOneWeekAgo = viewCountQuestionAndArticle.get(0)[0] == null ? 0 : Integer.parseInt(viewCountQuestionAndArticle.get(0)[0].toString());
+//                int articleViewCountOneWeekAgo = viewCountQuestionAndArticle.get(0)[1] == null ? 0 : Integer.parseInt(viewCountQuestionAndArticle.get(0)[1].toString());
+//
+//                tag.setViewCountOneWeekAgo(questionViewCountOneWeekAgo + articleViewCountOneWeekAgo);
+//                tagRepository.save(tag);
+//            }
 
             // Sort by which tags differ from those from one week ago the most
             if (SORT_VIEW_COUNT.equalsIgnoreCase(sortBy)) {
-                Collections.sort(finalTags, (tag1, tag2) -> {
-                    int tag1viewCountDifference = tag1.getViewCount() - tag1.getViewCountOneWeekAgo();
-                    int tag2viewCountDifference = tag2.getViewCount() - tag2.getViewCountOneWeekAgo();
+//                Collections.sort(finalTags, (tag1, tag2) -> {
+//                    int tag1viewCountDifference = tag1.getViewCount() - tag1.getViewCountOneWeekAgo();
+//                    int tag2viewCountDifference = tag2.getViewCount() - tag2.getViewCountOneWeekAgo();
+//
+//                    if (tag1viewCountDifference > tag2viewCountDifference) {
+//                        return -1;
+//                    } else if (tag1viewCountDifference < tag2viewCountDifference) {
+//                        return 1;
+//                    } else {
+//                        return 0;
+//                    }
+//                });
 
-                    if (tag1viewCountDifference > tag2viewCountDifference) {
+                Collections.sort(finalTags, (tag1, tag2) -> {
+                    if (tag1.getViewCount() > tag2.getViewCount()) {
                         return -1;
-                    } else if (tag1viewCountDifference < tag2viewCountDifference) {
+                    } else if (tag1.getViewCount() < tag2.getViewCount()) {
                         return 1;
                     } else {
                         return 0;

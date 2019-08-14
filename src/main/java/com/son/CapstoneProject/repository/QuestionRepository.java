@@ -92,11 +92,11 @@ public interface QuestionRepository extends PagingAndSortingRepository<Question,
     )
     Integer findTotalUpvoteOfQuestionsByYear(@Param("yearParam") int yearParam);
 
-    Question findTopByTags_tagIdAndQuestionIdNotOrderByViewCountDescUpvoteCountDesc(Long tagId, Long questionId);
-
     @Query(
             value = "select count(q.question_id) from question q where q.user_id = :userId",
             nativeQuery = true
     )
     Integer countNumberOfQuestionsByUserId(@Param("userId") Long userId);
+
+    List<Question> findTop5ByTags_tagIdAndQuestionIdNotInOrderByViewCountDescUpvoteCountDesc(Long tagId, List<Long> questionIds);
 }

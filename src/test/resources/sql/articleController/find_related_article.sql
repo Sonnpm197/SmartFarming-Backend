@@ -34,7 +34,17 @@ values (1, 'tagDescription1','chăn nuôi', 0, 0);
 insert into article (user_id, category, content, title, util_timestamp, view_count, article_id)
 values (1, N'trồng trọt',N'Ẩm thực: đồ ăn hà nội khá chán, chắc do chỉ đa phần người Bắc nên em không hợp khẩu vị', N'người miền Nam sinh sống ở HN', '2012-02-22T18:10:00', 0, 1);
 insert into article (user_id, category, content, title, util_timestamp, view_count, article_id)
-values (null, N'chăn nuôi',N'Ẩm thực: đồ ăn hà nội khá chán, chắc do chỉ đa phần người Bắc nên em không hợp khẩu vị', N'người miền Nam sinh sống ở HN', '2012-02-23T18:10:00', 0, 2);
+values (null, N'chăn nuôi',N'Ẩm thực: đồ ăn ', N'người', '2012-02-23T18:10:00', 0, 2);
+insert into article (user_id, category, content, title, util_timestamp, view_count, article_id)
+values (null, N'chăn nuôi',N'Ẩm thực: đồ ăn ', N'người', '2012-02-23T18:10:00', 0, 3);
+insert into article (user_id, category, content, title, util_timestamp, view_count, article_id)
+values (null, N'chăn nuôi',N'Ẩm thực: đồ ăn ', N'người', '2012-02-23T18:10:00', 0, 4);
+insert into article (user_id, category, content, title, util_timestamp, view_count, article_id)
+values (null, N'chăn nuôi',N'Ẩm thực: đồ ăn ', N'người', '2012-02-23T18:10:00', 0, 5);
+insert into article (user_id, category, content, title, util_timestamp, view_count, article_id)
+values (null, N'chăn nuôi',N'Ẩm thực: đồ ăn ', N'người', '2012-02-23T18:10:00', 0, 6);
+insert into article (user_id, category, content, title, util_timestamp, view_count, article_id)
+values (null, N'chăn nuôi',N'Ẩm thực: đồ ăn ', N'người', '2012-02-23T18:10:00', 0, 7);
 
 -- Insert into article_tags
 insert into article_tags (articles_article_id, tags_tag_id) values (1, 0);
@@ -42,3 +52,18 @@ insert into article_tags (articles_article_id, tags_tag_id) values (1, 1);
 
 insert into article_tags (articles_article_id, tags_tag_id) values (2, 0);
 insert into article_tags (articles_article_id, tags_tag_id) values (2, 1);
+
+insert into article_tags (articles_article_id, tags_tag_id) values (3, 0);
+insert into article_tags (articles_article_id, tags_tag_id) values (3, 1);
+
+insert into article_tags (articles_article_id, tags_tag_id) values (4, 0);
+insert into article_tags (articles_article_id, tags_tag_id) values (4, 1);
+
+insert into article_tags (articles_article_id, tags_tag_id) values (5, 0);
+insert into article_tags (articles_article_id, tags_tag_id) values (5, 1);
+
+insert into article_tags (articles_article_id, tags_tag_id) values (6, 0);
+insert into article_tags (articles_article_id, tags_tag_id) values (6, 1);
+
+insert into article_tags (articles_article_id, tags_tag_id) values (7, 0);
+insert into article_tags (articles_article_id, tags_tag_id) values (7, 1);
