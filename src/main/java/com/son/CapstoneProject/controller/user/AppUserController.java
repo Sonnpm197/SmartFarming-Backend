@@ -203,7 +203,7 @@ public class AppUserController {
             }
 
             int numberOfPages = 0;
-            int resultTagsSize = tags.size();
+            int resultTagsSize = getTotalTagsOfUser(userId);
 
             if (resultTagsSize % TAGS_PER_PAGE == 0) {
                 numberOfPages = resultTagsSize / TAGS_PER_PAGE;
