@@ -16,6 +16,8 @@ public interface AppUserTagRepository extends PagingAndSortingRepository<AppUser
 
     AppUserTag findAppUserTagByAppUser_UserIdAndTag_TagId(Long appUserId, Long tagId);
 
+    List<AppUserTag> findAllAppUserTagByAppUser_UserIdAndTag_TagId(Long appUserId, Long tagId);
+
     List<AppUserTag> findByTag_TagId(Long tagId);
 
     List<AppUserTag> findTop5ByAppUser_UserIdOrderByViewCountDesc(Long userId);

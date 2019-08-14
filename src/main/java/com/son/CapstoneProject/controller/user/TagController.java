@@ -124,6 +124,16 @@ public class TagController {
         }
     }
 
+    @GetMapping("/findAllTagsForRecommend")
+    public List<Tag> findAllTagsForRecommend() {
+        try {
+            return tagRepository.findAll();
+        } catch (Exception e) {
+            logger.error("An error has occurred", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        }
+    }
+
     @PostMapping("/searchTagsWhileTyping")
     public TagPagination searchTagsByPageIndex(@RequestBody TagSearch tagSearch) {
         try {

@@ -326,10 +326,20 @@ public class AppUserController {
 
                 // Now merge it into AppUserTag
                 for (Tag tag : listDistinctTags) {
-                    AppUserTag appUserTag = new AppUserTag();
-                    appUserTag.setAppUser(appUser);
-                    appUserTag.setTag(tag);
-                    appUserTagRepository.save(appUserTag);
+                    List<AppUserTag> appUserTags = appUserTagRepository.findAllAppUserTagByAppUser_UserIdAndTag_TagId(appUser.getUserId(), tag.getTagId());
+                    if (appUserTags == null) {
+                        AppUserTag appUserTag = new AppUserTag();
+                        appUserTag.setAppUser(appUser);
+                        appUserTag.setTag(tag);
+                        appUserTagRepository.save(appUserTag);
+                    } else {
+                        // remove to duplicate value
+                        if (appUserTags.size() > 1) {
+                            for (int i = 1; i < appUserTags.size(); i++) {
+                                appUserTagRepository.delete(appUserTags.get(i));
+                            }
+                        }
+                    }
                 }
 
             }
