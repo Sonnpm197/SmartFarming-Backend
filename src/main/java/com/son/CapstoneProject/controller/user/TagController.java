@@ -80,6 +80,8 @@ public class TagController {
                 tagPage = tagRepository.findAllByOrderByViewCountDesc(pageNumWithElements);
             } else if (SORT_UPVOTE_COUNT.equalsIgnoreCase(type)) {
                 tagPage = tagRepository.findAllByOrderByReputationDesc(pageNumWithElements);
+            } else if (SORT_TREND.equalsIgnoreCase(type)) {
+                tagPage = tagRepository.findAllByOrderByIncreasementOneWeekAgoTillNowDesc(pageNumWithElements);
             } else {
                 throw new Exception("Unknown type to findAllTags: " + type);
             }
@@ -102,6 +104,7 @@ public class TagController {
                 int articleViewCountOneWeekAgo = viewCountQuestionAndArticle.get(0)[1] == null ? 0 : Integer.parseInt(viewCountQuestionAndArticle.get(0)[1].toString());
 
                 tag.setViewCountOneWeekAgo(questionViewCountOneWeekAgo + articleViewCountOneWeekAgo);
+                tag.setIncreasementOneWeekAgoTillNow(tag.getViewCount() - tag.getViewCountOneWeekAgo());
                 tagRepository.save(tag);
             }
 

@@ -364,6 +364,20 @@ public class QuestionController {
             List<Tag> tags = controllerUtils.saveDistinctiveTags(updatedQuestion.getTags());
             updatedQuestion.setTags(tags);
 
+            // Update AppUserTag
+            // Add appUserTag
+            for (Tag tag : tags) {
+                // Create appUserTag here
+                if (appUserTagRepository.findAppUserTagByAppUser_UserIdAndTag_TagId(appUser.getUserId(), tag.getTagId()) == null) {
+                    if (Role.USER.getValue().equalsIgnoreCase(appUser.getRole())) {
+                        AppUserTag appUserTag = new AppUserTag();
+                        appUserTag.setTag(tag);
+                        appUserTag.setAppUser(appUser);
+                        appUserTagRepository.save(appUserTag);
+                    }
+                }
+            }
+
             // Update values
             oldQuestion.setTitle(updatedQuestion.getTitle());
             oldQuestion.setContent(updatedQuestion.getContent());

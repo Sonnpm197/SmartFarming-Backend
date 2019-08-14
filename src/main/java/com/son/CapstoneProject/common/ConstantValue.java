@@ -99,6 +99,7 @@ public class ConstantValue {
 
     // Sort by values
     public static final String SORT_VIEW_COUNT = "viewCount";
+    public static final String SORT_TREND = "trend";
     public static final String SORT_UPVOTE_COUNT = "upvoteCount";
     public static final String SORT_DATE = "date";
 }

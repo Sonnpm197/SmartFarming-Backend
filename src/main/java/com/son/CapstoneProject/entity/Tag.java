@@ -60,6 +60,8 @@ public class Tag {
 
     private Integer viewCountOneWeekAgo;
 
+    private Integer increasementOneWeekAgoTillNow;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
