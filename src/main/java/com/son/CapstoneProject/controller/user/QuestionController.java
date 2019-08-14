@@ -758,13 +758,55 @@ public class QuestionController {
             List<Tag> tagsByQuestionId = tagRepository.findByQuestions_questionId(questionId);
             List<Question> recommendedQuestions = new ArrayList<>();
 
+            // This list previousIds to prevent choosing duplicate articles
+            List<Long> previousIds = new ArrayList<>();
+            previousIds.add(questionId);
+
             if (tagsByQuestionId != null) {
-                for (Tag tag: tagsByQuestionId) {
-                    Question relatedQuestion = questionRepository.findTopByTags_tagIdAndQuestionIdNotOrderByViewCountDescUpvoteCountDesc(tag.getTagId(), originQuestion.getQuestionId());
-                    if (relatedQuestion != null && !relatedQuestion.equals(originQuestion) && !recommendedQuestions.contains(relatedQuestion)) {
-                        recommendedQuestions.add(relatedQuestion);
+                List<Long> listTagIdsHaveMoreThan2Questions = new ArrayList<>();
+                for (Tag tag : tagsByQuestionId) {
+                    Long tagId = tag.getTagId();
+                    Integer numberOfQuestionsByTagId = questionRepository.countNumberOfQuestionsByTagId(tagId);
+
+                    if (numberOfQuestionsByTagId != null && numberOfQuestionsByTagId >= 2) {
+                        listTagIdsHaveMoreThan2Questions.add(tagId);
                     }
                 }
+
+                Collections.shuffle(listTagIdsHaveMoreThan2Questions);
+
+                listTagIdsHaveMoreThan2Questions:
+                {
+                    for (Long tagId : listTagIdsHaveMoreThan2Questions) {
+                        List<Question> questionsByTagId =
+                                questionRepository.findTop5ByTags_tagIdAndQuestionIdNotInOrderByViewCountDescUpvoteCountDesc(tagId, previousIds);
+
+                        // If we cannot find any questions
+                        if (questionsByTagId == null) {
+                            continue;
+                        }
+                        // If we do find articles
+                        else {
+                            // If this tagId has 5 articles
+                            if (questionsByTagId.size() == 5) {
+                                recommendedQuestions.addAll(questionsByTagId);
+                                break;
+                            }
+                            // else continue searching other tags until reach 5
+                            else {
+                                for (Question question : questionsByTagId) {
+                                    Long id = question.getQuestionId();
+                                    previousIds.add(id);
+                                    recommendedQuestions.add(question);
+                                    if (recommendedQuestions.size() == NUMBER_OF_RECOMMENDED_QUESTIONS) {
+                                        break listTagIdsHaveMoreThan2Questions;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
             }
 
             int numberOfRecommendedQuestion = recommendedQuestions.size();
@@ -796,7 +838,7 @@ public class QuestionController {
             List<AppUserTag> recommendedUsers = new ArrayList<>();
 
             if (tagsByQuestionId != null) {
-                for (Tag tag: tagsByQuestionId) {
+                for (Tag tag : tagsByQuestionId) {
                     AppUserTag appUserTag = appUserTagRepository.findTopByTag_TagIdOrderByViewCountDescReputationDesc(tag.getTagId());
                     if (appUserTag != null && !recommendedUsers.contains(appUserTag)) {
                         recommendedUsers.add(appUserTag);

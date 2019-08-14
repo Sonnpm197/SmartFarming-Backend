@@ -78,6 +78,6 @@ public interface ArticleRepository extends PagingAndSortingRepository<Article, L
     )
     Integer findNumberOfArticlesByCategory(@Param("category") String category);
 
-    Article findTopByTags_tagIdAndArticleIdNotOrderByViewCountDescUpvoteCountDesc(Long tagId, Long articleId);
+    List<Article> findTop5ByTags_tagIdAndArticleIdNotInOrderByViewCountDescUpvoteCountDesc(Long tagId, List<Long> articleIds);
 
 }

@@ -55,8 +55,8 @@ public class ConstantValue {
     public static final int HOME_PAGE_SEARCH_QUESTIONS_PER_PAGE = 5;
     public static final int HOME_PAGE_SEARCH_ARTICLES_PER_PAGE = 5;
 
-    public static final int RECOMMENDED_QUESTIONS_PER_PAGE = 10;
-    public static final int RECOMMENDED_ARTICLES_PER_PAGE = 10;
+    public static final int NUMBER_OF_RECOMMENDED_QUESTIONS = 5;
+    public static final int NUMBER_OF_RECOMMENDED_ARTICLES = 5;
 
     // Vote point
     public static final int ARTICLE_UPVOTE_POINT = 1;

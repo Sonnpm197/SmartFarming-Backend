@@ -464,26 +464,60 @@ public class ArticleController {
             List<Tag> tagsByArticleId = tagRepository.findByArticles_articleId(articleId);
             List<Article> recommendedArticles = new ArrayList<>();
 
+            // This list previousIds to prevent choosing duplicate articles
+            List<Long> previousIds = new ArrayList<>();
+            previousIds.add(articleId);
+
             if (tagsByArticleId != null) {
+                List<Long> listTagIdsHaveMoreThan2Articles = new ArrayList<>();
                 for (Tag tag : tagsByArticleId) {
-                    Article relatedArticle = articleRepository.findTopByTags_tagIdAndArticleIdNotOrderByViewCountDescUpvoteCountDesc(tag.getTagId(), originArticle.getArticleId());
-                    if (relatedArticle != null && !relatedArticle.equals(originArticle) && !recommendedArticles.contains(relatedArticle)) {
-                        recommendedArticles.add(relatedArticle);
+                    Long tagId = tag.getTagId();
+                    Integer numberOfArticlesByTagId = articleRepository.countNumberOfArticlesByTagId(tagId);
+
+                    if (numberOfArticlesByTagId != null && numberOfArticlesByTagId >= 2) {
+                        listTagIdsHaveMoreThan2Articles.add(tagId);
                     }
                 }
-            }
 
-            int numberOfRecommendedArticle = recommendedArticles.size();
-            int numberOfPages = 0;
-            if (numberOfRecommendedArticle % ARTICLES_PER_PAGE == 0) {
-                numberOfPages = numberOfRecommendedArticle / ARTICLES_PER_PAGE;
-            } else {
-                numberOfPages = (numberOfRecommendedArticle / ARTICLES_PER_PAGE) + 1;
+                Collections.shuffle(listTagIdsHaveMoreThan2Articles);
+
+                listTagIdsHaveMoreThan2Articles:
+                {
+                    for (Long tagId : listTagIdsHaveMoreThan2Articles) {
+                        List<Article> articlesByTagId =
+                                articleRepository.findTop5ByTags_tagIdAndArticleIdNotInOrderByViewCountDescUpvoteCountDesc(tagId, previousIds);
+
+                        // If we cannot find any articles
+                        if (articlesByTagId == null) {
+                            continue;
+                        }
+                        // If we do find articles
+                        else {
+                            // If this tagId has 5 articles
+                            if (articlesByTagId.size() == 5) {
+                                recommendedArticles.addAll(articlesByTagId);
+                                break;
+                            }
+                            // else continue searching other tags until reach 5
+                            else {
+                                for (Article article : articlesByTagId) {
+                                    Long id = article.getArticleId();
+                                    previousIds.add(id);
+                                    recommendedArticles.add(article);
+                                    if (recommendedArticles.size() == NUMBER_OF_RECOMMENDED_ARTICLES) {
+                                        break listTagIdsHaveMoreThan2Articles;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
             }
 
             ArticlePagination articlePagination = new ArticlePagination();
             articlePagination.setArticlesByPageIndex(recommendedArticles);
-            articlePagination.setNumberOfPages(numberOfPages);
+            articlePagination.setNumberOfPages(1);
 
             return articlePagination;
         } catch (Exception e) {
