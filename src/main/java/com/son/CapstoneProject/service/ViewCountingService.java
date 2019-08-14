@@ -1,6 +1,5 @@
 package com.son.CapstoneProject.service;
 
-import com.son.CapstoneProject.controller.user.AnswerController;
 import com.son.CapstoneProject.entity.AppUserTag;
 import com.son.CapstoneProject.entity.Article;
 import com.son.CapstoneProject.entity.Question;
@@ -51,10 +50,10 @@ public class ViewCountingService {
     private Map<Long, Map<String, Long>> contentIdWithIpAddressAndTime = new ConcurrentHashMap<>();
 
     // View count by userId for question
-    private Map<Long, Map<Long, Long>> contentIdWithUserIdAndTimeForQuestion = new ConcurrentHashMap<>();
+    private Map<Long, Map<Long, Long>> questionIdWithUserIdAndTime = new ConcurrentHashMap<>();
 
     // View count by userId for question
-    private Map<Long, Map<Long, Long>> contentIdWithUserIdAndTimeForArticle = new ConcurrentHashMap<>();
+    private Map<Long, Map<Long, Long>> articleIdWithUserIdAndTime = new ConcurrentHashMap<>();
 
     /**
      * This method is called in a separated thread to count view of the question
@@ -139,9 +138,9 @@ public class ViewCountingService {
         Map<Long, Long> userIdWithTime = null;
 
         if (QUESTION.equalsIgnoreCase(type)) {
-            userIdWithTime = contentIdWithUserIdAndTimeForQuestion.get(contentId);
+            userIdWithTime = questionIdWithUserIdAndTime.get(contentId);
         } else if (ARTICLE.equalsIgnoreCase(type)) {
-            userIdWithTime = contentIdWithUserIdAndTimeForArticle.get(contentId);
+            userIdWithTime = articleIdWithUserIdAndTime.get(contentId);
         } else {
             logger.error("Unknown type: {}", type);
             return;
@@ -176,9 +175,9 @@ public class ViewCountingService {
             userIdWithTime.put(userId, System.currentTimeMillis());
 
             if (QUESTION.equalsIgnoreCase(type)) {
-                contentIdWithUserIdAndTimeForQuestion.put(contentId, userIdWithTime);
+                questionIdWithUserIdAndTime.put(contentId, userIdWithTime);
             } else if (ARTICLE.equalsIgnoreCase(type)) {
-                contentIdWithUserIdAndTimeForArticle.put(contentId, userIdWithTime);
+                articleIdWithUserIdAndTime.put(contentId, userIdWithTime);
             }
 
             // Update to database

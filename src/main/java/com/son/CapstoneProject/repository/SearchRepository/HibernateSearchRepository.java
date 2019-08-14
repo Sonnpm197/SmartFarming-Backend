@@ -141,7 +141,6 @@ public class HibernateSearchRepository {
         }
     }
 
-
     private Pagination returnFinalListByClassName(
             List<Query> queryList,
             String className,

@@ -444,7 +444,7 @@ public class ArticleController {
     @GetMapping("/viewRelatedArticles/{articleId}")
     public ArticlePagination viewRelatedArticles(@PathVariable Long articleId) {
         try {
-            Article article = articleRepository.findById(articleId)
+            Article originArticle = articleRepository.findById(articleId)
                     .orElseThrow(() -> new Exception("ArticleController.viewRelatedArticles: cannot find any article with id: " + articleId));
 
             List<Tag> tagsByArticleId = tagRepository.findByArticles_articleId(articleId);
@@ -453,7 +453,7 @@ public class ArticleController {
             if (tagsByArticleId != null) {
                 for (Tag tag: tagsByArticleId) {
                     Article relatedArticle = articleRepository.findTopByTags_tagIdOrderByViewCountDescUpvoteCountDesc(tag.getTagId());
-                    if (relatedArticle != null && !recommendedArticles.contains(relatedArticle)) {
+                    if (relatedArticle != null && !relatedArticle.equals(originArticle) && !recommendedArticles.contains(relatedArticle)) {
                         recommendedArticles.add(relatedArticle);
                     }
                 }

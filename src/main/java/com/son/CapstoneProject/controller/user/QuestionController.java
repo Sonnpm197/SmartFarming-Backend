@@ -752,7 +752,7 @@ public class QuestionController {
     @GetMapping("/viewRelatedQuestions/{questionId}")
     public QuestionPagination viewRelatedQuestions(@PathVariable Long questionId) {
         try {
-            Question question = questionRepository.findById(questionId)
+            Question originQuestion = questionRepository.findById(questionId)
                     .orElseThrow(() -> new Exception("QuestionController.viewRelatedQuestions: cannot find any article with id: " + questionId));
 
             List<Tag> tagsByQuestionId = tagRepository.findByQuestions_questionId(questionId);
@@ -761,7 +761,7 @@ public class QuestionController {
             if (tagsByQuestionId != null) {
                 for (Tag tag: tagsByQuestionId) {
                     Question relatedQuestion = questionRepository.findTopByTags_tagIdOrderByViewCountDescUpvoteCountDesc(tag.getTagId());
-                    if (relatedQuestion != null && !recommendedQuestions.contains(relatedQuestion)) {
+                    if (relatedQuestion != null && !relatedQuestion.equals(originQuestion) && !recommendedQuestions.contains(relatedQuestion)) {
                         recommendedQuestions.add(relatedQuestion);
                     }
                 }
