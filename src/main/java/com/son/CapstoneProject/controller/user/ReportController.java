@@ -5,6 +5,7 @@ import com.son.CapstoneProject.configuration.HttpRequestResponseUtils;
 import com.son.CapstoneProject.controller.ControllerUtils;
 import com.son.CapstoneProject.entity.*;
 import com.son.CapstoneProject.entity.login.AppUser;
+import com.son.CapstoneProject.entity.pagination.ReportPagination;
 import com.son.CapstoneProject.entity.pagination.UserAndReportTimePagination;
 import com.son.CapstoneProject.repository.ArticleRepository;
 import com.son.CapstoneProject.repository.CommentRepository;
@@ -14,6 +15,8 @@ import com.son.CapstoneProject.repository.loginRepository.AppUserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +27,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
+import static com.son.CapstoneProject.common.ConstantValue.QUESTIONS_PER_PAGE;
 import static com.son.CapstoneProject.common.ConstantValue.REPORTS_PER_PAGE;
 
 @RestController
@@ -52,10 +56,10 @@ public class ReportController {
             int startRow = pageNumber * REPORTS_PER_PAGE + 1; // from >= 1
             int endRow = startRow + REPORTS_PER_PAGE - 1; // to <= 10
 
-            List<Object[]> results =  reportRepository.findListUsersAndReportTime(startRow, endRow);
+            List<Object[]> results = reportRepository.findListUsersAndReportTime(startRow, endRow);
 
             List<UserAndReportTime> userAndReportTimes = new ArrayList<>();
-            for (Object[] row: results) {
+            for (Object[] row : results) {
                 UserAndReportTime userAndReportTime = new UserAndReportTime();
                 userAndReportTime.setRowIndex(row[0] == null ? null : row[0].toString());
                 userAndReportTime.setUserId(row[1] == null ? null : row[1].toString());
@@ -82,15 +86,32 @@ public class ReportController {
         }
     }
 
-    @GetMapping("/findListReportsByUser/{userId}")
-    public List<Report> findListReportsByUser(@PathVariable Long userId) {
+    @GetMapping("/findListReportsByUser/{userId}/{pageNumber}")
+    public ReportPagination findListReportsByUser(@PathVariable Long userId, @PathVariable int pageNumber) {
         try {
             String methodName = "ReportController.findListReportsByUser";
 
             AppUser appUser = appUserRepository.findById(userId)
                     .orElseThrow(() -> new Exception(methodName + ": cannot find user with id: " + userId));
 
-            return reportRepository.findByAppUser_UserId(appUser.getUserId());
+            PageRequest pageNumWithElements = PageRequest.of(pageNumber, REPORTS_PER_PAGE, Sort.by("utilTimestamp").descending());
+
+            ReportPagination reportPagination = new ReportPagination();
+            reportPagination.setReportsByPageIndex(reportRepository.findByAppUser_UserId(appUser.getUserId(), pageNumWithElements).getContent());
+
+            Integer totalReportsByUsers = reportRepository.findTotalReportsByUser(appUser.getUserId());
+
+            if (totalReportsByUsers == null) {
+                reportPagination.setNumberOfPages(0);
+            } else {
+                if (totalReportsByUsers % REPORTS_PER_PAGE == 0) {
+                    reportPagination.setNumberOfPages(totalReportsByUsers / REPORTS_PER_PAGE);
+                } else {
+                    reportPagination.setNumberOfPages(totalReportsByUsers / REPORTS_PER_PAGE + 1);
+                }
+            }
+
+            return reportPagination;
         } catch (Exception e) {
             logger.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);

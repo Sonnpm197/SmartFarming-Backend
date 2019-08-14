@@ -31,7 +31,7 @@ public interface ReportRepository extends PagingAndSortingRepository<Report, Lon
                     "             join report r on au.user_id = r.user_id\n" +
                     "      group by au.user_id, au.role, su.name) as sub\n" +
                     "where sub.rowIndex >= :startRow and sub.rowIndex <= :endRow",
-            nativeQuery=true
+            nativeQuery = true
     )
     List<Object[]> findListUsersAndReportTime(@Param("startRow") int startRow, @Param("endRow") int endRow);
 
@@ -40,10 +40,16 @@ public interface ReportRepository extends PagingAndSortingRepository<Report, Lon
                     "from app_user au\n" +
                     "       join report r on au.user_id = r.user_id\n" +
                     "group by au.user_id",
-            nativeQuery=true
+            nativeQuery = true
     )
     Integer findTotalReportedUsers();
 
-    List<Report> findByAppUser_UserId(Long userId);
+    Page<Report> findByAppUser_UserId(Long userId, Pageable pageable);
+
+    @Query(
+            value = "select count(r.report_id) from report r where r.user_id = :userId",
+            nativeQuery = true
+    )
+    Integer findTotalReportsByUser(@Param("userId") Long userId);
 
 }
