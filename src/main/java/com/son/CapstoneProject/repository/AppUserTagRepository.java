@@ -9,6 +9,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigInteger;
 import java.util.List;
 
 @Repository
@@ -29,5 +30,21 @@ public interface AppUserTagRepository extends PagingAndSortingRepository<AppUser
     @Query("select count(a.appUserTagId) from AppUserTag a where a.appUser = :appUser")
     Integer getTotalTagCount(@Param("appUser") AppUser appUser);
 
-    AppUserTag findTopByTag_TagIdOrderByViewCountDescReputationDesc(Long tagId);
+    @Query(
+            value = "select distinct au.user_id\n" +
+                    "from app_user au join app_user_tag aut on au.user_id = aut.app_user_user_id\n" +
+                    "where aut.tag_tag_id in :tagIds and au.user_id != :userId",
+            nativeQuery = true
+    )
+    List<BigInteger> findDistinctUsersByTagIdsInAndUserIdIsNot(@Param("tagIds") List<Long> tagIds, @Param("userId") Long userId);
+
+    @Query(
+            value = "select sum(aut.view_count)\n" +
+                    "from app_user_tag aut\n" +
+                    "where aut.app_user_user_id = :userId and aut.tag_tag_id in :tagIds",
+            nativeQuery = true
+    )
+    Integer findTotalViewCountOfUserIdByTagIdsIn(@Param("userId") Long userId, @Param("tagIds") List<Long> tagIds);
+
+    List<AppUserTag> findByAppUser_UserIdAndTag_TagIdIn(Long userId, List<Long> tagIds);
 }

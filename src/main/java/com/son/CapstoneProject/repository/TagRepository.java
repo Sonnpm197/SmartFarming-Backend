@@ -8,6 +8,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigInteger;
 import java.util.List;
 
 @Repository
@@ -34,6 +35,23 @@ public interface TagRepository extends PagingAndSortingRepository<Tag, Long> {
     List<Tag> findByArticles_articleId(Long articleId);
 
     List<Tag> findByQuestions_questionId(Long questionId);
+
+    @Query(
+            value = "select qt.tags_tag_id\n" +
+                    "from question q\n" +
+                    "       join question_tags qt on q.question_id = qt.questions_question_id\n" +
+                    "where q.question_id = :questionId",
+            nativeQuery = true
+    )
+    List<BigInteger> listTagIdByQuestionId(@Param("questionId") Long questionId);
+
+    @Query(
+            value = "select ats.tags_tag_id from article a join article_tags ats\n" +
+                    "    on a.article_id = ats.articles_article_id\n" +
+                    "where article_id = :articleId",
+            nativeQuery = true
+    )
+    List<BigInteger> listTagIdByArticleId(@Param("articleId") Long articleId);
 
     @Query(
             value = "select t1.totalQuestionView, t2.totalArticleView\n" +

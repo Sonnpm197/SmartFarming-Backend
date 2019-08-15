@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigInteger;
 import java.util.*;
 
 import static com.son.CapstoneProject.common.ConstantValue.*;
@@ -461,17 +462,17 @@ public class ArticleController {
             Article originArticle = articleRepository.findById(articleId)
                     .orElseThrow(() -> new Exception("ArticleController.viewRelatedArticles: cannot find any article with id: " + articleId));
 
-            List<Tag> tagsByArticleId = tagRepository.findByArticles_articleId(articleId);
+            List<BigInteger> tagsByArticleId = tagRepository.listTagIdByArticleId(articleId);
             List<Article> recommendedArticles = new ArrayList<>();
 
             // This list previousIds to prevent choosing duplicate articles
-            List<Long> previousIds = new ArrayList<>();
-            previousIds.add(articleId);
+            List<Long> previousArticleIds = new ArrayList<>();
+            previousArticleIds.add(articleId);
 
             if (tagsByArticleId != null) {
                 List<Long> listTagIdsHaveMoreThan2Articles = new ArrayList<>();
-                for (Tag tag : tagsByArticleId) {
-                    Long tagId = tag.getTagId();
+                for (BigInteger tagBigInteger : tagsByArticleId) {
+                    Long tagId = tagBigInteger.longValue();
                     Integer numberOfArticlesByTagId = articleRepository.countNumberOfArticlesByTagId(tagId);
 
                     if (numberOfArticlesByTagId != null && numberOfArticlesByTagId >= 2) {
@@ -485,7 +486,7 @@ public class ArticleController {
                 {
                     for (Long tagId : listTagIdsHaveMoreThan2Articles) {
                         List<Article> articlesByTagId =
-                                articleRepository.findTop5ByTags_tagIdAndArticleIdNotInOrderByViewCountDescUpvoteCountDesc(tagId, previousIds);
+                                articleRepository.findTop5ByTags_tagIdAndArticleIdNotInOrderByViewCountDescUpvoteCountDesc(tagId, previousArticleIds);
 
                         // If we cannot find any articles
                         if (articlesByTagId == null) {
@@ -501,8 +502,7 @@ public class ArticleController {
                             // else continue searching other tags until reach 5
                             else {
                                 for (Article article : articlesByTagId) {
-                                    Long id = article.getArticleId();
-                                    previousIds.add(id);
+                                    previousArticleIds.add(article.getArticleId());
                                     recommendedArticles.add(article);
                                     if (recommendedArticles.size() == NUMBER_OF_RECOMMENDED_ARTICLES) {
                                         break listTagIdsHaveMoreThan2Articles;
@@ -520,31 +520,6 @@ public class ArticleController {
             articlePagination.setNumberOfPages(1);
 
             return articlePagination;
-        } catch (Exception e) {
-            logger.error("An error has occurred", e);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
-        }
-    }
-
-    @GetMapping("/viewRelatedUsersByArticle/{articleId}")
-    public List<AppUserTag> viewRelatedUsersByArticle(@PathVariable Long articleId) {
-        try {
-            Article article = articleRepository.findById(articleId)
-                    .orElseThrow(() -> new Exception("ArticleController.viewRelatedUsersByArticle: cannot find any article with id: " + articleId));
-
-            List<Tag> tagsByArticleId = tagRepository.findByArticles_articleId(articleId);
-            List<AppUserTag> recommendedUsers = new ArrayList<>();
-
-            if (tagsByArticleId != null) {
-                for (Tag tag : tagsByArticleId) {
-                    AppUserTag appUserTag = appUserTagRepository.findTopByTag_TagIdOrderByViewCountDescReputationDesc(tag.getTagId());
-                    if (appUserTag != null && !recommendedUsers.contains(appUserTag)) {
-                        recommendedUsers.add(appUserTag);
-                    }
-                }
-            }
-
-            return recommendedUsers;
         } catch (Exception e) {
             logger.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);

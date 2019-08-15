@@ -31,7 +31,7 @@ public class Report {
     @Column(columnDefinition = "ntext")
     private String reason;
 
-    @Column(columnDefinition = "ntext")
+    @Column(columnDefinition = "nvarchar(255)")
     private String message;
 
 //    @JsonBackReference

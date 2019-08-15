@@ -1,13 +1,11 @@
 package com.son.CapstoneProject.controller.user;
 
-import com.son.CapstoneProject.common.ConstantValue;
 import com.son.CapstoneProject.configuration.HttpRequestResponseUtils;
 import com.son.CapstoneProject.controller.ControllerUtils;
 import com.son.CapstoneProject.controller.FileController;
 import com.son.CapstoneProject.entity.*;
 import com.son.CapstoneProject.entity.login.AppUser;
 import com.son.CapstoneProject.entity.pagination.QuestionPagination;
-import com.son.CapstoneProject.entity.search.GenericClass;
 import com.son.CapstoneProject.entity.search.QuestionSearch;
 import com.son.CapstoneProject.repository.*;
 import com.son.CapstoneProject.repository.loginRepository.AppUserRepository;
@@ -27,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigInteger;
 import java.util.*;
 
 import static com.son.CapstoneProject.common.ConstantValue.*;
@@ -700,7 +699,14 @@ public class QuestionController {
             // You cannot report your own question
             if (appUser.getUserId().equals(question.getAppUser().getUserId())) {
                 String message = methodName + ": You cannot report our own question";
-                // logger.info(message);
+                throw new Exception(message);
+            }
+
+            List<Report> existReports = reportRepository.findByQuestion_QuestionIdAndMessage(questionId, report.getMessage());
+
+            // Do not save the same reports
+            if (existReports != null && existReports.size() >= 1) {
+                String message = methodName + ": This question has already been reported";
                 throw new Exception(message);
             }
 
@@ -769,17 +775,17 @@ public class QuestionController {
             Question originQuestion = questionRepository.findById(questionId)
                     .orElseThrow(() -> new Exception("QuestionController.viewRelatedQuestions: cannot find any article with id: " + questionId));
 
-            List<Tag> tagsByQuestionId = tagRepository.findByQuestions_questionId(questionId);
+            List<BigInteger> tagsByQuestionId = tagRepository.listTagIdByQuestionId(questionId);
             List<Question> recommendedQuestions = new ArrayList<>();
 
             // This list previousIds to prevent choosing duplicate articles
-            List<Long> previousIds = new ArrayList<>();
-            previousIds.add(questionId);
+            List<Long> previousQuestionIds = new ArrayList<>();
+            previousQuestionIds.add(questionId);
 
             if (tagsByQuestionId != null) {
                 List<Long> listTagIdsHaveMoreThan2Questions = new ArrayList<>();
-                for (Tag tag : tagsByQuestionId) {
-                    Long tagId = tag.getTagId();
+                for (BigInteger tagIdInBigInteger : tagsByQuestionId) {
+                    Long tagId = tagIdInBigInteger.longValue();
                     Integer numberOfQuestionsByTagId = questionRepository.countNumberOfQuestionsByTagId(tagId);
 
                     if (numberOfQuestionsByTagId != null && numberOfQuestionsByTagId >= 2) {
@@ -793,7 +799,7 @@ public class QuestionController {
                 {
                     for (Long tagId : listTagIdsHaveMoreThan2Questions) {
                         List<Question> questionsByTagId =
-                                questionRepository.findTop5ByTags_tagIdAndQuestionIdNotInOrderByViewCountDescUpvoteCountDesc(tagId, previousIds);
+                                questionRepository.findTop5ByTags_tagIdAndQuestionIdNotInOrderByViewCountDescUpvoteCountDesc(tagId, previousQuestionIds);
 
                         // If we cannot find any questions
                         if (questionsByTagId == null) {
@@ -809,8 +815,7 @@ public class QuestionController {
                             // else continue searching other tags until reach 5
                             else {
                                 for (Question question : questionsByTagId) {
-                                    Long id = question.getQuestionId();
-                                    previousIds.add(id);
+                                    previousQuestionIds.add(question.getQuestionId());
                                     recommendedQuestions.add(question);
                                     if (recommendedQuestions.size() == NUMBER_OF_RECOMMENDED_QUESTIONS) {
                                         break listTagIdsHaveMoreThan2Questions;
@@ -843,20 +848,54 @@ public class QuestionController {
     }
 
     @GetMapping("/viewRelatedUsersByQuestion/{questionId}")
-    public List<AppUserTag> viewRelatedUsersByQuestion(@PathVariable Long questionId) {
+    public List<AppUser> viewRelatedUsersByQuestion(@PathVariable Long questionId) {
         try {
             Question question = questionRepository.findById(questionId)
                     .orElseThrow(() -> new Exception("QuestionController.viewRelatedUsersByQuestion: cannot find any question with id: " + questionId));
 
-            List<Tag> tagsByQuestionId = tagRepository.findByQuestions_questionId(questionId);
-            List<AppUserTag> recommendedUsers = new ArrayList<>();
+            List<BigInteger> tagsByQuestionId = tagRepository.listTagIdByQuestionId(questionId);
+            List<AppUser> recommendedUsers = new ArrayList<>();
 
             if (tagsByQuestionId != null) {
-                for (Tag tag : tagsByQuestionId) {
-                    AppUserTag appUserTag = appUserTagRepository.findTopByTag_TagIdOrderByViewCountDescReputationDesc(tag.getTagId());
-                    if (appUserTag != null && !recommendedUsers.contains(appUserTag)) {
-                        recommendedUsers.add(appUserTag);
+                List<Long> tagIds = new ArrayList<>();
+                for (BigInteger tag : tagsByQuestionId) {
+                    tagIds.add(tag.longValue());
+                }
+
+                List<BigInteger> idsOfUsersUsedTags = appUserTagRepository.findDistinctUsersByTagIdsInAndUserIdIsNot(tagIds, question.getAppUser().getUserId());
+                List<AppUser> appUsersUsedTags = new ArrayList<>();
+
+                for (BigInteger userId : idsOfUsersUsedTags) {
+                    try {
+                        appUsersUsedTags.add(appUserRepository.findById(userId.longValue()).get());
+                    } catch (Exception ex) {
+                        logger.error("An error has occurred", ex);
+                        continue;
                     }
+                }
+
+                // Then count each user view by these tags
+                Map<AppUser, Integer> userIdWithViewCount = new HashMap<>();
+                for (AppUser appUser : appUsersUsedTags) {
+                    Integer totalViewCount = appUserTagRepository.findTotalViewCountOfUserIdByTagIdsIn(appUser.getUserId(), tagIds);
+                    if (totalViewCount == null) {
+                        totalViewCount = 0;
+                    }
+
+                    userIdWithViewCount.put(appUser, totalViewCount);
+                }
+
+                // Then sort this map
+                userIdWithViewCount = sortDescMapValueByComparator(userIdWithViewCount);
+
+                int count = 0;
+
+                for (Map.Entry<AppUser, Integer> entry : userIdWithViewCount.entrySet()) {
+                    if (count == NUMBER_OF_RECOMMENDED_USERS) {
+                        break;
+                    }
+                    recommendedUsers.add(entry.getKey());
+                    count++;
                 }
             }
 
@@ -865,5 +904,58 @@ public class QuestionController {
             logger.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
+    }
+
+    @GetMapping("/viewDetailRelatedUser/{questionId}/{userId}")
+    public List<AppUserTag> viewDetailRelatedUser(@PathVariable Long questionId, @PathVariable Long userId) {
+        try {
+            AppUser appUser = appUserRepository.findById(userId)
+                    .orElseThrow(() -> new Exception("QuestionController.viewDetailRelatedUser: cannot find any question with id: " + userId));
+
+            Question question = questionRepository.findById(questionId)
+                    .orElseThrow(() -> new Exception("QuestionController.viewRelatedUsersByQuestion: cannot find any question with id: " + questionId));
+
+            List<BigInteger> tagIdsByQuestionId = tagRepository.listTagIdByQuestionId(questionId);
+
+            List<Long> tagIdsByLongValue = new ArrayList<>();
+
+            for (BigInteger tagIdBigInteger : tagIdsByQuestionId) {
+                tagIdsByLongValue.add(tagIdBigInteger.longValue());
+            }
+
+            if (tagIdsByLongValue.size() >= 1) {
+                return appUserTagRepository.findByAppUser_UserIdAndTag_TagIdIn(userId, tagIdsByLongValue);
+            } else {
+                return new ArrayList<>();
+            }
+
+        } catch (Exception e) {
+            logger.error("An error has occurred", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        }
+    }
+
+    private Map<AppUser, Integer> sortDescMapValueByComparator(Map<AppUser, Integer> unsortMap) {
+
+        List<Map.Entry<AppUser, Integer>> list = new ArrayList<>(unsortMap.entrySet());
+
+        // Sorting the list based on values
+        list.sort((o1, o2) -> {
+            if (o1.getValue() > o2.getValue()) {
+                return -1;
+            } else if (o1.getValue() < o2.getValue()) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
+
+        // Maintaining insertion order with the help of LinkedList
+        Map<AppUser, Integer> sortedMap = new HashMap<>();
+        for (Map.Entry<AppUser, Integer> entry : list) {
+            sortedMap.put(entry.getKey(), entry.getValue());
+        }
+
+        return sortedMap;
     }
 }

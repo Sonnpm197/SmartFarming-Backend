@@ -651,4 +651,58 @@ public class QuestionControllerTest {
         System.out.println(">> Result: " + questionList);
         Assert.assertTrue(questionList.getQa().size() == 1);
     }
+
+    @Test
+    @SqlGroup({
+            @Sql("/sql/questionController/find_related_users_by_question.sql"),
+            @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
+    })
+    public void viewRelatedUsersByQuestion() {
+        String url = createURL(port, "/question/viewRelatedUsersByQuestion/1");
+
+        // URI (URL) parameters
+        Map<String, String> uriParams = new HashMap<>();
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
+
+        System.out.println(">>> Testing URI: " + builder.buildAndExpand(uriParams).toUri());
+
+        HttpEntity<String> entity = new HttpEntity<>(null, CommonTest.getHeaders("GET", frontEndUrl));
+        ResponseEntity<List<AppUser>> response = CommonTest.getRestTemplate().exchange(
+                builder.buildAndExpand(uriParams).toUri(),
+                HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<List<AppUser>>() {
+                });
+
+        List<AppUser> questionList = response.getBody();
+        System.out.println(">> Result: " + questionList);
+    }
+
+    @Test
+    @SqlGroup({
+            @Sql("/sql/questionController/find_related_users_by_question.sql"),
+            @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
+    })
+    public void viewDetailRelatedUser() {
+        String url = createURL(port, "/question/viewDetailRelatedUser/1/2");
+
+        // URI (URL) parameters
+        Map<String, String> uriParams = new HashMap<>();
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
+
+        System.out.println(">>> Testing URI: " + builder.buildAndExpand(uriParams).toUri());
+
+        HttpEntity<String> entity = new HttpEntity<>(null, CommonTest.getHeaders("GET", frontEndUrl));
+        ResponseEntity<List<AppUserTag>> response = CommonTest.getRestTemplate().exchange(
+                builder.buildAndExpand(uriParams).toUri(),
+                HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<List<AppUserTag>>() {
+                });
+
+        List<AppUserTag> questionList = response.getBody();
+        System.out.println(">> Result: " + questionList);
+    }
 }

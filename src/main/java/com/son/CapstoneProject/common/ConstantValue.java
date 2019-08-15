@@ -57,6 +57,7 @@ public class ConstantValue {
 
     public static final int NUMBER_OF_RECOMMENDED_QUESTIONS = 5;
     public static final int NUMBER_OF_RECOMMENDED_ARTICLES = 5;
+    public static final int NUMBER_OF_RECOMMENDED_USERS = 5;
 
     // Vote point
     public static final int ARTICLE_UPVOTE_POINT = 1;
