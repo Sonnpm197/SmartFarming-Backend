@@ -102,6 +102,7 @@ public class NotificationController {
 
     /**
      * When they click on this to view, that means they know this notification
+     *
      * @param pageNumber
      * @return
      */
@@ -162,10 +163,12 @@ public class NotificationController {
             AppUser appUser = appUserRepository.findById(userId)
                     .orElseThrow(() -> new Exception("NotificationController. viewNumberOfUnseenNotification: Cannot find any User with id: " + userId));
 
-            return notificationRepository.getTotalUnseenNotificationByUser(false, appUser);
+            Integer result = notificationRepository.getTotalUnseenNotificationByUser(false, appUser);
+            return result == null ? 0 : result.intValue();
         } catch (Exception e) {
             logger.error("An error has occurred", e);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+            return 0;
+            // throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
 

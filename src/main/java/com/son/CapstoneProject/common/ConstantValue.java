@@ -50,7 +50,7 @@ public class ConstantValue {
     public static final int TAGS_PER_PAGE = 10;
     public static final int USERS_PER_PAGE = 10;
     public static final int REPORTS_PER_PAGE = 10;
-    public static final int NOTIFICATION_PER_PAGE = 10;
+    public static final int NOTIFICATION_PER_PAGE = 5;
 
     public static final int HOME_PAGE_SEARCH_QUESTIONS_PER_PAGE = 5;
     public static final int HOME_PAGE_SEARCH_ARTICLES_PER_PAGE = 5;
