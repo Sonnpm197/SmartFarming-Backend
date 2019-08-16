@@ -37,6 +37,12 @@ public class Notification {
     @JoinColumn(name = "articleId", foreignKey = @ForeignKey(name = "FK_NOTIFICATION_QUESTION"))
     private Article article;
 
+    private boolean deleteQuestion;
+
+    private boolean deleteAnswer;
+
+    private boolean deleteComment;
+
     @Temporal(TemporalType.TIMESTAMP)
     private java.util.Date utilTimestamp;
 

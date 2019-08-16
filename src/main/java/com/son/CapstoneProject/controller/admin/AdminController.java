@@ -821,6 +821,7 @@ public class AdminController {
             Notification notification = new Notification();
             notification.setUtilTimestamp(new Date());
 //            notification.setFromAdmin(true);
+            notification.setDeleteQuestion(true);
             notification.setAppUserReceiver(authorOfThisQuestion);
             notification.setMessage("Admin vừa xóa câu hỏi của bạn với tiêu đề: " + question.getTitle() + " do vi phạm nội quy diễn đàn.");
             notificationRepository.save(notification);
@@ -877,6 +878,7 @@ public class AdminController {
             Notification notification = new Notification();
             notification.setUtilTimestamp(new Date());
 //            notification.setFromAdmin(true);
+            notification.setDeleteAnswer(true);
             notification.setAppUserReceiver(authorOfThisQuestion);
             notification.setMessage("Admin vừa xóa câu trả lời của bạn: " + answer.getContent() + " do vi phạm nội quy diễn đàn.");
             notificationRepository.save(notification);
@@ -925,6 +927,7 @@ public class AdminController {
             Notification notification = new Notification();
             notification.setUtilTimestamp(new Date());
 //            notification.setFromAdmin(true);
+            notification.setDeleteComment(true);
             notification.setAppUserReceiver(authorOfThisQuestion);
             notification.setMessage("Admin vừa xóa bình luận của bạn: " + comment.getContent() + " do vi phạm nội quy diễn đàn.");
             notificationRepository.save(notification);
