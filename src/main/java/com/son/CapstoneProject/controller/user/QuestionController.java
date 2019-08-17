@@ -710,7 +710,7 @@ public class QuestionController {
                 throw new Exception(message);
             }
 
-            List<Report> existReports = reportRepository.findByQuestion_QuestionIdAndMessage(questionId, report.getMessage());
+            List<Report> existReports = reportRepository.findByQuestion_QuestionIdAndMessageAndAppUser_UserId(questionId, report.getMessage(), report.getAppUser().getUserId());
 
             // Do not save the same reports
             if (existReports != null && existReports.size() >= 1) {

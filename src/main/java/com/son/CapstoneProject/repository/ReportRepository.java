@@ -52,6 +52,6 @@ public interface ReportRepository extends PagingAndSortingRepository<Report, Lon
     )
     Integer findTotalReportsByUser(@Param("userId") Long userId);
 
-    List<Report> findByQuestion_QuestionIdAndMessage(Long questionId, String message);
+    List<Report> findByQuestion_QuestionIdAndMessageAndAppUser_UserId(Long questionId, String message, Long userId);
 
 }
