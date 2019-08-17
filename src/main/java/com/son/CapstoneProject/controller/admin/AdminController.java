@@ -759,8 +759,8 @@ public class AdminController {
     @DeleteMapping("/deleteQuestion/{questionId}")
     @Transactional
     public Map<String, String> deleteQuestion(/*@RequestBody AppUser appUser,*/
-                                              @PathVariable Long questionId,
-                                              HttpServletRequest request) {
+            @PathVariable Long questionId,
+            HttpServletRequest request) {
         try {
             String methodName = "AdminController.deleteQuestion";
 
@@ -873,12 +873,15 @@ public class AdminController {
                 commentRepository.delete(comment);
             }
 
+            Question question = answer.getQuestion();
+
             // Notify the author of the question
             AppUser authorOfThisQuestion = answer.getAppUser();
             Notification notification = new Notification();
             notification.setUtilTimestamp(new Date());
 //            notification.setFromAdmin(true);
             notification.setDeleteAnswer(true);
+            notification.setQuestion(question); // delete answer => link to question
             notification.setAppUserReceiver(authorOfThisQuestion);
             notification.setMessage("Admin vừa xóa câu trả lời của bạn: " + answer.getContent() + " do vi phạm nội quy diễn đàn.");
             notificationRepository.save(notification);
@@ -905,8 +908,8 @@ public class AdminController {
     @DeleteMapping("/deleteComment/{id}")
     @Transactional
     public Map<String, String> deleteComment(/*@RequestBody AppUser appUser,*/
-                                             @PathVariable Long id,
-                                             HttpServletRequest request) {
+            @PathVariable Long id,
+            HttpServletRequest request) {
         try {
             String methodName = "AdminController.deleteComment";
 
@@ -922,12 +925,17 @@ public class AdminController {
 //                controllerUtils.validateAppUser(appUser, methodName, true);
 //            }
 
+            Article article = comment.getArticle();
+
             // Notify the author of the question
             AppUser authorOfThisQuestion = comment.getAppUser();
             Notification notification = new Notification();
             notification.setUtilTimestamp(new Date());
 //            notification.setFromAdmin(true);
             notification.setDeleteComment(true);
+            if (article != null) {
+                notification.setArticle(article); // delete comment => link to article
+            }
             notification.setAppUserReceiver(authorOfThisQuestion);
             notification.setMessage("Admin vừa xóa bình luận của bạn: " + comment.getContent() + " do vi phạm nội quy diễn đàn.");
             notificationRepository.save(notification);
