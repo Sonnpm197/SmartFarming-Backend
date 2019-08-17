@@ -88,6 +88,7 @@ public class FileController {
      * @return
      */
     @PostMapping("/uploadMultipleFiles")
+    @Transactional
     public List<UploadedFile> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files) {
         try {
             List<UploadedFile> uploadedFiles = new ArrayList<>();

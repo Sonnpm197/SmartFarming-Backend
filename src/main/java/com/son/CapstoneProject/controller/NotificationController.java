@@ -107,6 +107,7 @@ public class NotificationController {
      * @return
      */
     @GetMapping("/viewNotificationsByPageIndex/{userId}/{pageNumber}")
+    @Transactional
     public NotificationPagination viewNotificationsByPageIndex(@PathVariable Long userId, @PathVariable int pageNumber) {
         try {
             logger.info("pageNumber: {}", pageNumber);
@@ -157,6 +158,7 @@ public class NotificationController {
     }
 
     @GetMapping("/viewNumberOfUnseenNotification/{userId}")
+    @Transactional
     public int viewNumberOfUnseenNotification(@PathVariable Long userId) {
         try {
 
@@ -173,6 +175,7 @@ public class NotificationController {
     }
 
     @GetMapping("/viewOneNotification/{notificationId}")
+    @Transactional
     public Notification viewOneNotification(@PathVariable Long notificationId) {
         try {
             // Update seen data

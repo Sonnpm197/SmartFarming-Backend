@@ -49,6 +49,7 @@ public class ReportController {
     }
 
     @GetMapping("/findListUsersAndReportTime/{pageNumber}")
+    @Transactional
     public UserAndReportTimePagination findListUsersAndReportTime(@PathVariable int pageNumber) {
         try {
             String methodName = "ReportController.findListUsersAndReportTime";
@@ -87,6 +88,7 @@ public class ReportController {
     }
 
     @GetMapping("/findListReportsByUser/{userId}/{pageNumber}")
+    @Transactional
     public ReportPagination findListReportsByUser(@PathVariable Long userId, @PathVariable int pageNumber) {
         try {
             String methodName = "ReportController.findListReportsByUser";

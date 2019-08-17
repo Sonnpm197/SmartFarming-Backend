@@ -87,6 +87,7 @@ public class QuestionController {
     }
 
     @GetMapping("/viewNumberOfQuestions")
+    @Transactional
     public long viewNumberOfQuestions() {
         try {
             return questionRepository.count();
@@ -97,6 +98,7 @@ public class QuestionController {
     }
 
     @GetMapping("/viewTop3QuestionsByViewCount")
+    @Transactional
     public QuestionPagination viewTop3QuestionsByViewCount() {
         try {
             List<Question> questions = questionRepository.findTop3ByOrderByViewCountDesc();
@@ -111,6 +113,7 @@ public class QuestionController {
     }
 
     @GetMapping("/viewNumberOfPages")
+    @Transactional
     public long viewNumberOfPages() {
         try {
             long numberOfQuestion = questionRepository.count();
@@ -126,6 +129,7 @@ public class QuestionController {
     }
 
     @GetMapping("/viewQuestions/{type}/{pageNumber}")
+    @Transactional
     public QuestionPagination viewQuestions(@PathVariable String type, @PathVariable int pageNumber) {
         try {
             PageRequest pageNumWithElements;
@@ -152,6 +156,7 @@ public class QuestionController {
     }
 
     @GetMapping("/viewQuestionsByTag/{type}/{tagId}/{pageNumber}")
+    @Transactional
     public QuestionPagination viewQuestionsByTag(@PathVariable String type, @PathVariable Long tagId, @PathVariable int pageNumber) {
         try {
             String methodName = "QuestionController.viewQuestionsByTag: ";
@@ -194,6 +199,7 @@ public class QuestionController {
     }
 
     @GetMapping("/viewQuestion/{userId}/{questionId}")
+    @Transactional
     public Question viewQuestionById(@PathVariable Long userId, @PathVariable Long questionId, HttpServletRequest request) {
         try {
             String ipAddress = HttpRequestResponseUtils.getClientIpAddress(request);
@@ -209,6 +215,7 @@ public class QuestionController {
     }
 
     @PostMapping("/searchQuestions/{type}/{pageNumber}")
+    @Transactional
     public QuestionPagination searchQuestions(@RequestBody QuestionSearch questionSearch,
                                               @PathVariable String type,
                                               @PathVariable int pageNumber) {
@@ -228,6 +235,7 @@ public class QuestionController {
     }
 
     @PostMapping("/searchQuestionsOnHomePage/{type}/{pageNumber}")
+    @Transactional
     public QuestionPagination searchQuestionsOnHomePage(@RequestBody QuestionSearch questionSearch,
                                                         @PathVariable String type,
                                                         @PathVariable int pageNumber) {
@@ -720,6 +728,7 @@ public class QuestionController {
     }
 
     @GetMapping("/viewTop10Questions/{type}")
+    @Transactional
     public QuestionPagination viewTop10Questions(@PathVariable String type) {
         try {
             List<Question> questions;
@@ -744,6 +753,7 @@ public class QuestionController {
     }
 
     @GetMapping("/usersAnswerResubscribeQuestion")
+    @Transactional
     public void usersCommentResubscribeArticles() {
         try {
             List<Question> questions = questionRepository.findAll();
@@ -770,6 +780,7 @@ public class QuestionController {
     }
 
     @GetMapping("/viewRelatedQuestions/{questionId}")
+    @Transactional
     public QuestionPagination viewRelatedQuestions(@PathVariable Long questionId) {
         try {
             Question originQuestion = questionRepository.findById(questionId)
@@ -848,6 +859,7 @@ public class QuestionController {
     }
 
     @GetMapping("/viewRelatedUsersByQuestion/{questionId}")
+    @Transactional
     public List<AppUser> viewRelatedUsersByQuestion(@PathVariable Long questionId) {
         try {
             Question question = questionRepository.findById(questionId)
@@ -907,6 +919,7 @@ public class QuestionController {
     }
 
     @GetMapping("/viewDetailRelatedUser/{questionId}/{userId}")
+    @Transactional
     public List<AppUserTag> viewDetailRelatedUser(@PathVariable Long questionId, @PathVariable Long userId) {
         try {
             AppUser appUser = appUserRepository.findById(userId)

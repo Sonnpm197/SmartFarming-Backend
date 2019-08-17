@@ -52,6 +52,7 @@ public class AppUserController {
     private ControllerUtils controllerUtils;
 
     @GetMapping("/viewNumberOfPages")
+    @Transactional
     public long viewNumberOfPages() {
         try {
             long numberOfUsers = appUserRepository.count();
@@ -67,6 +68,7 @@ public class AppUserController {
     }
 
     @GetMapping("/viewNumberOfUsers")
+    @Transactional
     public long viewNumberOfUsers() {
         try {
             return appUserRepository.count();
@@ -77,6 +79,7 @@ public class AppUserController {
     }
 
     @GetMapping("/viewTop3UsersByReputation")
+    @Transactional
     public AppUserPagination viewTop3UsersByReputation() {
         try {
             List<AppUser> appUsers = appUserRepository.findTop3ByRoleOrderByReputationDesc(ConstantValue.Role.USER.getValue());
@@ -92,6 +95,7 @@ public class AppUserController {
     }
 
     @GetMapping("/viewUser/{userId}")
+    @Transactional
     public AppUser viewUser(@PathVariable Long userId) {
         try {
             return appUserRepository.findById(userId).get();
@@ -102,6 +106,7 @@ public class AppUserController {
     }
 
     @GetMapping("/viewUsers/{pageNumber}")
+    @Transactional
     public AppUserPagination viewUsers(@PathVariable int pageNumber) {
         try {
             PageRequest pageNumWithElements = PageRequest.of(
@@ -165,6 +170,7 @@ public class AppUserController {
     }
 
     @GetMapping("/getTop5TagsOfUser/{type}/{userId}")
+    @Transactional
     public TagPagination getTop5TagsOfUser(@PathVariable String type, @PathVariable Long userId) {
         try {
             List<AppUserTag> appUserTags;
@@ -192,6 +198,7 @@ public class AppUserController {
     }
 
     @GetMapping("/getAllTagsOfUser/{userId}/{pageNumber}")
+    @Transactional
     public TagPagination getAllTagOfUser(@PathVariable Long userId, @PathVariable int pageNumber) {
         try {
             PageRequest pageNumWithElements = PageRequest.of(pageNumber, TAGS_PER_PAGE, Sort.by("viewCount").descending());
@@ -222,6 +229,7 @@ public class AppUserController {
     }
 
     @GetMapping("/getTop5QuestionsOfUser/{type}/{userId}")
+    @Transactional
     public QuestionPagination getTop5QuestionsOfUser(@PathVariable String type, @PathVariable Long userId) {
         try {
             List<Question> questions;
@@ -245,6 +253,7 @@ public class AppUserController {
     }
 
     @GetMapping("/getAllQuestionsOfUser/{type}/{userId}/{pageNumber}")
+    @Transactional
     public QuestionPagination getAllQuestionsOfUser(@PathVariable String type, @PathVariable Long userId, @PathVariable int pageNumber) {
         try {
             PageRequest pageNumWithElements;
@@ -279,6 +288,7 @@ public class AppUserController {
     }
 
     @GetMapping("/getTotalTagsOfUser/{userId}")
+    @Transactional
     public int getTotalTagsOfUser(@PathVariable Long userId) {
         try {
             AppUser appUser = appUserRepository.findById(userId)
@@ -291,6 +301,7 @@ public class AppUserController {
     }
 
     @GetMapping("/getUserByIpAddress")
+    @Transactional
     public AppUser getUserByIpAddress(HttpServletRequest request) {
         try {
             return controllerUtils.saveOrReturnAnonymousUser(HttpRequestResponseUtils.getClientIpAddress(request));
@@ -302,6 +313,7 @@ public class AppUserController {
     }
 
     @GetMapping("/linkingAppUserToTags")
+    @Transactional
     public String linkingAppUserToTags() {
         try {
 

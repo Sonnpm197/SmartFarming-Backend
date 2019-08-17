@@ -41,6 +41,7 @@ public class LoginController {
     private SocialUserRepository socialUserRepository;
 
     @GetMapping({"/", "/test"})
+    @Transactional
     public String test() {
         return "Welcome to my project";
     }

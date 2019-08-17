@@ -90,6 +90,7 @@ public class AdminController {
 //    }
 
     @GetMapping("/viewNumberOfReportPages")
+    @Transactional
     public long viewNumberOfReportPages() {
         try {
             long numberOfReport = reportRepository.count();
@@ -107,6 +108,7 @@ public class AdminController {
     }
 
     @GetMapping("/viewReportsByPageIndex/{pageNumber}")
+    @Transactional
     public ReportPagination viewReportsByPageIndex(@PathVariable int pageNumber) {
         try {
             logger.info("pageNumber: {}", pageNumber);
@@ -126,6 +128,7 @@ public class AdminController {
     }
 
     @GetMapping("/viewOneReport/{reportId}")
+    @Transactional
     public Report viewOneReport(@PathVariable Long reportId) {
         try {
             String methodName = "AdminController.viewOneReport";
@@ -156,6 +159,7 @@ public class AdminController {
     }
 
     @PostMapping("/searchTagsByPageIndex/{type}/{pageNumber}")
+    @Transactional
     public TagPagination searchTagsByPageIndex(@RequestBody TagSearch tagSearch,
                                                @PathVariable String type,
                                                @PathVariable int pageNumber) {
@@ -179,6 +183,7 @@ public class AdminController {
     }
 
     @GetMapping("/searchTopUsersByTag/{tagId}")
+    @Transactional
     public List<AppUserTag> searchTopUsersByTag(@PathVariable long tagId) {
         try {
             String methodName = "adminController.searchTopUsersByTag";
@@ -243,6 +248,7 @@ public class AdminController {
      * @return
      */
     @GetMapping("/totalWebSiteViewCount")
+    @Transactional
     public int totalView() {
         try {
             Integer articleTotalView = articleRepository.getTotalViewCount();
@@ -279,6 +285,7 @@ public class AdminController {
     }
 
     @GetMapping("/userChartInfo/{userId}")
+    @Transactional
     public List<UserChartInfo> detailUserActivitiesByDays(@PathVariable Long userId) {
         try {
             AppUser appUser = appUserRepository.findById(userId)
@@ -362,6 +369,7 @@ public class AdminController {
     }
 
     @PostMapping("/systemChartInfo/date")
+    @Transactional
     public List<SystemChartInfo> systemChartInfoByDate(@RequestBody SystemChartParams systemChartParams) {
         try {
             List<SystemChartInfo> listSystemChartInfo = new ArrayList<>();
@@ -486,6 +494,7 @@ public class AdminController {
     }
 
     @PostMapping("/systemChartInfo/month")
+    @Transactional
     public List<SystemChartInfo> systemChartInfoByMonth(@RequestBody SystemChartParams systemChartParams) {
         try {
             List<SystemChartInfo> listSystemChartInfo = new ArrayList<>();
@@ -625,6 +634,7 @@ public class AdminController {
     }
 
     @PostMapping("/systemChartInfo/year")
+    @Transactional
     public List<SystemChartInfo> systemChartInfoByYear(@RequestBody SystemChartParams systemChartParams) {
         try {
             List<SystemChartInfo> listSystemChartInfo = new ArrayList<>();

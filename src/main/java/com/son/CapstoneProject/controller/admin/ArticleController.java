@@ -65,11 +65,13 @@ public class ArticleController {
     private AppUserTagRepository appUserTagRepository;
 
     @GetMapping("/viewNumberOfArticles")
+    @Transactional
     public long viewNumberOfArticles() {
         return articleRepository.count();
     }
 
     @GetMapping("/viewDistinctCategories")
+    @Transactional
     public List<String> viewDistinctCategories() {
         try {
             return articleRepository.findDistinctCategory();
@@ -80,6 +82,7 @@ public class ArticleController {
     }
 
     @GetMapping("/viewNumberOfPages")
+    @Transactional
     public long viewNumberOfPages() {
         try {
             long numberOfArticle = articleRepository.count();
@@ -95,6 +98,7 @@ public class ArticleController {
     }
 
     @GetMapping("/viewArticles/{type}/{pageNumber}")
+    @Transactional
     public ArticlePagination viewArticles(@PathVariable String type, @PathVariable int pageNumber) {
         try {
             PageRequest pageNumWithElements;
@@ -121,6 +125,7 @@ public class ArticleController {
     }
 
     @PostMapping("/viewArticlesByCategory/{type}/{pageNumber}")
+    @Transactional
     public ArticlePagination viewArticlesByCategory(@RequestBody ArticleSearch articleSearch,
                                                     @PathVariable String type,
                                                     @PathVariable int pageNumber) {
@@ -163,6 +168,7 @@ public class ArticleController {
     }
 
     @GetMapping("/viewArticle/{userId}/{articleId}")
+    @Transactional
     public Article viewArticle(@PathVariable Long userId, @PathVariable Long articleId, HttpServletRequest request) {
         try {
             String ipAddress = HttpRequestResponseUtils.getClientIpAddress(request);
@@ -178,6 +184,7 @@ public class ArticleController {
     }
 
     @PostMapping("/searchArticles/{type}/{pageNumber}")
+    @Transactional
     public ArticlePagination searchArticles(@RequestBody ArticleSearch articleSearch,
                                             @PathVariable String type,
                                             @PathVariable int pageNumber) {
@@ -198,6 +205,7 @@ public class ArticleController {
     }
 
     @PostMapping("/searchArticlesOnHomePage/{type}/{pageNumber}")
+    @Transactional
     public ArticlePagination searchArticlesOnHomePage(@RequestBody ArticleSearch articleSearch,
                                                       @PathVariable String type,
                                                       @PathVariable int pageNumber) {
@@ -323,6 +331,7 @@ public class ArticleController {
      * @return
      */
     @DeleteMapping("/deleteArticle/{articleId}")
+    @Transactional
     public Map<String, String> deleteArticle(@PathVariable Long articleId) {
         try {
             Article article = articleRepository.findById(articleId)
@@ -357,6 +366,7 @@ public class ArticleController {
     }
 
     @GetMapping("/getTop10ArticlesByUpvoteCount")
+    @Transactional
     public ArticlePagination getTop10ArticlesByUpvoteCount() {
         try {
             ArticlePagination articlePagination = new ArticlePagination();
@@ -370,6 +380,7 @@ public class ArticleController {
     }
 
     @GetMapping("/getTop10ArticlesByUploadDate")
+    @Transactional
     public ArticlePagination getTop10ArticlesByUploadDate() {
         try {
             ArticlePagination articlePagination = new ArticlePagination();
@@ -383,6 +394,7 @@ public class ArticleController {
     }
 
     @GetMapping("/usersCommentResubscribeArticles")
+    @Transactional
     public void usersCommentResubscribeArticles() {
         try {
             List<Article> articles = articleRepository.findAll();
@@ -415,6 +427,7 @@ public class ArticleController {
     }
 
     @GetMapping("/viewArticlesByTag/{type}/{tagId}/{pageNumber}")
+    @Transactional
     public ArticlePagination viewArticlesByTag(@PathVariable String type, @PathVariable Long tagId, @PathVariable int pageNumber) {
         try {
             String methodName = "Article.viewQuestionsByTag: ";
@@ -457,6 +470,7 @@ public class ArticleController {
     }
 
     @GetMapping("/viewRelatedArticles/{articleId}")
+    @Transactional
     public ArticlePagination viewRelatedArticles(@PathVariable Long articleId) {
         try {
             Article originArticle = articleRepository.findById(articleId)

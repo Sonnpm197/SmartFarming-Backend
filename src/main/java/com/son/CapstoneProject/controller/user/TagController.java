@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -36,6 +37,7 @@ public class TagController {
     private HibernateSearchRepository hibernateSearchRepository;
 
     @GetMapping("/viewTop5TagsByViewCount")
+    @Transactional
     public TagPagination findTop5ByOrderByViewCount() {
         try {
             List<Tag> tags = tagRepository.findTop5ByOrderByViewCountDesc();
@@ -50,6 +52,7 @@ public class TagController {
     }
 
     @GetMapping("/viewTop10Tags/{type}")
+    @Transactional
     public TagPagination viewTop10Tags(@PathVariable String type) {
         try {
             List<Tag> tags;
@@ -71,6 +74,7 @@ public class TagController {
     }
 
     @GetMapping("/findAllTags/{type}/{pageNumber}")
+    @Transactional
     public TagPagination findAllTags(@PathVariable String type, @PathVariable int pageNumber) {
         try {
             PageRequest pageNumWithElements = PageRequest.of(pageNumber, TAGS_PER_PAGE);
@@ -128,6 +132,7 @@ public class TagController {
     }
 
     @GetMapping("/findAllTagsForRecommend")
+    @Transactional
     public List<Tag> findAllTagsForRecommend() {
         try {
             return tagRepository.findAll();
@@ -138,6 +143,7 @@ public class TagController {
     }
 
     @PostMapping("/searchTagsWhileTyping")
+    @Transactional
     public TagPagination searchTagsByPageIndex(@RequestBody TagSearch tagSearch) {
         try {
             return (TagPagination) hibernateSearchRepository.recommendTagNameWhileTyping(
