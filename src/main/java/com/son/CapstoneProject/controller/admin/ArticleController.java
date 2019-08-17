@@ -415,8 +415,23 @@ public class ArticleController {
                     }
                 }
 
+                List<AppUser> oldSubscribers = article.getSubscribers();
+                List<AppUser> newSubscribers = new ArrayList<>();
+
+                for (AppUser appUser: oldSubscribers) {
+                    if (!newSubscribers.contains(appUser)) {
+                        newSubscribers.add(appUser);
+                    }
+                }
+
+                for (AppUser appUser: distinctAppUsers) {
+                    if (!newSubscribers.contains(appUser)) {
+                        newSubscribers.add(appUser);
+                    }
+                }
+
                 // Then make them subscribe
-                article.setSubscribers(distinctAppUsers);
+                article.setSubscribers(newSubscribers);
                 articleRepository.save(article);
             }
 

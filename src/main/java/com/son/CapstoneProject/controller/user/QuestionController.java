@@ -754,7 +754,7 @@ public class QuestionController {
 
     @GetMapping("/usersAnswerResubscribeQuestion")
     @Transactional
-    public void usersCommentResubscribeArticles() {
+    public void usersAnswerResubscribeQuestion() {
         try {
             List<Question> questions = questionRepository.findAll();
 
@@ -770,7 +770,23 @@ public class QuestionController {
                 }
 
                 // Then make them subscribe
-                question.setSubscribers(distinctAppUsers);
+//                question.setSubscribers(distinctAppUsers);
+                List<AppUser> oldSubscribers = question.getSubscribers();
+                List<AppUser> newSubscribers = new ArrayList<>();
+
+                for (AppUser appUser: oldSubscribers) {
+                    if (!newSubscribers.contains(appUser)) {
+                        newSubscribers.add(appUser);
+                    }
+                }
+
+                for (AppUser appUser: distinctAppUsers) {
+                    if (!newSubscribers.contains(appUser)) {
+                        newSubscribers.add(appUser);
+                    }
+                }
+
+                question.setSubscribers(newSubscribers);
                 questionRepository.save(question);
             }
         } catch (Exception e) {
