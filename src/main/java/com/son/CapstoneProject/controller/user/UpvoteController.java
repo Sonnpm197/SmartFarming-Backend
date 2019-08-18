@@ -144,11 +144,11 @@ public class UpvoteController {
             }
 
             // You cannot like your own article, question, answer or comment
-            if (userUpvote.getUserId().equals(author.getUserId())) {
-                String message = methodName + ": You cannot like our own " + type;
-                // logger.info(message);
-                throw new Exception(message);
-            }
+//            if (userUpvote.getUserId().equals(author.getUserId())) {
+//                String message = methodName + ": You cannot like our own " + type;
+//                // logger.info(message);
+//                throw new Exception(message);
+//            }
 
             // Increase 1 reputation for the one who receives your like
 
