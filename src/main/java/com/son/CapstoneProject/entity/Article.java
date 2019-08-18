@@ -27,7 +27,7 @@ import java.util.Objects;
         tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class),
         filters = {
                 @TokenFilterDef(factory = LowerCaseFilterFactory.class),
-                // @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class),
+                 @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class),
         }
 )
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})

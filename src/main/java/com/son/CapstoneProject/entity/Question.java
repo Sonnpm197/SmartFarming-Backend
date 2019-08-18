@@ -37,14 +37,14 @@ import java.util.Objects;
 
 @AnalyzerDef(
         name = "customAnalyzer",
-//        charFilters = {
-//                // Same as ASCIIFoldingFilterFactory but we can specify mapping file
-//                @CharFilterDef(factory = MappingCharFilterFactory.class, params = {
-//                        @Parameter(
-//                                name = "mapping",
-//                                value = "mapping.txt")
-//                })
-//        },
+        charFilters = {
+                // Same as ASCIIFoldingFilterFactory but we can specify mapping file
+                @CharFilterDef(factory = MappingCharFilterFactory.class, params = {
+                        @Parameter(
+                                name = "mapping",
+                                value = "mapping.txt")
+                })
+        },
         tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class),
         filters = {
                 @TokenFilterDef(factory = LowerCaseFilterFactory.class)
