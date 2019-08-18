@@ -66,7 +66,7 @@ public class UpvoteController {
 
     @PostMapping(value = "/{type}/{id}")
     @Transactional
-    public String upvote(@RequestBody AppUser userUpvote,
+    public void upvote(@RequestBody AppUser userUpvote,
                          @PathVariable String type,
                          @PathVariable Long id,
                          HttpServletRequest request) {
@@ -212,7 +212,7 @@ public class UpvoteController {
 
             }
 
-            return "UpVote " + type + " with id: " + id + " successfully";
+//            return "{ UpVote " + type + " with id: " + id + " successfully }";
         } catch (Exception e) {
             logger.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
