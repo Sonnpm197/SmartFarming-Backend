@@ -156,4 +156,15 @@ public class TagController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
+
+    @GetMapping("/findTagById/{tagId}")
+    @Transactional
+    public Tag findTagById(@PathVariable("tagId") Long tagId) {
+        try {
+            return tagRepository.findById(tagId).get();
+        } catch (Exception e) {
+            logger.error("An error has occurred", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        }
+    }
 }
