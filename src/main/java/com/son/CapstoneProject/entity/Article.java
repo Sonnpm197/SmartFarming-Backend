@@ -41,11 +41,16 @@ public class Article {
     @Field(store = Store.YES)
     @Column(columnDefinition = "nvarchar(255)")
     private String title;
+//
+//    @Analyzer(definition = "articleCustomAnalyzer")
+//    @Field(store = Store.YES)
+//    @Column(columnDefinition = "ntext")
+    private String content; // contain html tags
 
     @Analyzer(definition = "articleCustomAnalyzer")
     @Field(store = Store.YES)
     @Column(columnDefinition = "ntext")
-    private String content;
+    private String contentWithoutHtmlTags; // contain no html tags
 
     @Analyzer(definition = "articleCustomAnalyzer")
     @Field(store = Store.YES)

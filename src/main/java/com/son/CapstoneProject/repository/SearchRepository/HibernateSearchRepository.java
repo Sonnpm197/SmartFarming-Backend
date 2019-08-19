@@ -70,7 +70,77 @@ public class HibernateSearchRepository {
      * @param searchedText
      * @return
      */
-    public Pagination search2(String searchedText, String className, String[] fields,
+//    public Pagination search2(String searchedText, String className, String[] fields,
+//                              String articleCategory, String sortBy, int pageIndex, boolean isHomepageSearch) throws Exception {
+//        try {
+//            GenericClass genericClass = null;
+//
+//            if (ARTICLE.equalsIgnoreCase(className)) {
+//                genericClass = new GenericClass(Article.class);
+//            } else if (QUESTION.equalsIgnoreCase(className)) {
+//                genericClass = new GenericClass(Question.class);
+//            } else if (TAG.equalsIgnoreCase(className)) {
+//                genericClass = new GenericClass(Tag.class);
+//            }
+//
+//            // If it starts with double quotes then search exactly
+//            if (searchedText.startsWith("\"") && searchedText.endsWith("\"")) {
+//
+//                // Search for each field
+//                List<org.apache.lucene.search.Query> queryList = new ArrayList<>();
+//                for (String field : fields) {
+//                    org.apache.lucene.search.Query phraseQuery = getQueryBuilder(genericClass)
+//                            .phrase()
+//                            .withSlop(0) // match exactly
+//                            .onField(field)
+//                            .sentence(searchedText)
+//                            .createQuery();
+//                    queryList.add(phraseQuery);
+//                }
+//
+//                // At the end of the loop return result
+//                return returnFinalListByClassName(queryList,
+//                        className,
+//                        genericClass,
+//                        articleCategory,
+//                        sortBy,
+//                        pageIndex,
+//                        isHomepageSearch,
+//                        true);
+//
+//            }
+//            // Else search with 'AND' operator
+//            else {
+//                String[] arrKeywords = searchedText.split(" ");
+//
+//                List<org.apache.lucene.search.Query> queryList = new ArrayList<>();
+//                for (String keyword : arrKeywords) {
+//                    if (!StringUtils.isNullOrEmpty(keyword)) {
+//                        org.apache.lucene.search.Query query = getQueryBuilder(genericClass)
+//                                .keyword()
+//                                .onFields(fields)
+//                                .matching(keyword.trim())
+//                                .createQuery();
+//                        queryList.add(query);
+//                    }
+//                }
+//
+//                // At the end of the loop return result
+//                return returnFinalListByClassName(queryList,
+//                        className,
+//                        genericClass,
+//                        articleCategory,
+//                        sortBy,
+//                        pageIndex,
+//                        isHomepageSearch,
+//                        false);
+//            }
+//        } catch (Exception e) {
+//            logger.error("An error has occurred", e);
+//            throw e;
+//        }
+//    }
+    public Pagination search3(String searchedText, String className, String[] fields,
                               String articleCategory, String sortBy, int pageIndex, boolean isHomepageSearch) throws Exception {
         try {
             GenericClass genericClass = null;
@@ -84,57 +154,44 @@ public class HibernateSearchRepository {
             }
 
             // If it starts with double quotes then search exactly
+            List<org.apache.lucene.search.Query> queryList = new ArrayList<>();
             if (searchedText.startsWith("\"") && searchedText.endsWith("\"")) {
+                if (ARTICLE.equalsIgnoreCase(className) || QUESTION.equalsIgnoreCase(className)) {
+                    org.apache.lucene.search.Query phraseQuery = getQueryBuilder(genericClass)
+                            .simpleQueryString()
+                            .onFields(fields[0], fields[1]) // title and contentWithoutHtmlTags for question & article
+                            .matching(searchedText)
+                            .createQuery();
+                    queryList.add(phraseQuery);
 
-                // Search for each field
-                List<org.apache.lucene.search.Query> queryList = new ArrayList<>();
+                } else if (TAG.equalsIgnoreCase(className)) {
+                    org.apache.lucene.search.Query phraseQuery = getQueryBuilder(genericClass)
+                            .simpleQueryString()
+                            .onField(fields[0]) // name for tag
+                            .matching(searchedText)
+                            .createQuery();
+                    queryList.add(phraseQuery);
+                }
+            } else {
                 for (String field : fields) {
                     org.apache.lucene.search.Query phraseQuery = getQueryBuilder(genericClass)
                             .phrase()
-                            .withSlop(0) // match exactly
+                            .withSlop(2)
                             .onField(field)
                             .sentence(searchedText)
                             .createQuery();
                     queryList.add(phraseQuery);
                 }
-
-                // At the end of the loop return result
-                return returnFinalListByClassName(queryList,
-                        className,
-                        genericClass,
-                        articleCategory,
-                        sortBy,
-                        pageIndex,
-                        isHomepageSearch,
-                        true);
-
             }
-            // Else search with 'AND' operator
-            else {
-                String[] arrKeywords = searchedText.split(" ");
 
-                List<org.apache.lucene.search.Query> queryList = new ArrayList<>();
-                for (String keyword : arrKeywords) {
-                    if (!StringUtils.isNullOrEmpty(keyword)) {
-                        org.apache.lucene.search.Query query = getQueryBuilder(genericClass)
-                                .keyword()
-                                .onFields(fields)
-                                .matching(keyword.trim())
-                                .createQuery();
-                        queryList.add(query);
-                    }
-                }
+            return returnFinalListByClassName(queryList,
+                    className,
+                    genericClass,
+                    articleCategory,
+                    sortBy,
+                    pageIndex,
+                    isHomepageSearch);
 
-                // At the end of the loop return result
-                return returnFinalListByClassName(queryList,
-                        className,
-                        genericClass,
-                        articleCategory,
-                        sortBy,
-                        pageIndex,
-                        isHomepageSearch,
-                        false);
-            }
         } catch (Exception e) {
             logger.error("An error has occurred", e);
             throw e;
@@ -148,8 +205,8 @@ public class HibernateSearchRepository {
             String articleCategory,
             String sortBy,
             int pageIndex,
-            boolean isHomepageSearch,
-            boolean isDoubleQuote) throws Exception {
+            boolean isHomepageSearch
+            /*, boolean isDoubleQuote*/) throws Exception {
 
         String methodName = "HibernateSearchRepository.returnFinalListByClassName";
 
@@ -160,9 +217,9 @@ public class HibernateSearchRepository {
         // Search in category of article (Only with not null article)
         if (articleCategory != null && articleCategory.trim().length() > 0) {
             org.apache.lucene.search.Query querySearchForArticleCategory = getQueryBuilder(genericClass)
-                    .keyword()
+                    .simpleQueryString()
                     .onField("category")
-                    .matching(articleCategory.trim())
+                    .matching("\"" + articleCategory.trim() + "\"")
                     .createQuery();
             queryList.add(querySearchForArticleCategory);
         }
@@ -171,14 +228,18 @@ public class HibernateSearchRepository {
         BooleanQuery.Builder finalQueryBuilder = new BooleanQuery.Builder();
 
         for (org.apache.lucene.search.Query query : queryList) {
-            if (isDoubleQuote) {
-                finalQueryBuilder.add(query, BooleanClause.Occur.SHOULD);
-            } else {
-                finalQueryBuilder.add(query, BooleanClause.Occur.MUST);
-            }
+//            if (isDoubleQuote) {
+//                finalQueryBuilder.add(query, BooleanClause.Occur.SHOULD);
+//            } else {
+//                finalQueryBuilder.add(query, BooleanClause.Occur.MUST);
+//            }
+
+            finalQueryBuilder.add(query, BooleanClause.Occur.SHOULD);
         }
 
         FullTextQuery fullTextQuery = getJpaQuery(finalQueryBuilder.build(), genericClass);
+
+//        FullTextQuery fullTextQuery = getJpaQuery(queryList.get(0), genericClass);
         if (ARTICLE.equalsIgnoreCase(className)) {
             if (!isHomepageSearch) {
                 fullTextQuery.setFirstResult(pageIndex * ARTICLES_PER_PAGE); // start from this element

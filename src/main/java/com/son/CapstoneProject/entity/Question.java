@@ -62,10 +62,15 @@ public class Question implements Serializable {
     @Column(columnDefinition = "nvarchar(100)")
     private String title;
 
+//    @Analyzer(definition = "customAnalyzer")
+//    @Field(store = Store.YES)
+//    @Column(columnDefinition = "ntext")
+    private String content;
+
     @Analyzer(definition = "customAnalyzer")
     @Field(store = Store.YES)
     @Column(columnDefinition = "ntext")
-    private String content;
+    private String contentWithoutHtmlTags; // contain no html tags
 
     // Many questions can be asked by an user
 //    @JsonBackReference

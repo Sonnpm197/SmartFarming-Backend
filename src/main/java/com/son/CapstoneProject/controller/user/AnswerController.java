@@ -230,8 +230,34 @@ public class AnswerController {
                 commentRepository.delete(comment);
             }
 
+            Question question = answer.getQuestion();
+
             // Then remove the answer
             answerRepository.delete(answer);
+
+            List<Tag> tags = question.getTags();
+            for (Tag tag : tags) {
+                AppUserTag appUserTag = appUserTagRepository
+                        .findAppUserTagByAppUser_UserIdAndTag_TagId(answer.getAppUser().getUserId(), tag.getTagId());
+
+                if (appUserTag != null) {
+                    // Then reduce point of this user by this question upvote count
+                    int currentPoint = appUserTag.getReputation();
+                    int resultPoint = 0;
+                    if (answer.getUpvoteCount() == null) {
+                        resultPoint = currentPoint - 0;
+                    } else {
+                        resultPoint = currentPoint - answer.getUpvoteCount();
+                    }
+
+                    if (resultPoint < 0) {
+                        resultPoint = 0;
+                    }
+
+                    appUserTag.setReputation(resultPoint);
+                    appUserTagRepository.save(appUserTag);
+                }
+            }
 
             Map<String, String> map = new HashMap<>();
             map.put("answerId", "" + answerId);

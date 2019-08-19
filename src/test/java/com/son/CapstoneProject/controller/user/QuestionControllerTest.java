@@ -427,7 +427,7 @@ public class QuestionControllerTest {
 
     @Test
     @SqlGroup({
-            @Sql("/sql/questionController/insert_question.sql"),
+            @Sql("/sql/questionController/delete_question.sql"),
             @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
     })
     public void deleteQuestion() {
@@ -483,11 +483,11 @@ public class QuestionControllerTest {
         Assert.assertFalse(editedQuestionRepository.findById(1L).isPresent());
         Assert.assertFalse(editedQuestionRepository.findById(2L).isPresent());
 
-        // Tags must be kept
-        Assert.assertTrue(tagRepository.findById(0L).isPresent());
-        Assert.assertTrue(tagRepository.findById(1L).isPresent());
-        Assert.assertTrue(tagRepository.findById(2L).isPresent());
-        Assert.assertTrue(tagRepository.findById(3L).isPresent());
+        Assert.assertFalse(tagRepository.findById(0L).isPresent());
+        Assert.assertFalse(tagRepository.findById(1L).isPresent());
+
+        Assert.assertFalse(appUserTagRepository.findById(0L).isPresent());
+        Assert.assertFalse(appUserTagRepository.findById(1L).isPresent());
     }
 
     @Test

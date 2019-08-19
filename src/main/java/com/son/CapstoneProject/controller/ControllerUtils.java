@@ -1,8 +1,12 @@
 package com.son.CapstoneProject.controller;
 
 import com.son.CapstoneProject.common.ConstantValue;
+import com.son.CapstoneProject.entity.AppUserTag;
 import com.son.CapstoneProject.entity.Tag;
 import com.son.CapstoneProject.entity.login.AppUser;
+import com.son.CapstoneProject.repository.AppUserTagRepository;
+import com.son.CapstoneProject.repository.ArticleRepository;
+import com.son.CapstoneProject.repository.QuestionRepository;
 import com.son.CapstoneProject.repository.TagRepository;
 import com.son.CapstoneProject.repository.loginRepository.AppUserRepository;
 import org.slf4j.Logger;
@@ -23,7 +27,16 @@ public class ControllerUtils {
     private TagRepository tagRepository;
 
     @Autowired
+    private AppUserTagRepository appUserTagRepository;
+
+    @Autowired
     private AppUserRepository appUserRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
+
+    @Autowired
+    private ArticleRepository articleRepository;
 
 //    @Autowired
 //    private AppUserDAO appUserDAO;
@@ -143,4 +156,34 @@ public class ControllerUtils {
         }
     }
 
+    public int numberOfQuestionsAndArticlesByTagId(Long tagId) {
+        Integer numberOfQuestions = questionRepository.countNumberOfQuestionsByTagId(tagId);
+        Integer numberOfArticles = articleRepository.countNumberOfArticlesByTagId(tagId);
+
+        if (numberOfQuestions == null) {
+            numberOfQuestions = 0;
+        }
+
+        if (numberOfArticles == null) {
+            numberOfArticles = 0;
+        }
+
+        return numberOfQuestions + numberOfArticles;
+    }
+
+    public void removeAppUserTagAndTagIfHasNoRelatedQuestionsOrArticle(Long tagId) throws Exception {
+        if (numberOfQuestionsAndArticlesByTagId(tagId) == 0) {
+            Tag tag = tagRepository.findById(tagId)
+                    .orElseThrow(() -> new Exception("Cannot find tag with id" + tagId));
+
+            List<AppUserTag> appUserTags = appUserTagRepository.findByTag_TagId(tagId);
+
+            for (AppUserTag appUserTag : appUserTags) {
+                appUserTagRepository.delete(appUserTag);
+            }
+
+            // then remove this tag
+            tagRepository.delete(tagRepository.findById(tagId).get());
+        }
+    }
 }

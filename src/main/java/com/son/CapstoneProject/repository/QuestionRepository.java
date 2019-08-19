@@ -10,6 +10,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -52,6 +53,23 @@ public interface QuestionRepository extends PagingAndSortingRepository<Question,
 
     // For paging purpose
     Page<Question> findByTags_tagId(Long tagId, Pageable pageable);
+
+    @Query(
+            value = "select distinct q.question_id from question q join question_tags qts\n" +
+                    "on q.question_id = qts.questions_question_id\n" +
+                    "where qts.tags_tag_id in :tagId",
+            nativeQuery = true
+    )
+    List<BigInteger> findDistinctByTags_tagIdIn(@Param("tagId") List<Long> tagId);
+
+    // Count number of question by tagId
+    @Query(
+            value = "select count(distinct q.question_id) from question q join question_tags qts\n" +
+                    "on q.question_id = qts.questions_question_id\n" +
+                    "where qts.tags_tag_id in :tagId",
+            nativeQuery = true
+    )
+    Integer countDistinctNumberOfQuestionsByTags_tagIdIn(@Param("tagId") List<Long> tagId);
 
     // Count number of question by tagId
     @Query(

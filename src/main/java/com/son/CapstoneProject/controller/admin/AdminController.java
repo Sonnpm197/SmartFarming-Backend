@@ -165,7 +165,7 @@ public class AdminController {
                                                @PathVariable int pageNumber) {
         try {
             // Admin search tags first
-            TagPagination tagPagination = (TagPagination) hibernateSearchRepository.search2(
+            TagPagination tagPagination = (TagPagination) hibernateSearchRepository.search3(
                     tagSearch.getTextSearch(),
                     TAG,
                     new String[]{"name"}, // search tag by name
@@ -836,8 +836,37 @@ public class AdminController {
             notification.setMessage("Admin vừa xóa câu hỏi của bạn với tiêu đề: " + question.getTitle() + " do vi phạm nội quy diễn đàn.");
             notificationRepository.save(notification);
 
+            List<Tag> tags = question.getTags();
+            for (Tag tag : tags) {
+                AppUserTag appUserTag = appUserTagRepository
+                        .findAppUserTagByAppUser_UserIdAndTag_TagId(question.getAppUser().getUserId(), tag.getTagId());
+
+                if (appUserTag != null) {
+                    // Then reduce point of this user by this question upvote count
+                    int currentPoint = appUserTag.getReputation();
+                    int resultPoint = 0;
+                    if (question.getUpvoteCount() == null) {
+                        resultPoint = currentPoint - 0;
+                    } else {
+                        resultPoint = currentPoint - question.getUpvoteCount();
+                    }
+
+                    if (resultPoint < 0) {
+                        resultPoint = 0;
+                    }
+
+                    appUserTag.setReputation(resultPoint);
+                    appUserTagRepository.save(appUserTag);
+                }
+            }
+
             // Then remove the question
             questionRepository.delete(question);
+
+            // After deleting question check if this tag has related questions / articles or not
+            for (Tag tag : tags) {
+                controllerUtils.removeAppUserTagAndTagIfHasNoRelatedQuestionsOrArticle(tag.getTagId());
+            }
 
             Map<String, String> map = new HashMap<>();
             map.put("questionId", "" + questionId);
@@ -898,6 +927,30 @@ public class AdminController {
 
             // Then remove the answer
             answerRepository.delete(answer);
+
+            List<Tag> tags = question.getTags();
+            for (Tag tag : tags) {
+                AppUserTag appUserTag = appUserTagRepository
+                        .findAppUserTagByAppUser_UserIdAndTag_TagId(answer.getAppUser().getUserId(), tag.getTagId());
+
+                if (appUserTag != null) {
+                    // Then reduce point of this user by this question upvote count
+                    int currentPoint = appUserTag.getReputation();
+                    int resultPoint = 0;
+                    if (answer.getUpvoteCount() == null) {
+                        resultPoint = currentPoint;
+                    } else {
+                        resultPoint = currentPoint - answer.getUpvoteCount();
+                    }
+
+                    if (resultPoint < 0) {
+                        resultPoint = 0;
+                    }
+
+                    appUserTag.setReputation(resultPoint);
+                    appUserTagRepository.save(appUserTag);
+                }
+            }
 
             Map<String, String> map = new HashMap<>();
             map.put("answerId", "" + answerId);

@@ -1,16 +1,19 @@
 package com.son.CapstoneProject.controller.user;
 
+import com.son.CapstoneProject.common.StringUtils;
 import com.son.CapstoneProject.configuration.HttpRequestResponseUtils;
 import com.son.CapstoneProject.controller.ControllerUtils;
 import com.son.CapstoneProject.controller.FileController;
 import com.son.CapstoneProject.entity.*;
 import com.son.CapstoneProject.entity.login.AppUser;
 import com.son.CapstoneProject.entity.pagination.QuestionPagination;
+import com.son.CapstoneProject.entity.pagination.TagPagination;
 import com.son.CapstoneProject.entity.search.QuestionSearch;
 import com.son.CapstoneProject.repository.*;
 import com.son.CapstoneProject.repository.loginRepository.AppUserRepository;
 import com.son.CapstoneProject.repository.searchRepository.HibernateSearchRepository;
 import com.son.CapstoneProject.service.ViewCountingService;
+import org.jsoup.Jsoup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -220,14 +223,129 @@ public class QuestionController {
                                               @PathVariable String type,
                                               @PathVariable int pageNumber) {
         try {
-            return (QuestionPagination) hibernateSearchRepository.search2(questionSearch.getTextSearch(),
-                    QUESTION,
-                    new String[]{"title", "content"},
+            if (StringUtils.isNullOrEmpty(questionSearch.getTextSearch())) {
+                // return by previous status
+                return viewQuestions(type, pageNumber);
+            }
+
+            // Search by tag first
+            TagPagination tagPagination = (TagPagination) hibernateSearchRepository.search3(
+                    questionSearch.getTextSearch(),
+                    TAG,
+                    new String[]{"name"}, // search tag by name
                     null,
-                    type,
-                    pageNumber,
+                    SORT_UPVOTE_COUNT,
+                    0,
                     false
             );
+
+            List<Tag> tags = tagPagination.getTagsByPageIndex();
+
+            if (tags == null || tags.size() == 0) {
+                return (QuestionPagination) hibernateSearchRepository.search3(questionSearch.getTextSearch(),
+                        QUESTION,
+                        new String[]{"title", "contentWithoutHtmlTags"},
+                        null,
+                        type,
+                        pageNumber,
+                        false
+                );
+            }
+            // Search by list tags
+            else {
+                QuestionPagination questionPagination = new QuestionPagination();
+                List<Long> tagIds = new ArrayList<>();
+
+                for (Tag tag : tags) {
+                    if (!tagIds.contains(tag.getTagId())) {
+                        tagIds.add(tag.getTagId());
+                    }
+                }
+
+                // We have to select all questionIds in these tagIds
+                List<BigInteger> questionIdsResult = questionRepository.findDistinctByTags_tagIdIn(tagIds);
+                int numberOfContents = questionRepository.countDistinctNumberOfQuestionsByTags_tagIdIn(tagIds);
+
+                List<Question> finalQuestions = new ArrayList<>();
+                for (BigInteger questionIdBigInteger : questionIdsResult) {
+                    try {
+                        finalQuestions.add(questionRepository.findById(questionIdBigInteger.longValue()).get());
+                    } catch (Exception e) {
+                        logger.error("An error has occurred", e);
+                        continue;
+                    }
+                }
+
+                // Then sort them
+                if (SORT_DATE.equalsIgnoreCase(type)) {
+                    Collections.sort(finalQuestions, (question1, question2) -> {
+                        if (question1.getUtilTimestamp() != null && question2.getUtilTimestamp() != null) {
+                            if (question1.getUtilTimestamp().after(question2.getUtilTimestamp())) {
+                                return -1;
+                            } else if (question1.getUtilTimestamp().before(question2.getUtilTimestamp())) {
+                                return 1;
+                            } else {
+                                return 0;
+                            }
+                        }
+                        return 0;
+                    });
+                } else if (SORT_VIEW_COUNT.equalsIgnoreCase(type)) {
+                    Collections.sort(finalQuestions, (question1, question2) -> {
+                        if (question1.getViewCount() >= 0 && question2.getViewCount() >= 0) {
+                            if (question1.getViewCount() > question2.getViewCount()) {
+                                return -1;
+                            } else if (question1.getViewCount() < question2.getViewCount()) {
+                                return 1;
+                            } else {
+                                return 0;
+                            }
+                        }
+                        return 0;
+                    });
+                } else if (SORT_UPVOTE_COUNT.equalsIgnoreCase(type)) {
+                    Collections.sort(finalQuestions, (question1, question2) -> {
+                        if (question1.getUpvoteCount() >= 0 && question2.getUpvoteCount() >= 0) {
+                            if (question1.getUpvoteCount() > question2.getUpvoteCount()) {
+                                return -1;
+                            } else if (question1.getUpvoteCount() < question2.getUpvoteCount()) {
+                                return 1;
+                            } else {
+                                return 0;
+                            }
+                        }
+                        return 0;
+                    });
+                } else {
+                    throw new Exception("ArticleController.searchQuestions unknown type: " + type);
+                }
+
+                // Add number of pages
+                if (numberOfContents % QUESTIONS_PER_PAGE == 0) {
+                    questionPagination.setNumberOfPages(numberOfContents / QUESTIONS_PER_PAGE);
+                } else {
+                    questionPagination.setNumberOfPages(numberOfContents / QUESTIONS_PER_PAGE + 1);
+                }
+
+                // Then get result i = start; i <= end from the above array
+                int start = pageNumber * QUESTIONS_PER_PAGE;
+                int end = pageNumber * QUESTIONS_PER_PAGE + QUESTIONS_PER_PAGE - 1;
+
+                List<Question> questionShownOnUI = new ArrayList<>();
+                for (int i = start; i <= end; i++) {
+                    try {
+                        questionShownOnUI.add(finalQuestions.get(i));
+                    } catch (Exception e) {
+                        // Prevent index out of bound
+//                        logger.error("An error has occurred", e);
+                        continue;
+                    }
+                }
+
+                // Finally add to questionPagination
+                questionPagination.setQa(questionShownOnUI);
+                return questionPagination;
+            }
         } catch (Exception e) {
             logger.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
@@ -240,14 +358,63 @@ public class QuestionController {
                                                         @PathVariable String type,
                                                         @PathVariable int pageNumber) {
         try {
-            return (QuestionPagination) hibernateSearchRepository.search2(questionSearch.getTextSearch(),
-                    QUESTION,
-                    new String[]{"title", "content"},
+            // Search by tag first
+            TagPagination tagPagination = (TagPagination) hibernateSearchRepository.search3(
+                    questionSearch.getTextSearch(),
+                    TAG,
+                    new String[]{"name"}, // search tag by name
                     null,
-                    type,
-                    pageNumber,
-                    true
+                    SORT_UPVOTE_COUNT,
+                    0,
+                    false
             );
+
+            List<Tag> tags = tagPagination.getTagsByPageIndex();
+
+            if (tags == null || tags.size() == 0) {
+                return (QuestionPagination) hibernateSearchRepository.search3(questionSearch.getTextSearch(),
+                        QUESTION,
+                        new String[]{"title", "contentWithoutHtmlTags"},
+                        null,
+                        type,
+                        pageNumber,
+                        true
+                );
+            } else {
+                PageRequest pageNumWithElements;
+
+                if (SORT_DATE.equalsIgnoreCase(type)) {
+                    pageNumWithElements = PageRequest.of(pageNumber, HOME_PAGE_SEARCH_QUESTIONS_PER_PAGE, Sort.by("utilTimestamp").descending());
+                } else if (SORT_VIEW_COUNT.equalsIgnoreCase(type)) {
+                    pageNumWithElements = PageRequest.of(pageNumber, HOME_PAGE_SEARCH_QUESTIONS_PER_PAGE, Sort.by("viewCount").descending());
+                } else if (SORT_UPVOTE_COUNT.equalsIgnoreCase(type)) {
+                    pageNumWithElements = PageRequest.of(pageNumber, HOME_PAGE_SEARCH_QUESTIONS_PER_PAGE, Sort.by("upvoteCount").descending());
+                } else {
+                    throw new Exception("QuestionController.searchQuestionsOnHomePage unknown type: " + type);
+                }
+
+                QuestionPagination questionPagination = new QuestionPagination();
+                List<Question> finalQuestions = new ArrayList<>();
+                int count = 0;
+
+                for (Tag tag : tags) {
+                    if (count == HOME_PAGE_SEARCH_QUESTIONS_PER_PAGE) {
+                        break;
+                    }
+                    Page<Question> questionPage = questionRepository.findByTags_tagId(tag.getTagId(), pageNumWithElements);
+                    List<Question> questions = questionPage.getContent();
+                    for (Question question : questions) {
+                        if (!finalQuestions.contains(question)) {
+                            finalQuestions.add(question);
+                            count++;
+                        }
+                    }
+                }
+
+                questionPagination.setQa(finalQuestions);
+                questionPagination.setNumberOfPages(1);
+                return questionPagination;
+            }
         } catch (Exception e) {
             logger.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
@@ -311,6 +478,9 @@ public class QuestionController {
 
             // add date
             question.setUtilTimestamp(new Date());
+
+            // Set raw content string to article
+            question.setContentWithoutHtmlTags(Jsoup.parse(question.getContent()).text());
 
             // Add this user as a subscriber
             if (!question.getSubscribers().contains(appUser)) {
@@ -496,8 +666,38 @@ public class QuestionController {
                 reportRepository.delete(report);
             }
 
+            // Reduce point related to tags of this user
+            List<Tag> tags = question.getTags();
+            for (Tag tag : tags) {
+                AppUserTag appUserTag = appUserTagRepository
+                        .findAppUserTagByAppUser_UserIdAndTag_TagId(question.getAppUser().getUserId(), tag.getTagId());
+
+                if (appUserTag != null) {
+                    // Then reduce point of this user by this question upvote count
+                    int currentPoint = appUserTag.getReputation();
+                    int resultPoint = 0;
+                    if (question.getUpvoteCount() == null) {
+                        resultPoint = currentPoint - 0;
+                    } else {
+                        resultPoint = currentPoint - question.getUpvoteCount();
+                    }
+
+                    if (resultPoint < 0) {
+                        resultPoint = 0;
+                    }
+
+                    appUserTag.setReputation(resultPoint);
+                    appUserTagRepository.save(appUserTag);
+                }
+            }
+
             // Then remove the question
             questionRepository.delete(question);
+
+            // After deleting question check if this tag has related questions / articles or not
+            for (Tag tag : tags) {
+                controllerUtils.removeAppUserTagAndTagIfHasNoRelatedQuestionsOrArticle(tag.getTagId());
+            }
 
             Map<String, String> map = new HashMap<>();
             map.put("questionId", "" + questionId);
@@ -774,13 +974,13 @@ public class QuestionController {
                 List<AppUser> oldSubscribers = question.getSubscribers();
                 List<AppUser> newSubscribers = new ArrayList<>();
 
-                for (AppUser appUser: oldSubscribers) {
+                for (AppUser appUser : oldSubscribers) {
                     if (!newSubscribers.contains(appUser)) {
                         newSubscribers.add(appUser);
                     }
                 }
 
-                for (AppUser appUser: distinctAppUsers) {
+                for (AppUser appUser : distinctAppUsers) {
                     if (!newSubscribers.contains(appUser)) {
                         newSubscribers.add(appUser);
                     }
@@ -958,6 +1158,23 @@ public class QuestionController {
                 return new ArrayList<>();
             }
 
+        } catch (Exception e) {
+            logger.error("An error has occurred", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        }
+    }
+
+    @GetMapping("/addContentWithoutHtmlTagsAndUpvoteCount")
+    @Transactional
+    public void addContentWithoutHtmlTags() {
+        try {
+            List<Question> questions = questionRepository.findAll();
+
+            for (Question question : questions) {
+                question.setContentWithoutHtmlTags(Jsoup.parse(question.getContent()).text());
+                question.setUpvoteCount(question.getUpvotedUserIds().size());
+                questionRepository.save(question);
+            }
         } catch (Exception e) {
             logger.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);

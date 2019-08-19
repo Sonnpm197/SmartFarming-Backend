@@ -8,6 +8,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -62,6 +63,22 @@ public interface ArticleRepository extends PagingAndSortingRepository<Article, L
 
     // For paging purpose
     Page<Article> findByTags_tagId(Long tagId, Pageable pageable);
+
+    @Query(
+            value = "select distinct a.article_id from article a join article_tags ats\n" +
+                    "    on a.article_id = ats.articles_article_id\n" +
+                    "where ats.tags_tag_id in :tagId",
+            nativeQuery = true
+    )
+    List<BigInteger> findDistinctArticleIdsByTags_tagIdIn(@Param("tagId") List<Long> tagId);
+
+    @Query(
+            value = "select count(distinct a.article_id) from article a join article_tags ats\n" +
+                    "    on a.article_id = ats.articles_article_id\n" +
+                    "where ats.tags_tag_id in :tagId",
+            nativeQuery = true
+    )
+    Integer countDistinctNumberOfArticlesByTags_tagIdIn(@Param("tagId") List<Long> tagId);
 
     // Count number of article by tagId
     @Query(
