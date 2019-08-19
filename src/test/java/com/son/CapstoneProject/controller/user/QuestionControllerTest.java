@@ -668,14 +668,14 @@ public class QuestionControllerTest {
         System.out.println(">>> Testing URI: " + builder.buildAndExpand(uriParams).toUri());
 
         HttpEntity<String> entity = new HttpEntity<>(null, CommonTest.getHeaders("GET", frontEndUrl));
-        ResponseEntity<List<AppUser>> response = CommonTest.getRestTemplate().exchange(
+        ResponseEntity<List<RelatedAppUserWithDetails>> response = CommonTest.getRestTemplate().exchange(
                 builder.buildAndExpand(uriParams).toUri(),
                 HttpMethod.GET,
                 entity,
-                new ParameterizedTypeReference<List<AppUser>>() {
+                new ParameterizedTypeReference<List<RelatedAppUserWithDetails>>() {
                 });
 
-        List<AppUser> questionList = response.getBody();
+        List<RelatedAppUserWithDetails> questionList = response.getBody();
         System.out.println(">> Result: " + questionList);
     }
 

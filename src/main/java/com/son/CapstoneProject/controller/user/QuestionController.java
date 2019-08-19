@@ -1076,7 +1076,7 @@ public class QuestionController {
 
     @GetMapping("/viewRelatedUsersByQuestion/{questionId}")
     @Transactional
-    public List<AppUser> viewRelatedUsersByQuestion(@PathVariable Long questionId) {
+    public List<RelatedAppUserWithDetails> viewRelatedUsersByQuestion(@PathVariable Long questionId) {
         try {
             Question question = questionRepository.findById(questionId)
                     .orElseThrow(() -> new Exception("QuestionController.viewRelatedUsersByQuestion: cannot find any question with id: " + questionId));
@@ -1127,7 +1127,20 @@ public class QuestionController {
                 }
             }
 
-            return recommendedUsers;
+            List<RelatedAppUserWithDetails> relatedAppUserWithDetails = new ArrayList<>();
+            for (AppUser appUser: recommendedUsers) {
+                List<AppUserTag> details = viewDetailRelatedUser(questionId, appUser.getUserId());
+
+                // Create new appUserTagWithDetail
+                RelatedAppUserWithDetails relatedAppUserWithDetail = new RelatedAppUserWithDetails();
+                relatedAppUserWithDetail.setAppUser(appUser);
+                relatedAppUserWithDetail.setAppUserTags(details);
+
+                // Add to list
+                relatedAppUserWithDetails.add(relatedAppUserWithDetail);
+            }
+
+            return relatedAppUserWithDetails;
         } catch (Exception e) {
             logger.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
@@ -1138,11 +1151,11 @@ public class QuestionController {
     @Transactional
     public List<AppUserTag> viewDetailRelatedUser(@PathVariable Long questionId, @PathVariable Long userId) {
         try {
-            AppUser appUser = appUserRepository.findById(userId)
-                    .orElseThrow(() -> new Exception("QuestionController.viewDetailRelatedUser: cannot find any question with id: " + userId));
-
-            Question question = questionRepository.findById(questionId)
-                    .orElseThrow(() -> new Exception("QuestionController.viewRelatedUsersByQuestion: cannot find any question with id: " + questionId));
+//            AppUser appUser = appUserRepository.findById(userId)
+//                    .orElseThrow(() -> new Exception("QuestionController.viewDetailRelatedUser: cannot find any question with id: " + userId));
+//
+//            Question question = questionRepository.findById(questionId)
+//                    .orElseThrow(() -> new Exception("QuestionController.viewRelatedUsersByQuestion: cannot find any question with id: " + questionId));
 
             List<BigInteger> tagIdsByQuestionId = tagRepository.listTagIdByQuestionId(questionId);
 
