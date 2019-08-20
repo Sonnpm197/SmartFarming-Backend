@@ -67,7 +67,7 @@ public class Tag {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Tag tag = (Tag) o;
-        return Objects.equals(tagId, tag.tagId);
+        return Objects.equals(tagId, tag.tagId) && Objects.equals(name, tag.name);
     }
 
     @Override
