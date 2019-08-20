@@ -159,7 +159,7 @@ public class HibernateSearchRepository {
                 if (ARTICLE.equalsIgnoreCase(className) || QUESTION.equalsIgnoreCase(className)) {
                     org.apache.lucene.search.Query phraseQuery = getQueryBuilder(genericClass)
                             .simpleQueryString()
-                            .onFields(fields[0], fields[1]) // title and contentWithoutHtmlTags for question & article
+                            .onFields(fields[0], fields[1], "tags.name") // title and contentWithoutHtmlTags for question & article
                             .matching(searchedText)
                             .createQuery();
                     queryList.add(phraseQuery);
