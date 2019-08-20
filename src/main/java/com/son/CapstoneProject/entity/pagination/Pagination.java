@@ -9,5 +9,6 @@ import lombok.Setter;
 public class Pagination {
 
     protected int numberOfPages;
+    protected int numberOfContents;
 
 }

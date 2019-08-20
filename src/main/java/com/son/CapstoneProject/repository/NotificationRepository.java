@@ -14,6 +14,13 @@ import java.util.List;
 @Repository
 public interface NotificationRepository extends PagingAndSortingRepository<Notification, Long> {
 
+    @Query(
+            value = "select count(distinct n.notification_id) from notification n\n" +
+                    "where n.user_id = :userId",
+            nativeQuery = true
+    )
+    Integer findTotalNumberByAppUserReceiver_UserId(@Param("userId") Long userId);
+
     Page<Notification> findByAppUserReceiver_UserId(Long userId, Pageable pageable);
 
     @Query("select count(n.notificationId) from Notification n where n.seen = :seen and n.appUserReceiver = :appUser")

@@ -118,8 +118,8 @@ public class AdminController {
             // Return pagination objects
             ReportPagination reportPagination = new ReportPagination();
             reportPagination.setReportsByPageIndex(reportPage.getContent());
-
             reportPagination.setNumberOfPages(Integer.parseInt("" + viewNumberOfReportPages()));
+            reportPagination.setNumberOfContents(Integer.parseInt("" + reportRepository.count()));
             return reportPagination;
         } catch (Exception e) {
             logger.error("An error has occurred", e);

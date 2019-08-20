@@ -127,6 +127,7 @@ public class TagController {
             TagPagination tagPagination = new TagPagination();
             tagPagination.setTagsByPageIndex(tags);
             tagPagination.setNumberOfPages(numberOfPages);
+            tagPagination.setNumberOfContents(size);
             return tagPagination;
         } catch (Exception e) {
             logger.error("An error has occurred", e);

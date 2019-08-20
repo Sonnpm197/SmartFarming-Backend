@@ -134,7 +134,11 @@ public class NotificationController {
             NotificationPagination notificationPagination = new NotificationPagination();
             notificationPagination.setNotificationsByPageIndex(modifiableNotifications);
 
-            int numberOfNotifications = modifiableNotifications.size();
+            Integer numberOfNotifications = notificationRepository.findTotalNumberByAppUserReceiver_UserId(userId);
+
+            if (numberOfNotifications == null) {
+                numberOfNotifications = 0;
+            }
 
             if (numberOfNotifications % NOTIFICATION_PER_PAGE == 0) {
                 logger.info("numberOfNotificationPages : {}", numberOfNotifications / NOTIFICATION_PER_PAGE);
@@ -149,6 +153,8 @@ public class NotificationController {
 //                notification.setSeen(true);
 //                notificationRepository.save(notification);
 //            }
+
+            notificationPagination.setNumberOfContents(numberOfNotifications);
 
             return notificationPagination;
         } catch (Exception e) {

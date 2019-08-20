@@ -1,7 +1,6 @@
 package com.son.CapstoneProject.entity.pagination;
 
 import com.son.CapstoneProject.entity.Report;
-import com.son.CapstoneProject.entity.Tag;
 import lombok.Getter;
 import lombok.Setter;
 

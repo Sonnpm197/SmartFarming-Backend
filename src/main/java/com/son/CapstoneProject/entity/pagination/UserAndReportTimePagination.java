@@ -1,7 +1,6 @@
 package com.son.CapstoneProject.entity.pagination;
 
 import com.son.CapstoneProject.entity.UserAndReportTime;
-import com.son.CapstoneProject.entity.login.AppUser;
 import lombok.Getter;
 import lombok.Setter;
 

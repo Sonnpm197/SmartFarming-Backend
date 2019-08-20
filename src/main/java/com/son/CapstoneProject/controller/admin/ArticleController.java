@@ -120,6 +120,7 @@ public class ArticleController {
             ArticlePagination articlePagination = new ArticlePagination();
             articlePagination.setArticlesByPageIndex(articlePage.getContent());
             articlePagination.setNumberOfPages(Integer.parseInt("" + viewNumberOfPages()));
+            articlePagination.setNumberOfContents(Integer.parseInt("" + articleRepository.count()));
             return articlePagination;
         } catch (Exception e) {
             logger.error("An error has occurred", e);
@@ -163,6 +164,8 @@ public class ArticleController {
             } else {
                 articlePagination.setNumberOfPages(numberOfArticlesByInt / ARTICLES_PER_PAGE + 1);
             }
+
+            articlePagination.setNumberOfContents(numberOfArticlesByInt);
             return articlePagination;
         } catch (Exception e) {
             logger.error("An error has occurred", e);
@@ -211,15 +214,15 @@ public class ArticleController {
 //            List<Tag> tags = tagPagination.getTagsByPageIndex();
 //
 //            if (tags == null || tags.size() == 0) {
-                return (ArticlePagination) hibernateSearchRepository.search3(
-                        articleSearch.getTextSearch(),
-                        ARTICLE,
-                        new String[]{"title", "contentWithoutHtmlTags"},
-                        articleSearch.getCategory(),
-                        type,
-                        pageNumber,
-                        false
-                );
+            return (ArticlePagination) hibernateSearchRepository.search3(
+                    articleSearch.getTextSearch(),
+                    ARTICLE,
+                    new String[]{"title", "contentWithoutHtmlTags"},
+                    articleSearch.getCategory(),
+                    type,
+                    pageNumber,
+                    false
+            );
 //            }
 //            // Search by list tags
 //            else {
@@ -342,15 +345,15 @@ public class ArticleController {
 //            List<Tag> tags = tagPagination.getTagsByPageIndex();
 //
 //            if (tags == null || tags.size() == 0) {
-                return (ArticlePagination) hibernateSearchRepository.search3(
-                        articleSearch.getTextSearch(),
-                        ARTICLE,
-                        new String[]{"title", "contentWithoutHtmlTags"},
-                        articleSearch.getCategory(),
-                        type,
-                        pageNumber,
-                        true
-                );
+            return (ArticlePagination) hibernateSearchRepository.search3(
+                    articleSearch.getTextSearch(),
+                    ARTICLE,
+                    new String[]{"title", "contentWithoutHtmlTags"},
+                    articleSearch.getCategory(),
+                    type,
+                    pageNumber,
+                    true
+            );
 //            } else {
 //                PageRequest pageNumWithElements;
 //
@@ -643,16 +646,17 @@ public class ArticleController {
 
             // Return pagination objects
             ArticlePagination articlePagination = new ArticlePagination();
-            long numberOfQuestionsByTagId = articleRepository.countNumberOfArticlesByTagId(tagId);
+            long numberOfArticlesByTagId = articleRepository.countNumberOfArticlesByTagId(tagId);
             long numberOfPages = 0;
-            if (numberOfQuestionsByTagId % ARTICLES_PER_PAGE == 0) {
-                numberOfPages = numberOfQuestionsByTagId / ARTICLES_PER_PAGE;
+            if (numberOfArticlesByTagId % ARTICLES_PER_PAGE == 0) {
+                numberOfPages = numberOfArticlesByTagId / ARTICLES_PER_PAGE;
             } else {
-                numberOfPages = (numberOfQuestionsByTagId / ARTICLES_PER_PAGE) + 1;
+                numberOfPages = (numberOfArticlesByTagId / ARTICLES_PER_PAGE) + 1;
             }
 
             articlePagination.setArticlesByPageIndex(articles.getContent());
             articlePagination.setNumberOfPages(Integer.parseInt("" + numberOfPages));
+            articlePagination.setNumberOfContents(Integer.parseInt("" + numberOfArticlesByTagId));
 
             return articlePagination;
         } catch (Exception e) {

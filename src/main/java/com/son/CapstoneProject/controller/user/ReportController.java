@@ -80,6 +80,7 @@ public class ReportController {
                 userAndReportTimePagination.setNumberOfPages(numberOfReportedUsers / REPORTS_PER_PAGE + 1);
             }
 
+            userAndReportTimePagination.setNumberOfContents(numberOfReportedUsers);
             return userAndReportTimePagination;
         } catch (Exception e) {
             logger.error("An error has occurred", e);
@@ -105,12 +106,15 @@ public class ReportController {
 
             if (totalReportsByUsers == null) {
                 reportPagination.setNumberOfPages(0);
+                reportPagination.setNumberOfContents(0);
             } else {
                 if (totalReportsByUsers % REPORTS_PER_PAGE == 0) {
                     reportPagination.setNumberOfPages(totalReportsByUsers / REPORTS_PER_PAGE);
                 } else {
                     reportPagination.setNumberOfPages(totalReportsByUsers / REPORTS_PER_PAGE + 1);
                 }
+
+                reportPagination.setNumberOfContents(totalReportsByUsers);
             }
 
             return reportPagination;

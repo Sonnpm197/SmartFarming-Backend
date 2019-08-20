@@ -117,6 +117,7 @@ public class AppUserController {
             AppUserPagination userPagination = new AppUserPagination();
             userPagination.setAppUsersByPageIndex(appUserRepository.findAll(pageNumWithElements).getContent());
             userPagination.setNumberOfPages(Integer.parseInt("" + viewNumberOfPages()));
+            userPagination.setNumberOfContents(Integer.parseInt("" + appUserRepository.count()));
             return userPagination;
         } catch (Exception e) {
             logger.error("An error has occurred", e);
@@ -221,6 +222,7 @@ public class AppUserController {
             TagPagination tagPagination = new TagPagination();
             tagPagination.setTagsByPageIndex(tags);
             tagPagination.setNumberOfPages(numberOfPages);
+            tagPagination.setNumberOfContents(resultTagsSize);
             return tagPagination;
         } catch (Exception e) {
             logger.error("An error has occurred", e);
@@ -269,17 +271,22 @@ public class AppUserController {
             Page<Question> questionPage = questionRepository.findByAppUser_UserId(userId, pageNumWithElements);
 
             int numberOfPages = 0;
-            int resultTagsSize = questionRepository.countNumberOfQuestionsByUserId(userId);
+            Integer numberOfQuestionsByUserId = questionRepository.countNumberOfQuestionsByUserId(userId);
 
-            if (resultTagsSize % QUESTIONS_PER_PAGE == 0) {
-                numberOfPages = resultTagsSize / QUESTIONS_PER_PAGE;
+            if (numberOfQuestionsByUserId == null) {
+                numberOfQuestionsByUserId = 0;
+            }
+
+            if (numberOfQuestionsByUserId % QUESTIONS_PER_PAGE == 0) {
+                numberOfPages = numberOfQuestionsByUserId / QUESTIONS_PER_PAGE;
             } else {
-                numberOfPages = resultTagsSize / QUESTIONS_PER_PAGE + 1;
+                numberOfPages = numberOfQuestionsByUserId / QUESTIONS_PER_PAGE + 1;
             }
 
             QuestionPagination questionPagination = new QuestionPagination();
             questionPagination.setQa(questionPage.getContent());
             questionPagination.setNumberOfPages(numberOfPages);
+            questionPagination.setNumberOfContents(numberOfQuestionsByUserId);
             return questionPagination;
         } catch (Exception e) {
             logger.error("An error has occurred", e);

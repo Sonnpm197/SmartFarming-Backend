@@ -151,6 +151,7 @@ public class QuestionController {
             QuestionPagination questionPagination = new QuestionPagination();
             questionPagination.setQa(questionPage.getContent());
             questionPagination.setNumberOfPages(Integer.parseInt("" + viewNumberOfPages()));
+            questionPagination.setNumberOfContents(Integer.parseInt("" + questionRepository.count()));
             return questionPagination;
         } catch (Exception e) {
             logger.error("An error has occurred", e);
@@ -193,6 +194,7 @@ public class QuestionController {
 
             questionPagination.setQa(questionPage.getContent());
             questionPagination.setNumberOfPages(Integer.parseInt("" + numberOfPages));
+            questionPagination.setNumberOfContents(Integer.parseInt("" + numberOfQuestionsByTagId));
 
             return questionPagination;
         } catch (Exception e) {
@@ -1066,6 +1068,7 @@ public class QuestionController {
             QuestionPagination questionPagination = new QuestionPagination();
             questionPagination.setQa(recommendedQuestions);
             questionPagination.setNumberOfPages(numberOfPages);
+            questionPagination.setNumberOfContents(numberOfRecommendedQuestion);
 
             return questionPagination;
         } catch (Exception e) {
