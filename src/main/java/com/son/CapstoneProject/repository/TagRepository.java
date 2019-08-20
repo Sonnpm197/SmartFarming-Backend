@@ -66,4 +66,10 @@ public interface TagRepository extends PagingAndSortingRepository<Tag, Long> {
             nativeQuery = true
     )
     List<Object[]> countTotalQuestionViewAndArticleViewBeforeDate(@Param("utilTimeStamp") String utilTimeStamp, @Param("tagId") Long tagId);
+
+    @Query(
+            value = "select count(tag.tag_id) from tag",
+            nativeQuery = true
+    )
+    Integer countNumberOfTags();
 }

@@ -59,12 +59,12 @@ public class Question implements Serializable {
     // default: index=Index.YES, analyze=Analyze.YES and store=Store.NO
     @Analyzer(definition = "customAnalyzer")
     @Field(store = Store.YES)
-    @Column(columnDefinition = "nvarchar(100)")
+    @Column(columnDefinition = "nvarchar(255)")
     private String title;
 
 //    @Analyzer(definition = "customAnalyzer")
 //    @Field(store = Store.YES)
-//    @Column(columnDefinition = "ntext")
+    @Column(columnDefinition = "ntext")
     private String content;
 
     @Analyzer(definition = "customAnalyzer")
@@ -95,6 +95,7 @@ public class Question implements Serializable {
     private List<UploadedFile> uploadedFiles;
 
 //    @JsonManagedReference
+    @IndexedEmbedded
     @ManyToMany(fetch = FetchType.LAZY/*, cascade = CascadeType.ALL*/)
     private List<Tag> tags;
 

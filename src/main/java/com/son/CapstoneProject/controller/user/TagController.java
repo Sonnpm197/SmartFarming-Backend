@@ -112,7 +112,10 @@ public class TagController {
                 tagRepository.save(tag);
             }
 
-            int size = tags.size();
+            Integer size = tagRepository.countNumberOfTags();
+            if (size == null) {
+                size = 0;
+            }
             int numberOfPages;
 
             if (size % TAGS_PER_PAGE == 0) {

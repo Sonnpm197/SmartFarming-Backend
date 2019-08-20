@@ -228,20 +228,20 @@ public class QuestionController {
                 return viewQuestions(type, pageNumber);
             }
 
-            // Search by tag first
-            TagPagination tagPagination = (TagPagination) hibernateSearchRepository.search3(
-                    questionSearch.getTextSearch(),
-                    TAG,
-                    new String[]{"name"}, // search tag by name
-                    null,
-                    SORT_UPVOTE_COUNT,
-                    0,
-                    false
-            );
-
-            List<Tag> tags = tagPagination.getTagsByPageIndex();
-
-            if (tags == null || tags.size() == 0) {
+//            // Search by tag first
+//            TagPagination tagPagination = (TagPagination) hibernateSearchRepository.search3(
+//                    questionSearch.getTextSearch(),
+//                    TAG,
+//                    new String[]{"name"}, // search tag by name
+//                    null,
+//                    SORT_UPVOTE_COUNT,
+//                    0,
+//                    false
+//            );
+//
+//            List<Tag> tags = tagPagination.getTagsByPageIndex();
+//
+//            if (tags == null || tags.size() == 0) {
                 return (QuestionPagination) hibernateSearchRepository.search3(questionSearch.getTextSearch(),
                         QUESTION,
                         new String[]{"title", "contentWithoutHtmlTags"},
@@ -250,102 +250,102 @@ public class QuestionController {
                         pageNumber,
                         false
                 );
-            }
-            // Search by list tags
-            else {
-                QuestionPagination questionPagination = new QuestionPagination();
-                List<Long> tagIds = new ArrayList<>();
-
-                for (Tag tag : tags) {
-                    if (!tagIds.contains(tag.getTagId())) {
-                        tagIds.add(tag.getTagId());
-                    }
-                }
-
-                // We have to select all questionIds in these tagIds
-                List<BigInteger> questionIdsResult = questionRepository.findDistinctByTags_tagIdIn(tagIds);
-                int numberOfContents = questionRepository.countDistinctNumberOfQuestionsByTags_tagIdIn(tagIds);
-
-                List<Question> finalQuestions = new ArrayList<>();
-                for (BigInteger questionIdBigInteger : questionIdsResult) {
-                    try {
-                        finalQuestions.add(questionRepository.findById(questionIdBigInteger.longValue()).get());
-                    } catch (Exception e) {
-                        logger.error("An error has occurred", e);
-                        continue;
-                    }
-                }
-
-                // Then sort them
-                if (SORT_DATE.equalsIgnoreCase(type)) {
-                    Collections.sort(finalQuestions, (question1, question2) -> {
-                        if (question1.getUtilTimestamp() != null && question2.getUtilTimestamp() != null) {
-                            if (question1.getUtilTimestamp().after(question2.getUtilTimestamp())) {
-                                return -1;
-                            } else if (question1.getUtilTimestamp().before(question2.getUtilTimestamp())) {
-                                return 1;
-                            } else {
-                                return 0;
-                            }
-                        }
-                        return 0;
-                    });
-                } else if (SORT_VIEW_COUNT.equalsIgnoreCase(type)) {
-                    Collections.sort(finalQuestions, (question1, question2) -> {
-                        if (question1.getViewCount() >= 0 && question2.getViewCount() >= 0) {
-                            if (question1.getViewCount() > question2.getViewCount()) {
-                                return -1;
-                            } else if (question1.getViewCount() < question2.getViewCount()) {
-                                return 1;
-                            } else {
-                                return 0;
-                            }
-                        }
-                        return 0;
-                    });
-                } else if (SORT_UPVOTE_COUNT.equalsIgnoreCase(type)) {
-                    Collections.sort(finalQuestions, (question1, question2) -> {
-                        if (question1.getUpvoteCount() >= 0 && question2.getUpvoteCount() >= 0) {
-                            if (question1.getUpvoteCount() > question2.getUpvoteCount()) {
-                                return -1;
-                            } else if (question1.getUpvoteCount() < question2.getUpvoteCount()) {
-                                return 1;
-                            } else {
-                                return 0;
-                            }
-                        }
-                        return 0;
-                    });
-                } else {
-                    throw new Exception("ArticleController.searchQuestions unknown type: " + type);
-                }
-
-                // Add number of pages
-                if (numberOfContents % QUESTIONS_PER_PAGE == 0) {
-                    questionPagination.setNumberOfPages(numberOfContents / QUESTIONS_PER_PAGE);
-                } else {
-                    questionPagination.setNumberOfPages(numberOfContents / QUESTIONS_PER_PAGE + 1);
-                }
-
-                // Then get result i = start; i <= end from the above array
-                int start = pageNumber * QUESTIONS_PER_PAGE;
-                int end = pageNumber * QUESTIONS_PER_PAGE + QUESTIONS_PER_PAGE - 1;
-
-                List<Question> questionShownOnUI = new ArrayList<>();
-                for (int i = start; i <= end; i++) {
-                    try {
-                        questionShownOnUI.add(finalQuestions.get(i));
-                    } catch (Exception e) {
-                        // Prevent index out of bound
+//            }
+//            // Search by list tags
+//            else {
+//                QuestionPagination questionPagination = new QuestionPagination();
+//                List<Long> tagIds = new ArrayList<>();
+//
+//                for (Tag tag : tags) {
+//                    if (!tagIds.contains(tag.getTagId())) {
+//                        tagIds.add(tag.getTagId());
+//                    }
+//                }
+//
+//                // We have to select all questionIds in these tagIds
+//                List<BigInteger> questionIdsResult = questionRepository.findDistinctByTags_tagIdIn(tagIds);
+//                int numberOfContents = questionRepository.countDistinctNumberOfQuestionsByTags_tagIdIn(tagIds);
+//
+//                List<Question> finalQuestions = new ArrayList<>();
+//                for (BigInteger questionIdBigInteger : questionIdsResult) {
+//                    try {
+//                        finalQuestions.add(questionRepository.findById(questionIdBigInteger.longValue()).get());
+//                    } catch (Exception e) {
 //                        logger.error("An error has occurred", e);
-                        continue;
-                    }
-                }
-
-                // Finally add to questionPagination
-                questionPagination.setQa(questionShownOnUI);
-                return questionPagination;
-            }
+//                        continue;
+//                    }
+//                }
+//
+//                // Then sort them
+//                if (SORT_DATE.equalsIgnoreCase(type)) {
+//                    Collections.sort(finalQuestions, (question1, question2) -> {
+//                        if (question1.getUtilTimestamp() != null && question2.getUtilTimestamp() != null) {
+//                            if (question1.getUtilTimestamp().after(question2.getUtilTimestamp())) {
+//                                return -1;
+//                            } else if (question1.getUtilTimestamp().before(question2.getUtilTimestamp())) {
+//                                return 1;
+//                            } else {
+//                                return 0;
+//                            }
+//                        }
+//                        return 0;
+//                    });
+//                } else if (SORT_VIEW_COUNT.equalsIgnoreCase(type)) {
+//                    Collections.sort(finalQuestions, (question1, question2) -> {
+//                        if (question1.getViewCount() >= 0 && question2.getViewCount() >= 0) {
+//                            if (question1.getViewCount() > question2.getViewCount()) {
+//                                return -1;
+//                            } else if (question1.getViewCount() < question2.getViewCount()) {
+//                                return 1;
+//                            } else {
+//                                return 0;
+//                            }
+//                        }
+//                        return 0;
+//                    });
+//                } else if (SORT_UPVOTE_COUNT.equalsIgnoreCase(type)) {
+//                    Collections.sort(finalQuestions, (question1, question2) -> {
+//                        if (question1.getUpvoteCount() >= 0 && question2.getUpvoteCount() >= 0) {
+//                            if (question1.getUpvoteCount() > question2.getUpvoteCount()) {
+//                                return -1;
+//                            } else if (question1.getUpvoteCount() < question2.getUpvoteCount()) {
+//                                return 1;
+//                            } else {
+//                                return 0;
+//                            }
+//                        }
+//                        return 0;
+//                    });
+//                } else {
+//                    throw new Exception("ArticleController.searchQuestions unknown type: " + type);
+//                }
+//
+//                // Add number of pages
+//                if (numberOfContents % QUESTIONS_PER_PAGE == 0) {
+//                    questionPagination.setNumberOfPages(numberOfContents / QUESTIONS_PER_PAGE);
+//                } else {
+//                    questionPagination.setNumberOfPages(numberOfContents / QUESTIONS_PER_PAGE + 1);
+//                }
+//
+//                // Then get result i = start; i <= end from the above array
+//                int start = pageNumber * QUESTIONS_PER_PAGE;
+//                int end = pageNumber * QUESTIONS_PER_PAGE + QUESTIONS_PER_PAGE - 1;
+//
+//                List<Question> questionShownOnUI = new ArrayList<>();
+//                for (int i = start; i <= end; i++) {
+//                    try {
+//                        questionShownOnUI.add(finalQuestions.get(i));
+//                    } catch (Exception e) {
+//                        // Prevent index out of bound
+////                        logger.error("An error has occurred", e);
+//                        continue;
+//                    }
+//                }
+//
+//                // Finally add to questionPagination
+//                questionPagination.setQa(questionShownOnUI);
+//                return questionPagination;
+//            }
         } catch (Exception e) {
             logger.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
@@ -358,20 +358,20 @@ public class QuestionController {
                                                         @PathVariable String type,
                                                         @PathVariable int pageNumber) {
         try {
-            // Search by tag first
-            TagPagination tagPagination = (TagPagination) hibernateSearchRepository.search3(
-                    questionSearch.getTextSearch(),
-                    TAG,
-                    new String[]{"name"}, // search tag by name
-                    null,
-                    SORT_UPVOTE_COUNT,
-                    0,
-                    false
-            );
-
-            List<Tag> tags = tagPagination.getTagsByPageIndex();
-
-            if (tags == null || tags.size() == 0) {
+//            // Search by tag first
+//            TagPagination tagPagination = (TagPagination) hibernateSearchRepository.search3(
+//                    questionSearch.getTextSearch(),
+//                    TAG,
+//                    new String[]{"name"}, // search tag by name
+//                    null,
+//                    SORT_UPVOTE_COUNT,
+//                    0,
+//                    false
+//            );
+//
+//            List<Tag> tags = tagPagination.getTagsByPageIndex();
+//
+//            if (tags == null || tags.size() == 0) {
                 return (QuestionPagination) hibernateSearchRepository.search3(questionSearch.getTextSearch(),
                         QUESTION,
                         new String[]{"title", "contentWithoutHtmlTags"},
@@ -380,41 +380,41 @@ public class QuestionController {
                         pageNumber,
                         true
                 );
-            } else {
-                PageRequest pageNumWithElements;
-
-                if (SORT_DATE.equalsIgnoreCase(type)) {
-                    pageNumWithElements = PageRequest.of(pageNumber, HOME_PAGE_SEARCH_QUESTIONS_PER_PAGE, Sort.by("utilTimestamp").descending());
-                } else if (SORT_VIEW_COUNT.equalsIgnoreCase(type)) {
-                    pageNumWithElements = PageRequest.of(pageNumber, HOME_PAGE_SEARCH_QUESTIONS_PER_PAGE, Sort.by("viewCount").descending());
-                } else if (SORT_UPVOTE_COUNT.equalsIgnoreCase(type)) {
-                    pageNumWithElements = PageRequest.of(pageNumber, HOME_PAGE_SEARCH_QUESTIONS_PER_PAGE, Sort.by("upvoteCount").descending());
-                } else {
-                    throw new Exception("QuestionController.searchQuestionsOnHomePage unknown type: " + type);
-                }
-
-                QuestionPagination questionPagination = new QuestionPagination();
-                List<Question> finalQuestions = new ArrayList<>();
-                int count = 0;
-
-                for (Tag tag : tags) {
-                    if (count == HOME_PAGE_SEARCH_QUESTIONS_PER_PAGE) {
-                        break;
-                    }
-                    Page<Question> questionPage = questionRepository.findByTags_tagId(tag.getTagId(), pageNumWithElements);
-                    List<Question> questions = questionPage.getContent();
-                    for (Question question : questions) {
-                        if (!finalQuestions.contains(question)) {
-                            finalQuestions.add(question);
-                            count++;
-                        }
-                    }
-                }
-
-                questionPagination.setQa(finalQuestions);
-                questionPagination.setNumberOfPages(1);
-                return questionPagination;
-            }
+//            } else {
+//                PageRequest pageNumWithElements;
+//
+//                if (SORT_DATE.equalsIgnoreCase(type)) {
+//                    pageNumWithElements = PageRequest.of(pageNumber, HOME_PAGE_SEARCH_QUESTIONS_PER_PAGE, Sort.by("utilTimestamp").descending());
+//                } else if (SORT_VIEW_COUNT.equalsIgnoreCase(type)) {
+//                    pageNumWithElements = PageRequest.of(pageNumber, HOME_PAGE_SEARCH_QUESTIONS_PER_PAGE, Sort.by("viewCount").descending());
+//                } else if (SORT_UPVOTE_COUNT.equalsIgnoreCase(type)) {
+//                    pageNumWithElements = PageRequest.of(pageNumber, HOME_PAGE_SEARCH_QUESTIONS_PER_PAGE, Sort.by("upvoteCount").descending());
+//                } else {
+//                    throw new Exception("QuestionController.searchQuestionsOnHomePage unknown type: " + type);
+//                }
+//
+//                QuestionPagination questionPagination = new QuestionPagination();
+//                List<Question> finalQuestions = new ArrayList<>();
+//                int count = 0;
+//
+//                for (Tag tag : tags) {
+//                    if (count == HOME_PAGE_SEARCH_QUESTIONS_PER_PAGE) {
+//                        break;
+//                    }
+//                    Page<Question> questionPage = questionRepository.findByTags_tagId(tag.getTagId(), pageNumWithElements);
+//                    List<Question> questions = questionPage.getContent();
+//                    for (Question question : questions) {
+//                        if (!finalQuestions.contains(question)) {
+//                            finalQuestions.add(question);
+//                            count++;
+//                        }
+//                    }
+//                }
+//
+//                questionPagination.setQa(finalQuestions);
+//                questionPagination.setNumberOfPages(1);
+//                return questionPagination;
+//            }
         } catch (Exception e) {
             logger.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);

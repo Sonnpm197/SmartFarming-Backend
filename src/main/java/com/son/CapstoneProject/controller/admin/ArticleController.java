@@ -197,20 +197,20 @@ public class ArticleController {
                 return viewArticles(type, pageNumber);
             }
 
-            // Search by tag first
-            TagPagination tagPagination = (TagPagination) hibernateSearchRepository.search3(
-                    articleSearch.getTextSearch(),
-                    TAG,
-                    new String[]{"name"}, // search tag by name
-                    null,
-                    SORT_UPVOTE_COUNT,
-                    0,
-                    false
-            );
-
-            List<Tag> tags = tagPagination.getTagsByPageIndex();
-
-            if (tags == null || tags.size() == 0) {
+//            // Search by tag first
+//            TagPagination tagPagination = (TagPagination) hibernateSearchRepository.search3(
+//                    articleSearch.getTextSearch(),
+//                    TAG,
+//                    new String[]{"name"}, // search tag by name
+//                    null,
+//                    SORT_UPVOTE_COUNT,
+//                    0,
+//                    false
+//            );
+//
+//            List<Tag> tags = tagPagination.getTagsByPageIndex();
+//
+//            if (tags == null || tags.size() == 0) {
                 return (ArticlePagination) hibernateSearchRepository.search3(
                         articleSearch.getTextSearch(),
                         ARTICLE,
@@ -220,102 +220,102 @@ public class ArticleController {
                         pageNumber,
                         false
                 );
-            }
-            // Search by list tags
-            else {
-                ArticlePagination articlePagination = new ArticlePagination();
-                List<Long> tagIds = new ArrayList<>();
-
-                for (Tag tag : tags) {
-                    if (!tagIds.contains(tag.getTagId())) {
-                        tagIds.add(tag.getTagId());
-                    }
-                }
-
-                // We have to select all questionIds in these tagIds
-                List<BigInteger> articleIdsResult = articleRepository.findDistinctArticleIdsByTags_tagIdIn(tagIds);
-                int numberOfContents = articleRepository.countDistinctNumberOfArticlesByTags_tagIdIn(tagIds);
-
-                List<Article> finalArticles = new ArrayList<>();
-                for (BigInteger articleIdBigInteger : articleIdsResult) {
-                    try {
-                        finalArticles.add(articleRepository.findById(articleIdBigInteger.longValue()).get());
-                    } catch (Exception e) {
-                        logger.error("An error has occurred", e);
-                        continue;
-                    }
-                }
-
-                // Then sort them
-                if (SORT_DATE.equalsIgnoreCase(type)) {
-                    Collections.sort(finalArticles, (article1, article2) -> {
-                        if (article1.getUtilTimestamp() != null && article2.getUtilTimestamp() != null) {
-                            if (article1.getUtilTimestamp().after(article2.getUtilTimestamp())) {
-                                return -1;
-                            } else if (article1.getUtilTimestamp().before(article2.getUtilTimestamp())) {
-                                return 1;
-                            } else {
-                                return 0;
-                            }
-                        }
-                        return 0;
-                    });
-                } else if (SORT_VIEW_COUNT.equalsIgnoreCase(type)) {
-                    Collections.sort(finalArticles, (article1, article2) -> {
-                        if (article1.getViewCount() >= 0 && article2.getViewCount() >= 0) {
-                            if (article1.getViewCount() > article2.getViewCount()) {
-                                return -1;
-                            } else if (article1.getViewCount() < article2.getViewCount()) {
-                                return 1;
-                            } else {
-                                return 0;
-                            }
-                        }
-                        return 0;
-                    });
-                } else if (SORT_UPVOTE_COUNT.equalsIgnoreCase(type)) {
-                    Collections.sort(finalArticles, (article1, article2) -> {
-                        if (article1.getUpvoteCount() >= 0 && article2.getUpvoteCount() >= 0) {
-                            if (article1.getUpvoteCount() > article2.getUpvoteCount()) {
-                                return -1;
-                            } else if (article1.getUpvoteCount() < article2.getUpvoteCount()) {
-                                return 1;
-                            } else {
-                                return 0;
-                            }
-                        }
-                        return 0;
-                    });
-                } else {
-                    throw new Exception("ArticleController.searchQuestions unknown type: " + type);
-                }
-
-                // Add number of pages
-                if (numberOfContents % ARTICLES_PER_PAGE == 0) {
-                    articlePagination.setNumberOfPages(numberOfContents / ARTICLES_PER_PAGE);
-                } else {
-                    articlePagination.setNumberOfPages(numberOfContents / ARTICLES_PER_PAGE + 1);
-                }
-
-                // Then get result i = start; i <= end from the above array
-                int start = pageNumber * ARTICLES_PER_PAGE;
-                int end = pageNumber * ARTICLES_PER_PAGE + ARTICLES_PER_PAGE - 1;
-
-                List<Article> articleShownOnUI = new ArrayList<>();
-                for (int i = start; i <= end; i++) {
-                    try {
-                        articleShownOnUI.add(finalArticles.get(i));
-                    } catch (Exception e) {
-                        // Prevent index out of bound
+//            }
+//            // Search by list tags
+//            else {
+//                ArticlePagination articlePagination = new ArticlePagination();
+//                List<Long> tagIds = new ArrayList<>();
+//
+//                for (Tag tag : tags) {
+//                    if (!tagIds.contains(tag.getTagId())) {
+//                        tagIds.add(tag.getTagId());
+//                    }
+//                }
+//
+//                // We have to select all questionIds in these tagIds
+//                List<BigInteger> articleIdsResult = articleRepository.findDistinctArticleIdsByTags_tagIdIn(tagIds);
+//                int numberOfContents = articleRepository.countDistinctNumberOfArticlesByTags_tagIdIn(tagIds);
+//
+//                List<Article> finalArticles = new ArrayList<>();
+//                for (BigInteger articleIdBigInteger : articleIdsResult) {
+//                    try {
+//                        finalArticles.add(articleRepository.findById(articleIdBigInteger.longValue()).get());
+//                    } catch (Exception e) {
 //                        logger.error("An error has occurred", e);
-                        continue;
-                    }
-                }
-
-                // Finally add to questionPagination
-                articlePagination.setArticlesByPageIndex(articleShownOnUI);
-                return articlePagination;
-            }
+//                        continue;
+//                    }
+//                }
+//
+//                // Then sort them
+//                if (SORT_DATE.equalsIgnoreCase(type)) {
+//                    Collections.sort(finalArticles, (article1, article2) -> {
+//                        if (article1.getUtilTimestamp() != null && article2.getUtilTimestamp() != null) {
+//                            if (article1.getUtilTimestamp().after(article2.getUtilTimestamp())) {
+//                                return -1;
+//                            } else if (article1.getUtilTimestamp().before(article2.getUtilTimestamp())) {
+//                                return 1;
+//                            } else {
+//                                return 0;
+//                            }
+//                        }
+//                        return 0;
+//                    });
+//                } else if (SORT_VIEW_COUNT.equalsIgnoreCase(type)) {
+//                    Collections.sort(finalArticles, (article1, article2) -> {
+//                        if (article1.getViewCount() >= 0 && article2.getViewCount() >= 0) {
+//                            if (article1.getViewCount() > article2.getViewCount()) {
+//                                return -1;
+//                            } else if (article1.getViewCount() < article2.getViewCount()) {
+//                                return 1;
+//                            } else {
+//                                return 0;
+//                            }
+//                        }
+//                        return 0;
+//                    });
+//                } else if (SORT_UPVOTE_COUNT.equalsIgnoreCase(type)) {
+//                    Collections.sort(finalArticles, (article1, article2) -> {
+//                        if (article1.getUpvoteCount() >= 0 && article2.getUpvoteCount() >= 0) {
+//                            if (article1.getUpvoteCount() > article2.getUpvoteCount()) {
+//                                return -1;
+//                            } else if (article1.getUpvoteCount() < article2.getUpvoteCount()) {
+//                                return 1;
+//                            } else {
+//                                return 0;
+//                            }
+//                        }
+//                        return 0;
+//                    });
+//                } else {
+//                    throw new Exception("ArticleController.searchQuestions unknown type: " + type);
+//                }
+//
+//                // Add number of pages
+//                if (numberOfContents % ARTICLES_PER_PAGE == 0) {
+//                    articlePagination.setNumberOfPages(numberOfContents / ARTICLES_PER_PAGE);
+//                } else {
+//                    articlePagination.setNumberOfPages(numberOfContents / ARTICLES_PER_PAGE + 1);
+//                }
+//
+//                // Then get result i = start; i <= end from the above array
+//                int start = pageNumber * ARTICLES_PER_PAGE;
+//                int end = pageNumber * ARTICLES_PER_PAGE + ARTICLES_PER_PAGE - 1;
+//
+//                List<Article> articleShownOnUI = new ArrayList<>();
+//                for (int i = start; i <= end; i++) {
+//                    try {
+//                        articleShownOnUI.add(finalArticles.get(i));
+//                    } catch (Exception e) {
+//                        // Prevent index out of bound
+////                        logger.error("An error has occurred", e);
+//                        continue;
+//                    }
+//                }
+//
+//                // Finally add to questionPagination
+//                articlePagination.setArticlesByPageIndex(articleShownOnUI);
+//                return articlePagination;
+//            }
         } catch (Exception e) {
             logger.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
@@ -329,19 +329,19 @@ public class ArticleController {
                                                       @PathVariable int pageNumber) {
         try {
             // Search by tag first
-            TagPagination tagPagination = (TagPagination) hibernateSearchRepository.search3(
-                    articleSearch.getTextSearch(),
-                    TAG,
-                    new String[]{"name"}, // search tag by name
-                    null,
-                    SORT_UPVOTE_COUNT,
-                    0,
-                    false
-            );
-
-            List<Tag> tags = tagPagination.getTagsByPageIndex();
-
-            if (tags == null || tags.size() == 0) {
+//            TagPagination tagPagination = (TagPagination) hibernateSearchRepository.search3(
+//                    articleSearch.getTextSearch(),
+//                    TAG,
+//                    new String[]{"name"}, // search tag by name
+//                    null,
+//                    SORT_UPVOTE_COUNT,
+//                    0,
+//                    false
+//            );
+//
+//            List<Tag> tags = tagPagination.getTagsByPageIndex();
+//
+//            if (tags == null || tags.size() == 0) {
                 return (ArticlePagination) hibernateSearchRepository.search3(
                         articleSearch.getTextSearch(),
                         ARTICLE,
@@ -351,41 +351,41 @@ public class ArticleController {
                         pageNumber,
                         true
                 );
-            } else {
-                PageRequest pageNumWithElements;
-
-                if (SORT_DATE.equalsIgnoreCase(type)) {
-                    pageNumWithElements = PageRequest.of(pageNumber, HOME_PAGE_SEARCH_ARTICLES_PER_PAGE, Sort.by("utilTimestamp").descending());
-                } else if (SORT_VIEW_COUNT.equalsIgnoreCase(type)) {
-                    pageNumWithElements = PageRequest.of(pageNumber, HOME_PAGE_SEARCH_ARTICLES_PER_PAGE, Sort.by("viewCount").descending());
-                } else if (SORT_UPVOTE_COUNT.equalsIgnoreCase(type)) {
-                    pageNumWithElements = PageRequest.of(pageNumber, HOME_PAGE_SEARCH_ARTICLES_PER_PAGE, Sort.by("upvoteCount").descending());
-                } else {
-                    throw new Exception("ArticleController.searchArticlesOnHomePage unknown type: " + type);
-                }
-
-                ArticlePagination articlePagination = new ArticlePagination();
-                List<Article> finalArticles = new ArrayList<>();
-                int count = 0;
-
-                for (Tag tag : tags) {
-                    if (count == HOME_PAGE_SEARCH_ARTICLES_PER_PAGE) {
-                        break;
-                    }
-                    Page<Article> articlePage = articleRepository.findByTags_tagId(tag.getTagId(), pageNumWithElements);
-                    List<Article> articles = articlePage.getContent();
-                    for (Article article : articles) {
-                        if (!finalArticles.contains(article)) {
-                            finalArticles.add(article);
-                            count++;
-                        }
-                    }
-                }
-
-                articlePagination.setArticlesByPageIndex(finalArticles);
-                articlePagination.setNumberOfPages(1);
-                return articlePagination;
-            }
+//            } else {
+//                PageRequest pageNumWithElements;
+//
+//                if (SORT_DATE.equalsIgnoreCase(type)) {
+//                    pageNumWithElements = PageRequest.of(pageNumber, HOME_PAGE_SEARCH_ARTICLES_PER_PAGE, Sort.by("utilTimestamp").descending());
+//                } else if (SORT_VIEW_COUNT.equalsIgnoreCase(type)) {
+//                    pageNumWithElements = PageRequest.of(pageNumber, HOME_PAGE_SEARCH_ARTICLES_PER_PAGE, Sort.by("viewCount").descending());
+//                } else if (SORT_UPVOTE_COUNT.equalsIgnoreCase(type)) {
+//                    pageNumWithElements = PageRequest.of(pageNumber, HOME_PAGE_SEARCH_ARTICLES_PER_PAGE, Sort.by("upvoteCount").descending());
+//                } else {
+//                    throw new Exception("ArticleController.searchArticlesOnHomePage unknown type: " + type);
+//                }
+//
+//                ArticlePagination articlePagination = new ArticlePagination();
+//                List<Article> finalArticles = new ArrayList<>();
+//                int count = 0;
+//
+//                for (Tag tag : tags) {
+//                    if (count == HOME_PAGE_SEARCH_ARTICLES_PER_PAGE) {
+//                        break;
+//                    }
+//                    Page<Article> articlePage = articleRepository.findByTags_tagId(tag.getTagId(), pageNumWithElements);
+//                    List<Article> articles = articlePage.getContent();
+//                    for (Article article : articles) {
+//                        if (!finalArticles.contains(article)) {
+//                            finalArticles.add(article);
+//                            count++;
+//                        }
+//                    }
+//                }
+//
+//                articlePagination.setArticlesByPageIndex(finalArticles);
+//                articlePagination.setNumberOfPages(1);
+//                return articlePagination;
+//            }
         } catch (Exception e) {
             logger.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
