@@ -224,16 +224,6 @@ public class HibernateSearchRepository {
         List<Question> finalQuestions = new ArrayList<>();
         List<Tag> finalTags = new ArrayList<>();
 
-        // Search in category of article (Only with not null article)
-        if (articleCategory != null && articleCategory.trim().length() > 0) {
-            org.apache.lucene.search.Query querySearchForArticleCategory = getQueryBuilder(genericClass)
-                    .simpleQueryString()
-                    .onField("category")
-                    .matching("\"" + articleCategory.trim() + "\"")
-                    .createQuery();
-            queryList.add(querySearchForArticleCategory);
-        }
-
         // Build an "and" finalQuery
         BooleanQuery.Builder finalQueryBuilder = new BooleanQuery.Builder();
 
@@ -245,6 +235,17 @@ public class HibernateSearchRepository {
 //            }
 
             finalQueryBuilder.add(query, BooleanClause.Occur.SHOULD);
+        }
+
+        // Search in category of article (Only with not null article)
+        if (articleCategory != null && articleCategory.trim().length() > 0) {
+            org.apache.lucene.search.Query querySearchForArticleCategory = getQueryBuilder(genericClass)
+                    .simpleQueryString()
+                    .onField("category")
+                    .matching("\"" + articleCategory.trim() + "\"")
+                    .createQuery();
+            finalQueryBuilder.add(querySearchForArticleCategory, BooleanClause.Occur.MUST);
+//            queryList.add(querySearchForArticleCategory);
         }
 
         FullTextQuery fullTextQuery = getJpaQuery(finalQueryBuilder.build(), genericClass);
