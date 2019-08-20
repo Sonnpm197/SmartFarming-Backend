@@ -154,47 +154,100 @@ public class HibernateSearchRepository {
             }
 
             // If it starts with double quotes then search exactly
-            List<org.apache.lucene.search.Query> queryList = new ArrayList<>();
+            BooleanQuery.Builder finalQueryBuilder = new BooleanQuery.Builder();
+
             if (searchedText.startsWith("\"") && searchedText.endsWith("\"")) {
-                if (ARTICLE.equalsIgnoreCase(className) || QUESTION.equalsIgnoreCase(className)) {
-                    org.apache.lucene.search.Query phraseQuery = getQueryBuilder(genericClass)
+                org.apache.lucene.search.Query phraseQuery = null;
+                if (QUESTION.equalsIgnoreCase(className)) {
+                    phraseQuery = getQueryBuilder(genericClass)
                             .simpleQueryString()
                             .onFields(fields[0], fields[1], "tags.name") // title and contentWithoutHtmlTags for question & article
                             .matching(searchedText)
                             .createQuery();
-                    queryList.add(phraseQuery);
 
+                } else if (ARTICLE.equalsIgnoreCase(className)) {
+                    if (!StringUtils.isNullOrEmpty(articleCategory)) {
+                        phraseQuery = getQueryBuilder(genericClass)
+                                .bool()
+                                .must(getQueryBuilder(genericClass)
+                                        .simpleQueryString()
+                                        .onFields(fields[0], fields[1], "tags.name")
+                                        .matching(searchedText).createQuery())
+                                .must(getQueryBuilder(genericClass)
+                                        .simpleQueryString()
+                                        .onField("category")
+                                        .matching(articleCategory).createQuery())
+                                .createQuery();
+                    }
                 } else if (TAG.equalsIgnoreCase(className)) {
-                    org.apache.lucene.search.Query phraseQuery = getQueryBuilder(genericClass)
+                    phraseQuery = getQueryBuilder(genericClass)
                             .simpleQueryString()
                             .onField(fields[0]) // name for tag
                             .matching(searchedText)
                             .createQuery();
-                    queryList.add(phraseQuery);
-                }
-            } else {
-                for (String field : fields) {
-                    org.apache.lucene.search.Query phraseQuery = getQueryBuilder(genericClass)
-                            .phrase()
-                            .withSlop(2)
-                            .onField(field)
-                            .sentence(searchedText)
-                            .createQuery();
-                    queryList.add(phraseQuery);
                 }
 
-                if (ARTICLE.equalsIgnoreCase(className) || QUESTION.equalsIgnoreCase(className)) {
+                finalQueryBuilder.add(phraseQuery, BooleanClause.Occur.SHOULD);
+            }
+            // If searchedText is not started with double quotes
+            else {
+                if (ARTICLE.equalsIgnoreCase(className)) {
+                    if (!StringUtils.isNullOrEmpty(articleCategory)) {
+                        for (String field : fields) {
+                            org.apache.lucene.search.Query phraseQuery = getQueryBuilder(genericClass)
+                                    .bool()
+                                    .must(getQueryBuilder(genericClass)
+                                            .phrase()
+                                            .withSlop(2)
+                                            .onField(field)
+                                            .sentence(searchedText)
+                                            .createQuery())
+                                    .must(getQueryBuilder(genericClass)
+                                            .simpleQueryString()
+                                            .onField("category")
+                                            .matching(articleCategory)
+                                            .createQuery())
+                                    .should(getQueryBuilder(genericClass)
+                                            .phrase()
+                                            .withSlop(2)
+                                            .onField("tags.name")
+                                            .sentence(searchedText)
+                                            .createQuery())
+                                    .createQuery();
+                            finalQueryBuilder.add(phraseQuery, BooleanClause.Occur.SHOULD);
+                        }
+                    }
+                } else if (QUESTION.equalsIgnoreCase(className)) {
+                    for (String field : fields) {
+                        org.apache.lucene.search.Query phraseQuery = getQueryBuilder(genericClass)
+                                .bool()
+                                .must(getQueryBuilder(genericClass)
+                                        .phrase()
+                                        .withSlop(2)
+                                        .onField(field)
+                                        .sentence(searchedText)
+                                        .createQuery())
+                                .should(getQueryBuilder(genericClass)
+                                        .phrase()
+                                        .withSlop(2)
+                                        .onField("tags.name")
+                                        .sentence(searchedText)
+                                        .createQuery())
+                                .createQuery();
+                        finalQueryBuilder.add(phraseQuery, BooleanClause.Occur.SHOULD);
+                    }
+                } else if (TAG.equalsIgnoreCase(className)) {
                     org.apache.lucene.search.Query phraseQuery = getQueryBuilder(genericClass)
                             .phrase()
                             .withSlop(2)
-                            .onField("tags.name")
+                            .onField(fields[0]) // name for tag
                             .sentence(searchedText)
                             .createQuery();
-                    queryList.add(phraseQuery);
+                    finalQueryBuilder.add(phraseQuery, BooleanClause.Occur.SHOULD);
                 }
             }
 
-            return returnFinalListByClassName(queryList,
+            return returnFinalListByClassName(finalQueryBuilder,
                     className,
                     genericClass,
                     articleCategory,
@@ -209,7 +262,8 @@ public class HibernateSearchRepository {
     }
 
     private Pagination returnFinalListByClassName(
-            List<Query> queryList,
+            /*List<Query> queryList,*/
+            BooleanQuery.Builder finalQueryBuilder,
             String className,
             GenericClass genericClass,
             String articleCategory,
@@ -225,28 +279,28 @@ public class HibernateSearchRepository {
         List<Tag> finalTags = new ArrayList<>();
 
         // Build an "and" finalQuery
-        BooleanQuery.Builder finalQueryBuilder = new BooleanQuery.Builder();
+//        BooleanQuery.Builder finalQueryBuilder = new BooleanQuery.Builder();
 
-        for (org.apache.lucene.search.Query query : queryList) {
+//        for (org.apache.lucene.search.Query query : queryList) {
 //            if (isDoubleQuote) {
 //                finalQueryBuilder.add(query, BooleanClause.Occur.SHOULD);
 //            } else {
 //                finalQueryBuilder.add(query, BooleanClause.Occur.MUST);
 //            }
-
-            finalQueryBuilder.add(query, BooleanClause.Occur.SHOULD);
-        }
+//
+//            finalQueryBuilder.add(query, BooleanClause.Occur.SHOULD);
+//        }
 
         // Search in category of article (Only with not null article)
-        if (articleCategory != null && articleCategory.trim().length() > 0) {
-            org.apache.lucene.search.Query querySearchForArticleCategory = getQueryBuilder(genericClass)
-                    .simpleQueryString()
-                    .onField("category")
-                    .matching("\"" + articleCategory.trim() + "\"")
-                    .createQuery();
-            finalQueryBuilder.add(querySearchForArticleCategory, BooleanClause.Occur.MUST);
-//            queryList.add(querySearchForArticleCategory);
-        }
+//        if (articleCategory != null && articleCategory.trim().length() > 0) {
+//            org.apache.lucene.search.Query querySearchForArticleCategory = getQueryBuilder(genericClass)
+//                    .simpleQueryString()
+//                    .onField("category")
+//                    .matching("\"" + articleCategory.trim() + "\"")
+//                    .createQuery();
+//            finalQueryBuilder.add(querySearchForArticleCategory, BooleanClause.Occur.MUST);
+////            queryList.add(querySearchForArticleCategory);
+//        }
 
         FullTextQuery fullTextQuery = getJpaQuery(finalQueryBuilder.build(), genericClass);
 
@@ -360,6 +414,7 @@ public class HibernateSearchRepository {
             ArticlePagination articlePagination = new ArticlePagination();
             articlePagination.setArticlesByPageIndex(finalArticles);
             articlePagination.setNumberOfPages(numberOfPages);
+            articlePagination.setNumberOfContents(totalSize);
 
             return articlePagination;
         } else if (QUESTION.equalsIgnoreCase(className)) {
@@ -424,6 +479,7 @@ public class HibernateSearchRepository {
             QuestionPagination questionPagination = new QuestionPagination();
             questionPagination.setQa(finalQuestions);
             questionPagination.setNumberOfPages(numberOfPages);
+            questionPagination.setNumberOfContents(totalSize);
 
             return questionPagination;
 
@@ -496,6 +552,7 @@ public class HibernateSearchRepository {
             TagPagination tagPagination = new TagPagination();
             tagPagination.setTagsByPageIndex(finalTags);
             tagPagination.setNumberOfPages(numberOfPages);
+            tagPagination.setNumberOfContents(totalSize);
 
             return tagPagination;
         }
