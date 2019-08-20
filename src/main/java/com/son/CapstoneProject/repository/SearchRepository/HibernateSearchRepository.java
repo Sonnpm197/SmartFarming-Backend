@@ -182,6 +182,16 @@ public class HibernateSearchRepository {
                             .createQuery();
                     queryList.add(phraseQuery);
                 }
+
+                if (ARTICLE.equalsIgnoreCase(className) || QUESTION.equalsIgnoreCase(className)) {
+                    org.apache.lucene.search.Query phraseQuery = getQueryBuilder(genericClass)
+                            .phrase()
+                            .withSlop(2)
+                            .onField("tags.name")
+                            .sentence(searchedText)
+                            .createQuery();
+                    queryList.add(phraseQuery);
+                }
             }
 
             return returnFinalListByClassName(queryList,
