@@ -182,12 +182,9 @@ public class HibernateSearchRepository {
                                 .createQuery();
                     } else {
                         phraseQuery = getQueryBuilder(genericClass)
-                                .bool()
-                                .must(getQueryBuilder(genericClass)
-                                        .simpleQueryString()
-                                        .onFields(fields[0], fields[1], "tags.name")
-                                        .matching(searchedText)
-                                        .createQuery())
+                                .simpleQueryString()
+                                .onFields(fields[0], fields[1], "tags.name")
+                                .matching(searchedText)
                                 .createQuery();
                     }
                 } else if (TAG.equalsIgnoreCase(className)) {
@@ -235,7 +232,8 @@ public class HibernateSearchRepository {
                             org.apache.lucene.search.Query phraseQuery = getQueryBuilder(genericClass)
                                     .simpleQueryString()
                                     .onField("category")
-                                    .matching("\"" + articleCategory + "\"").createQuery();
+                                    .matching("\"" + articleCategory + "\"")
+                                    .createQuery();
                             finalQueryBuilder.add(phraseQuery, BooleanClause.Occur.SHOULD);
                         }
                     }
