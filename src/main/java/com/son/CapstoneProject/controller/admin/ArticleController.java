@@ -198,7 +198,7 @@ public class ArticleController {
                                             @PathVariable String type,
                                             @PathVariable int pageNumber) {
         try {
-            if (StringUtils.isNullOrEmpty(articleSearch.getTextSearch())) {
+            if (StringUtils.isNullOrEmpty(articleSearch.getTextSearch()) && StringUtils.isNullOrEmpty(articleSearch.getCategory())) {
                 // return by previous status
                 return viewArticles(type, pageNumber);
             }

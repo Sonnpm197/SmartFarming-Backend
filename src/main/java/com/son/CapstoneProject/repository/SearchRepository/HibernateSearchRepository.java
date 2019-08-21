@@ -178,6 +178,14 @@ public class HibernateSearchRepository {
                                         .onField("category")
                                         .matching(articleCategory).createQuery())
                                 .createQuery();
+                    } else {
+                        phraseQuery = getQueryBuilder(genericClass)
+                                .bool()
+                                .must(getQueryBuilder(genericClass)
+                                        .simpleQueryString()
+                                        .onFields(fields[0], fields[1], "tags.name")
+                                        .matching(searchedText).createQuery())
+                                .createQuery();
                     }
                 } else if (TAG.equalsIgnoreCase(className)) {
                     phraseQuery = getQueryBuilder(genericClass)
@@ -193,6 +201,48 @@ public class HibernateSearchRepository {
             else {
                 if (ARTICLE.equalsIgnoreCase(className)) {
                     if (!StringUtils.isNullOrEmpty(articleCategory)) {
+                        // If search text has more than 1 word
+                        if (!StringUtils.isNullOrEmpty(searchedText)) {
+                            for (String field : fields) {
+                                org.apache.lucene.search.Query phraseQuery = getQueryBuilder(genericClass)
+                                        .bool()
+                                        .must(getQueryBuilder(genericClass)
+                                                .phrase()
+                                                .withSlop(2)
+                                                .onField(field)
+                                                .sentence(searchedText)
+                                                .createQuery())
+                                        .must(getQueryBuilder(genericClass)
+                                                .simpleQueryString()
+                                                .onField("category")
+                                                .matching(articleCategory)
+                                                .createQuery())
+                                        .should(getQueryBuilder(genericClass)
+                                                .phrase()
+                                                .withSlop(2)
+                                                .onField("tags.name")
+                                                .sentence(searchedText)
+                                                .createQuery())
+                                        .createQuery();
+                                finalQueryBuilder.add(phraseQuery, BooleanClause.Occur.SHOULD);
+                            }
+                        }
+                        // If searchedText is null or ""
+                        else {
+                            org.apache.lucene.search.Query phraseQuery = getQueryBuilder(genericClass)
+                                    .bool()
+                                    .must(getQueryBuilder(genericClass)
+                                            .simpleQueryString()
+                                            .onFields(fields[0], fields[1], "tags.name")
+                                            .matching(searchedText).createQuery())
+                                    .must(getQueryBuilder(genericClass)
+                                            .simpleQueryString()
+                                            .onField("category")
+                                            .matching(articleCategory).createQuery())
+                                    .createQuery();
+                            finalQueryBuilder.add(phraseQuery, BooleanClause.Occur.SHOULD);
+                        }
+                    } else {
                         for (String field : fields) {
                             org.apache.lucene.search.Query phraseQuery = getQueryBuilder(genericClass)
                                     .bool()
@@ -201,11 +251,6 @@ public class HibernateSearchRepository {
                                             .withSlop(2)
                                             .onField(field)
                                             .sentence(searchedText)
-                                            .createQuery())
-                                    .must(getQueryBuilder(genericClass)
-                                            .simpleQueryString()
-                                            .onField("category")
-                                            .matching(articleCategory)
                                             .createQuery())
                                     .should(getQueryBuilder(genericClass)
                                             .phrase()
