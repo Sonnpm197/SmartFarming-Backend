@@ -145,7 +145,7 @@ public class NotificationControllerTest {
 
         NotificationPagination notification = response.getBody();
         System.out.println(">> Result: " + notification);
-        Assert.assertTrue(notification.getNotificationsByPageIndex().size() == 3);
+        Assert.assertTrue(notification.getNotificationsByPageIndex().size() == 4);
     }
 
     @Test
@@ -174,7 +174,7 @@ public class NotificationControllerTest {
 
         Integer notification = response.getBody();
         System.out.println(">> Result: " + notification);
-        Assert.assertTrue(notification == 2);
+        Assert.assertTrue(notification == 4);
     }
 
     @Test

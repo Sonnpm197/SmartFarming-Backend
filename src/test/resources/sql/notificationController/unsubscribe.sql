@@ -30,10 +30,15 @@ insert into question (question_id, content, title, util_timestamp, view_count, u
 values (1, N'Ẩm thực: đồ ăn hà nội khá chán, chắc do chỉ đa phần người Bắc nên em không hợp khẩu vị',
  N'người miền Nam sinh sống ở HN', '2012-02-24T18:10:00', 0, 1);
 
-insert into notification(notification_id, seen, message, util_timestamp, user_id, article_id, question_id)
-values (1, 0, 'deleted question', '2012-02-24T18:10:00',1, null , 1);
-insert into notification(notification_id, seen, message, util_timestamp, user_id, article_id, question_id)
-values (2, 0, 'deleted question 2', '2012-02-24T18:10:00',2, null , 1);
+insert into notification
+    (notification_id, delete_answer, delete_comment, delete_question,
+     message, seen, util_timestamp, user_id, article_id, question_id)
+values (1, 0, 0, 0, 'deleted question', 0, '2012-02-24T18:10:00', 1, null, 1);
+
+insert into notification
+    (notification_id, delete_answer, delete_comment, delete_question,
+     message, seen, util_timestamp, user_id, article_id, question_id)
+values (2, 0, 0, 0, 'deleted question', 0, '2012-02-24T18:10:00', 2, null, 1);
 
 insert into question_subscribers(subscribed_questions_question_id, subscribers_user_id)
 values (1, 1);

@@ -172,11 +172,13 @@ public class HibernateSearchRepository {
                                 .must(getQueryBuilder(genericClass)
                                         .simpleQueryString()
                                         .onFields(fields[0], fields[1], "tags.name")
-                                        .matching(searchedText).createQuery())
+                                        .matching(searchedText)
+                                        .createQuery())
                                 .must(getQueryBuilder(genericClass)
                                         .simpleQueryString()
                                         .onField("category")
-                                        .matching(articleCategory).createQuery())
+                                        .matching(articleCategory)
+                                        .createQuery())
                                 .createQuery();
                     } else {
                         phraseQuery = getQueryBuilder(genericClass)
@@ -184,7 +186,8 @@ public class HibernateSearchRepository {
                                 .must(getQueryBuilder(genericClass)
                                         .simpleQueryString()
                                         .onFields(fields[0], fields[1], "tags.name")
-                                        .matching(searchedText).createQuery())
+                                        .matching(searchedText)
+                                        .createQuery())
                                 .createQuery();
                     }
                 } else if (TAG.equalsIgnoreCase(className)) {
@@ -197,7 +200,7 @@ public class HibernateSearchRepository {
 
                 finalQueryBuilder.add(phraseQuery, BooleanClause.Occur.SHOULD);
             }
-            // If searchedText is not started with double quotes
+            // If searchedText passed from Angular does not start & end with double quotes
             else {
                 if (ARTICLE.equalsIgnoreCase(className)) {
                     if (!StringUtils.isNullOrEmpty(articleCategory)) {
@@ -227,28 +230,25 @@ public class HibernateSearchRepository {
                                 finalQueryBuilder.add(phraseQuery, BooleanClause.Occur.SHOULD);
                             }
                         }
-                        // If searchedText is null or ""
+                        // If searchedText is null or "" and articleCategory is not null
                         else {
                             org.apache.lucene.search.Query phraseQuery = getQueryBuilder(genericClass)
-                                    .bool()
-                                    .must(getQueryBuilder(genericClass)
-                                            .simpleQueryString()
-                                            .onFields(fields[0], fields[1], "tags.name")
-                                            .matching(searchedText).createQuery())
-                                    .must(getQueryBuilder(genericClass)
-                                            .simpleQueryString()
-                                            .onField("category")
-                                            .matching(articleCategory).createQuery())
-                                    .createQuery();
+                                    .simpleQueryString()
+                                    .onField("category")
+                                    .matching(articleCategory).createQuery();
                             finalQueryBuilder.add(phraseQuery, BooleanClause.Occur.SHOULD);
                         }
                     } else {
                         for (String field : fields) {
+                            // ======================================================== //
+                            // If this is an article then we need to search for category
+                            // Note**: title / content must go with category, but tags are not necessary
+                            // ======================================================== //
                             org.apache.lucene.search.Query phraseQuery = getQueryBuilder(genericClass)
                                     .bool()
                                     .must(getQueryBuilder(genericClass)
                                             .phrase()
-                                            .withSlop(2)
+                                            .withSlop(2) // Allow (wrong) words between searchedText reach maximum of 2
                                             .onField(field)
                                             .sentence(searchedText)
                                             .createQuery())

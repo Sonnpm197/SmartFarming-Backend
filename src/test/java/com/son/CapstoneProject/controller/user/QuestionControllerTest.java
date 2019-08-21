@@ -237,11 +237,12 @@ public class QuestionControllerTest {
             @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
     })
     public void viewQuestionById() {
-        String url = createURL(port, "/question/viewQuestion/{id}");
+        String url = createURL(port, "/question/viewQuestion/{userId}/{questionId}");
 
         // URI (URL) parameters
         Map<String, Integer> uriParams = new HashMap<>();
-        uriParams.put("id", 1);
+        uriParams.put("userId", 1);
+        uriParams.put("questionId", 1);
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
 

@@ -143,11 +143,12 @@ public class ArticleControllerTest {
             @Sql(scripts = "/sql/clean_database.sql", executionPhase = AFTER_TEST_METHOD)
     })
     public void viewArticleById() {
-        String url = createURL("/article/viewArticle/{id}");
+        String url = createURL("/article/viewArticle/{userId}/{articleId}");
 
         // URI (URL) parameters
         Map<String, Integer> uriParams = new HashMap<>();
-        uriParams.put("id", 1);
+        uriParams.put("userId", 1);
+        uriParams.put("articleId", 1);
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
 
@@ -448,6 +449,6 @@ public class ArticleControllerTest {
                 });
 
         System.out.println(">> Result: " + response.getBody());
-        Assert.assertTrue(response.getBody().getArticlesByPageIndex().size() == 1);
+        Assert.assertTrue(response.getBody().getArticlesByPageIndex().size() == 5);
     }
 }

@@ -118,6 +118,10 @@ public class QuestionController {
         }
     }
 
+    /**
+     * View number of pages when view all questions (For lazy loading purposes)
+     * @return
+     */
     @GetMapping("/viewNumberOfPages")
     @Transactional
     public long viewNumberOfPages() {
