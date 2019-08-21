@@ -79,6 +79,9 @@ public class QuestionController {
     @Autowired
     private TagRepository tagRepository;
 
+    @Autowired
+    private NotificationRepository notificationRepository;
+
     @GetMapping("/test")
     public String test() {
         return "You only see this if you are an user";
@@ -691,6 +694,13 @@ public class QuestionController {
                     appUserTag.setReputation(resultPoint);
                     appUserTagRepository.save(appUserTag);
                 }
+            }
+
+            // Delete all notifications related to this question
+            List<Notification> notifications = notificationRepository.findByQuestion_QuestionId(questionId);
+
+            for (Notification noti: notifications) {
+                notificationRepository.delete(noti);
             }
 
             // Then remove the question

@@ -67,6 +67,9 @@ public class ArticleController {
     @Autowired
     private AppUserTagRepository appUserTagRepository;
 
+    @Autowired
+    private NotificationRepository notificationRepository;
+
     @GetMapping("/viewNumberOfArticles")
     @Transactional
     public long viewNumberOfArticles() {
@@ -523,6 +526,12 @@ public class ArticleController {
             List<UploadedFile> uploadedFiles = article.getUploadedFiles();
             for (UploadedFile uploadedFile : uploadedFiles) {
                 fileController.deleteFile(uploadedFile);
+            }
+
+            List<Notification> notifications = notificationRepository.findByArticle_ArticleId(articleId);
+
+            for (Notification notification: notifications) {
+                notificationRepository.delete(notification);
             }
 
             // Delete article

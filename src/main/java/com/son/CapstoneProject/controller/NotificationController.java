@@ -93,7 +93,10 @@ public class NotificationController {
                 articleRepository.save(article);
             }
 
-            return fullDataNotification;
+            // Unsub = seen
+            fullDataNotification.setSeen(true);
+
+            return notificationRepository.save(fullDataNotification);
         } catch (Exception e) {
             logger.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);

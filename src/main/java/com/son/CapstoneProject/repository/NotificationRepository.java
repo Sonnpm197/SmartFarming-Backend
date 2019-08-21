@@ -25,4 +25,8 @@ public interface NotificationRepository extends PagingAndSortingRepository<Notif
 
     @Query("select count(n.notificationId) from Notification n where n.seen = :seen and n.appUserReceiver = :appUser")
     Integer getTotalUnseenNotificationByUser(@Param("seen") boolean seen, @Param("appUser") AppUser appUser);
+
+    List<Notification> findByQuestion_QuestionId(Long questionId);
+
+    List<Notification> findByArticle_ArticleId(Long articleId);
 }

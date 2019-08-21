@@ -860,6 +860,13 @@ public class AdminController {
                 }
             }
 
+            // Delete all notifications related to this question
+            List<Notification> notifications = notificationRepository.findByQuestion_QuestionId(questionId);
+
+            for (Notification noti: notifications) {
+                notificationRepository.delete(noti);
+            }
+
             // Then remove the question
             questionRepository.delete(question);
 
