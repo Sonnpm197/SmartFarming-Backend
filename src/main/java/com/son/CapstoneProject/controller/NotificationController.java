@@ -166,6 +166,27 @@ public class NotificationController {
         }
     }
 
+    @GetMapping("/viewMoreNotifications/{userId}/{pageNumber}")
+    @Transactional
+    public NotificationPagination viewMoreNotifications(@PathVariable Long userId, @PathVariable int pageNumber) {
+        try {
+            logger.info("pageNumber: {}", pageNumber);
+            NotificationPagination finalNotifications = new NotificationPagination();
+
+            for (int i = 0; i <= pageNumber; i++) {
+                NotificationPagination notificationPagination = viewNotificationsByPageIndex(userId, i);
+                finalNotifications.getNotificationsByPageIndex().addAll(notificationPagination.getNotificationsByPageIndex());
+            }
+
+            finalNotifications.setCurrentPage(pageNumber);
+
+            return finalNotifications;
+        } catch (Exception e) {
+            logger.error("An error has occurred", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        }
+    }
+
     @GetMapping("/viewNumberOfUnseenNotification/{userId}")
     @Transactional
     public int viewNumberOfUnseenNotification(@PathVariable Long userId) {

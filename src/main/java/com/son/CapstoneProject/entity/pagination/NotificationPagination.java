@@ -12,5 +12,6 @@ import java.util.List;
 public class NotificationPagination extends Pagination {
 
     private List<Notification> notificationsByPageIndex = new ArrayList<>();
+    private int currentPage;
 
 }
