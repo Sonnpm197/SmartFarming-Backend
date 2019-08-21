@@ -218,7 +218,7 @@ public class HibernateSearchRepository {
                                         .must(getQueryBuilder(genericClass)
                                                 .simpleQueryString()
                                                 .onField("category")
-                                                .matching(articleCategory)
+                                                .matching("\"" + articleCategory + "\"")
                                                 .createQuery())
                                         .should(getQueryBuilder(genericClass)
                                                 .phrase()
@@ -235,10 +235,12 @@ public class HibernateSearchRepository {
                             org.apache.lucene.search.Query phraseQuery = getQueryBuilder(genericClass)
                                     .simpleQueryString()
                                     .onField("category")
-                                    .matching(articleCategory).createQuery();
+                                    .matching("\"" + articleCategory + "\"").createQuery();
                             finalQueryBuilder.add(phraseQuery, BooleanClause.Occur.SHOULD);
                         }
-                    } else {
+                    }
+                    // Search articles without category
+                    else {
                         for (String field : fields) {
                             // ======================================================== //
                             // If this is an article then we need to search for category
