@@ -208,29 +208,24 @@ public class AdminController {
                 @Override
                 public int compare(AppUserTag appUserTag1, AppUserTag appUserTag2) {
                     // If 2 users have the same reputation and view count gap are <= ranking gap => equal rank
-                    if (appUserTag1.getReputation() == appUserTag2.getReputation()
+                    if (Math.abs(appUserTag1.getReputation() - appUserTag2.getReputation()) <= RANKING_REPUTATION_GAP
                             && Math.abs(appUserTag1.getViewCount() - appUserTag2.getViewCount()) <= RANKING_VIEW_COUNT_GAP) {
                         return 0;
                     }
                     // If 2 users have the same reputation or repu of 1 > repu of 2 and view count appUserTag1 - appUserTag2 greater than gap
                     // If appUserTag1 < appUserTag2 repu but appUserTag1 still has more view => user1 > user2
-                    else if (appUserTag1.getReputation() >= appUserTag2.getReputation() // focus on viewCount
-                            && appUserTag1.getViewCount() - appUserTag2.getViewCount() > RANKING_VIEW_COUNT_GAP
-                            ||
-                            appUserTag1.getReputation() < appUserTag2.getReputation()
+                    else if (appUserTag1.getReputation() >= appUserTag2.getReputation() - RANKING_REPUTATION_GAP // focus on viewCount
                                     && appUserTag1.getViewCount() - appUserTag2.getViewCount() > RANKING_VIEW_COUNT_GAP
                             ||
-                            appUserTag1.getReputation() > appUserTag2.getReputation() // focus on reputation
-                                    && Math.abs(appUserTag1.getViewCount() - appUserTag2.getViewCount()) <= RANKING_VIEW_COUNT_GAP
-                    ) {
+                            appUserTag1.getViewCount() >= appUserTag2.getViewCount() - RANKING_VIEW_COUNT_GAP // focus on viewCount
+                                    && appUserTag1.getReputation() - appUserTag2.getReputation() > RANKING_REPUTATION_GAP
+                            ||
+                            appUserTag1.getViewCount() - appUserTag2.getViewCount() > RANKING_VIEW_COUNT_GAP
+                                    && appUserTag1.getReputation() - appUserTag2.getReputation() > RANKING_REPUTATION_GAP) {
                         return -1; // appUserTag1 > appUserTag2
-                    } else if (appUserTag1.getReputation() < appUserTag2.getReputation()
-                            && appUserTag2.getViewCount() - appUserTag1.getViewCount() > RANKING_VIEW_COUNT_GAP
-                    ) {
-                        return 1; // appUserTag1 < appUserTag2
+                    } else {
+                        return 1; // appUserTag2 > appUser1
                     }
-
-                    return 0;
                 }
             });
 
@@ -311,6 +306,7 @@ public class AdminController {
             // Sort list distinct date
             Collections.sort(distinctDate, new Comparator<String>() {
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
                 @Override
                 public int compare(String o1, String o2) {
                     try {
@@ -876,7 +872,7 @@ public class AdminController {
             // Delete all notifications related to this question
             List<Notification> notifications = notificationRepository.findByQuestion_QuestionId(questionId);
 
-            for (Notification noti: notifications) {
+            for (Notification noti : notifications) {
                 notificationRepository.delete(noti);
             }
 

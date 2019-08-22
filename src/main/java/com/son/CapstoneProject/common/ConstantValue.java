@@ -87,6 +87,7 @@ public class ConstantValue {
 
     // Ranking
     public static final int RANKING_VIEW_COUNT_GAP = 10;
+    public static final int RANKING_REPUTATION_GAP = 10;
 
     // Constant values
     public static final String QUESTION = "question";
