@@ -29,17 +29,14 @@ public interface ReportRepository extends PagingAndSortingRepository<Report, Lon
                     "      from app_user au\n" +
                     "             left join social_user su on au.social_id = su.social_user_id\n" +
                     "             join report r on au.user_id = r.user_id\n" +
-                    "      group by au.user_id, au.role, su.name) as sub\n" +
-                    "where sub.rowIndex >= :startRow and sub.rowIndex <= :endRow",
+                    "      group by au.user_id, au.role, su.name) as sub\n"
+                    /*+ "where sub.rowIndex >= :startRow and sub.rowIndex <= :endRow"*/,
             nativeQuery = true
     )
-    List<Object[]> findListUsersAndReportTime(@Param("startRow") int startRow, @Param("endRow") int endRow);
+    List<Object[]> findListUsersAndReportTime(/*@Param("startRow") int startRow, @Param("endRow") int endRow*/);
 
     @Query(
-            value = "select count(distinct au.user_id)\n" +
-                    "from app_user au\n" +
-                    "       join report r on au.user_id = r.user_id\n" +
-                    "group by au.user_id",
+            value = "select count(distinct r.user_id) from report r;",
             nativeQuery = true
     )
     Integer findTotalReportedUsers();

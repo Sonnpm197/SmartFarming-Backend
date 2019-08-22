@@ -57,7 +57,7 @@ public class ReportController {
             int startRow = pageNumber * REPORTS_PER_PAGE + 1; // from >= 1
             int endRow = startRow + REPORTS_PER_PAGE - 1; // to <= 10
 
-            List<Object[]> results = reportRepository.findListUsersAndReportTime(startRow, endRow);
+            List<Object[]> results = reportRepository.findListUsersAndReportTime(/*startRow, endRow*/);
 
             List<UserAndReportTime> userAndReportTimes = new ArrayList<>();
             for (Object[] row : results) {
@@ -74,11 +74,11 @@ public class ReportController {
             userAndReportTimePagination.setUserAndReportTimes(userAndReportTimes);
 
             int numberOfReportedUsers = reportRepository.findTotalReportedUsers();
-            if (numberOfReportedUsers % REPORTS_PER_PAGE == 0) {
-                userAndReportTimePagination.setNumberOfPages(numberOfReportedUsers / REPORTS_PER_PAGE);
-            } else {
-                userAndReportTimePagination.setNumberOfPages(numberOfReportedUsers / REPORTS_PER_PAGE + 1);
-            }
+//            if (numberOfReportedUsers % 2 == 0) {
+//                userAndReportTimePagination.setNumberOfPages(numberOfReportedUsers / 2);
+//            } else {
+//                userAndReportTimePagination.setNumberOfPages(numberOfReportedUsers / 2 + 1);
+//            }
 
             userAndReportTimePagination.setNumberOfContents(numberOfReportedUsers);
             return userAndReportTimePagination;
