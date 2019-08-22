@@ -308,6 +308,19 @@ public class AdminController {
             selectDistinctDateFromList(answerDateByAppUser, distinctDate);
             selectDistinctDateFromList(commentDateByAppUser, distinctDate);
 
+            // Sort list distinct date
+            Collections.sort(distinctDate, new Comparator<String>() {
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                @Override
+                public int compare(String o1, String o2) {
+                    try {
+                        return simpleDateFormat.parse(o1).compareTo(simpleDateFormat.parse(o2));
+                    } catch (ParseException e) {
+                        throw new IllegalArgumentException(e);
+                    }
+                }
+            });
+
             List<UserChartInfo> userChartInfoByDate = new ArrayList<>();
             SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
             // After get distinct date then select to get the list data for each day

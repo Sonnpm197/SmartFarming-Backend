@@ -312,8 +312,7 @@ public class AppUserController {
     public AppUser getUserByIpAddress(HttpServletRequest request) {
         try {
             return controllerUtils.saveOrReturnAnonymousUser(HttpRequestResponseUtils.getClientIpAddress(request));
-        } catch (
-                Exception e) {
+        } catch (Exception e) {
             logger.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
