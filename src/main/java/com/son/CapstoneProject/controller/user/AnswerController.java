@@ -1,11 +1,10 @@
 package com.son.CapstoneProject.controller.user;
 
 import com.son.CapstoneProject.common.ConstantValue;
+import com.son.CapstoneProject.common.entity.*;
 import com.son.CapstoneProject.configuration.HttpRequestResponseUtils;
 import com.son.CapstoneProject.controller.ControllerUtils;
-import com.son.CapstoneProject.controller.admin.ArticleController;
-import com.son.CapstoneProject.entity.*;
-import com.son.CapstoneProject.entity.login.AppUser;
+import com.son.CapstoneProject.common.entity.login.AppUser;
 import com.son.CapstoneProject.repository.*;
 import com.son.CapstoneProject.repository.loginRepository.AppUserRepository;
 import org.slf4j.Logger;

@@ -2,11 +2,7 @@ package com.son.CapstoneProject.controller.user;
 
 import com.son.CapstoneProject.Application;
 import com.son.CapstoneProject.controller.CommonTest;
-import com.son.CapstoneProject.entity.Comment;
-import com.son.CapstoneProject.entity.Question;
-import com.son.CapstoneProject.entity.Tag;
-import com.son.CapstoneProject.entity.UploadedFile;
-import com.son.CapstoneProject.entity.login.AppUser;
+import com.son.CapstoneProject.common.entity.Comment;
 import com.son.CapstoneProject.repository.CommentRepository;
 import org.junit.Assert;
 import org.junit.Test;
@@ -22,16 +18,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static com.son.CapstoneProject.controller.CommonTest.createURL;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
-import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = Application.class)

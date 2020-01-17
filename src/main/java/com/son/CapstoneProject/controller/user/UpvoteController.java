@@ -1,14 +1,11 @@
 package com.son.CapstoneProject.controller.user;
 
-import com.son.CapstoneProject.common.ConstantValue;
+import com.son.CapstoneProject.common.entity.*;
+import com.son.CapstoneProject.common.entity.login.AppUser;
 import com.son.CapstoneProject.configuration.HttpRequestResponseUtils;
 import com.son.CapstoneProject.controller.ControllerUtils;
-import com.son.CapstoneProject.entity.*;
-import com.son.CapstoneProject.entity.login.AppUser;
-import com.son.CapstoneProject.entity.login.UserRole;
 import com.son.CapstoneProject.repository.*;
 import com.son.CapstoneProject.repository.loginRepository.AppUserRepository;
-import com.son.CapstoneProject.repository.loginRepository.UserRoleRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +20,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import static com.son.CapstoneProject.common.ConstantValue.*;
-import static com.son.CapstoneProject.entity.login.AppRole.*;
 
 @RestController
 @RequestMapping("/upvote")

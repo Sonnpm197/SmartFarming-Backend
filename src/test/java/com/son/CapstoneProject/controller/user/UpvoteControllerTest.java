@@ -1,12 +1,7 @@
 package com.son.CapstoneProject.controller.user;
 
 import com.son.CapstoneProject.Application;
-import com.son.CapstoneProject.common.ConstantValue;
 import com.son.CapstoneProject.controller.CommonTest;
-import com.son.CapstoneProject.entity.Question;
-import com.son.CapstoneProject.entity.Tag;
-import com.son.CapstoneProject.entity.UploadedFile;
-import com.son.CapstoneProject.entity.login.AppUser;
 import com.son.CapstoneProject.repository.AppUserTagRepository;
 import com.son.CapstoneProject.repository.TagRepository;
 import com.son.CapstoneProject.repository.loginRepository.AppUserRepository;
@@ -27,7 +22,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static com.son.CapstoneProject.common.ConstantValue.*;

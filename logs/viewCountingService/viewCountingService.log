@@ -1,0 +1,4 @@
+28-08-2019 02:19:13.034 INFO  c.s.C.service.ViewCountingService.countViewByUserId - UserId: 1 counting for type: article with contentId: 1
+28-08-2019 02:19:13.038 INFO  c.s.C.service.ViewCountingService.countViewByUserId - Found no map userIdWithTime for type: article and contentId: 1
+28-08-2019 02:20:31.240 INFO  c.s.C.service.ViewCountingService.countViewByUserId - UserId: 1 counting for type: question with contentId: 1
+28-08-2019 02:20:31.241 INFO  c.s.C.service.ViewCountingService.countViewByUserId - Found no map userIdWithTime for type: question and contentId: 1

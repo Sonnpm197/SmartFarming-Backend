@@ -1,6 +1,6 @@
 package com.son.CapstoneProject.repository;
 
-import com.son.CapstoneProject.entity.Article;
+import com.son.CapstoneProject.common.entity.Article;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -2,8 +2,7 @@ package com.son.CapstoneProject.controller.user;
 
 import com.son.CapstoneProject.Application;
 import com.son.CapstoneProject.controller.CommonTest;
-import com.son.CapstoneProject.entity.Answer;
-import com.son.CapstoneProject.entity.login.AppUser;
+import com.son.CapstoneProject.common.entity.login.AppUser;
 import com.son.CapstoneProject.repository.loginRepository.AppUserRepository;
 import org.junit.Assert;
 import org.junit.Test;

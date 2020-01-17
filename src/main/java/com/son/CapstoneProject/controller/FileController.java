@@ -3,7 +3,7 @@ package com.son.CapstoneProject.controller;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.son.CapstoneProject.common.ConstantValue;
-import com.son.CapstoneProject.entity.UploadedFile;
+import com.son.CapstoneProject.common.entity.UploadedFile;
 import com.son.CapstoneProject.repository.UploadedFileRepository;
 import com.son.CapstoneProject.service.googleStorage.BlobHandler;
 import net.sf.jmimemagic.Magic;

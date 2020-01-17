@@ -2,15 +2,13 @@ package com.son.CapstoneProject.controller.admin;
 
 import com.son.CapstoneProject.Application;
 import com.son.CapstoneProject.controller.CommonTest;
-import com.son.CapstoneProject.entity.Article;
-import com.son.CapstoneProject.entity.RestResponsePage;
-import com.son.CapstoneProject.entity.Tag;
-import com.son.CapstoneProject.entity.pagination.ArticlePagination;
+import com.son.CapstoneProject.common.entity.Article;
+import com.son.CapstoneProject.common.entity.Tag;
+import com.son.CapstoneProject.common.entity.pagination.ArticlePagination;
 import com.son.CapstoneProject.repository.ArticleRepository;
 import com.son.CapstoneProject.repository.CommentRepository;
 import com.son.CapstoneProject.repository.TagRepository;
 import com.son.CapstoneProject.repository.UploadedFileRepository;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,14 +23,11 @@ import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
-import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = Application.class)

@@ -2,12 +2,12 @@ package com.son.CapstoneProject.controller.admin;
 
 import com.son.CapstoneProject.Application;
 import com.son.CapstoneProject.controller.CommonTest;
-import com.son.CapstoneProject.entity.AppUserTag;
-import com.son.CapstoneProject.entity.Report;
-import com.son.CapstoneProject.entity.adminChart.SystemChartInfo;
-import com.son.CapstoneProject.entity.adminChart.UserChartInfo;
-import com.son.CapstoneProject.entity.pagination.ReportPagination;
-import com.son.CapstoneProject.entity.pagination.TagPagination;
+import com.son.CapstoneProject.common.entity.AppUserTag;
+import com.son.CapstoneProject.common.entity.Report;
+import com.son.CapstoneProject.common.entity.adminChart.SystemChartInfo;
+import com.son.CapstoneProject.common.entity.adminChart.UserChartInfo;
+import com.son.CapstoneProject.common.entity.pagination.ReportPagination;
+import com.son.CapstoneProject.common.entity.pagination.TagPagination;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

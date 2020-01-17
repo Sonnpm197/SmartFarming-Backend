@@ -1,18 +1,18 @@
 package com.son.CapstoneProject.controller.user;
 
 import com.son.CapstoneProject.common.StringUtils;
+import com.son.CapstoneProject.common.entity.*;
+import com.son.CapstoneProject.common.entity.login.AppUser;
+import com.son.CapstoneProject.common.entity.pagination.QuestionPagination;
+import com.son.CapstoneProject.common.entity.search.QuestionSearch;
 import com.son.CapstoneProject.configuration.HttpRequestResponseUtils;
 import com.son.CapstoneProject.controller.ControllerUtils;
 import com.son.CapstoneProject.controller.FileController;
-import com.son.CapstoneProject.entity.*;
-import com.son.CapstoneProject.entity.login.AppUser;
-import com.son.CapstoneProject.entity.pagination.QuestionPagination;
-import com.son.CapstoneProject.entity.pagination.TagPagination;
-import com.son.CapstoneProject.entity.search.QuestionSearch;
 import com.son.CapstoneProject.repository.*;
 import com.son.CapstoneProject.repository.loginRepository.AppUserRepository;
 import com.son.CapstoneProject.repository.searchRepository.HibernateSearchRepository;
 import com.son.CapstoneProject.service.ViewCountingService;
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,9 +36,8 @@ import static com.son.CapstoneProject.common.ConstantValue.*;
 @RestController
 @RequestMapping("/question")
 @CrossOrigin(origins = {"${front-end.settings.cross-origin.url}"})
+@Slf4j
 public class QuestionController {
-
-    private static final Logger logger = LoggerFactory.getLogger(QuestionController.class);
 
     @Autowired
     private FileController fileController;
@@ -98,7 +97,7 @@ public class QuestionController {
         try {
             return questionRepository.count();
         } catch (Exception e) {
-            logger.error("An error has occurred", e);
+            log.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
@@ -113,7 +112,7 @@ public class QuestionController {
             questionPagination.setNumberOfPages(1);
             return questionPagination;
         } catch (Exception e) {
-            logger.error("An error has occurred", e);
+            log.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
@@ -133,7 +132,7 @@ public class QuestionController {
                 return (numberOfQuestion / QUESTIONS_PER_PAGE) + 1;
             }
         } catch (Exception e) {
-            logger.error("An error has occurred", e);
+            log.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
@@ -161,7 +160,7 @@ public class QuestionController {
             questionPagination.setNumberOfContents(Integer.parseInt("" + questionRepository.count()));
             return questionPagination;
         } catch (Exception e) {
-            logger.error("An error has occurred", e);
+            log.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
@@ -205,7 +204,7 @@ public class QuestionController {
 
             return questionPagination;
         } catch (Exception e) {
-            logger.error("An error has occurred", e);
+            log.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
@@ -221,7 +220,7 @@ public class QuestionController {
             return questionRepository.findById(questionId)
                     .orElseThrow(() -> new Exception("QuestionController.viewQuestionById: Not found any question with id: " + questionId));
         } catch (Exception e) {
-            logger.error("An error has occurred", e);
+            log.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
@@ -356,7 +355,7 @@ public class QuestionController {
 //                return questionPagination;
 //            }
         } catch (Exception e) {
-            logger.error("An error has occurred", e);
+            log.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
@@ -425,7 +424,7 @@ public class QuestionController {
 //                return questionPagination;
 //            }
         } catch (Exception e) {
-            logger.error("An error has occurred", e);
+            log.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
@@ -513,7 +512,7 @@ public class QuestionController {
 
             return question;
         } catch (Exception e) {
-            logger.error("An error has occurred", e);
+            log.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
@@ -592,7 +591,7 @@ public class QuestionController {
 
             return ResponseEntity.ok(resultQuestion);
         } catch (Exception e) {
-            logger.error("An error has occurred", e);
+            log.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
@@ -720,7 +719,7 @@ public class QuestionController {
             map.put("deleted", "true");
             return map;
         } catch (Exception e) {
-            logger.error("An error has occurred", e);
+            log.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
@@ -787,7 +786,7 @@ public class QuestionController {
 
             return ResponseEntity.ok(savedEditedQuestion);
         } catch (Exception e) {
-            logger.error("An error has occurred", e);
+            log.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
@@ -826,7 +825,7 @@ public class QuestionController {
 
             return question.getEditedQuestions();
         } catch (Exception e) {
-            logger.error("An error has occurred", e);
+            log.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
@@ -887,7 +886,7 @@ public class QuestionController {
             question.setUtilTimestamp(new Date());
             return questionRepository.save(question);
         } catch (Exception e) {
-            logger.error("An error has occurred", e);
+            log.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
@@ -938,7 +937,7 @@ public class QuestionController {
             report.setUtilTimestamp(new Date());
             return reportRepository.save(report);
         } catch (Exception e) {
-            logger.error("An error has occurred", e);
+            log.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
@@ -963,7 +962,7 @@ public class QuestionController {
             questionPagination.setNumberOfPages(1);
             return questionPagination;
         } catch (Exception e) {
-            logger.error("An error has occurred", e);
+            log.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
@@ -1006,7 +1005,7 @@ public class QuestionController {
                 questionRepository.save(question);
             }
         } catch (Exception e) {
-            logger.error("An error has occurred", e);
+            log.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
@@ -1086,7 +1085,7 @@ public class QuestionController {
 
             return questionPagination;
         } catch (Exception e) {
-            logger.error("An error has occurred", e);
+            log.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
@@ -1114,7 +1113,7 @@ public class QuestionController {
                     try {
                         appUsersUsedTags.add(appUserRepository.findById(userId.longValue()).get());
                     } catch (Exception ex) {
-                        logger.error("An error has occurred", ex);
+                        log.error("An error has occurred", ex);
                         continue;
                     }
                 }
@@ -1159,7 +1158,7 @@ public class QuestionController {
 
             return relatedAppUserWithDetails;
         } catch (Exception e) {
-            logger.error("An error has occurred", e);
+            log.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
@@ -1189,7 +1188,7 @@ public class QuestionController {
             }
 
         } catch (Exception e) {
-            logger.error("An error has occurred", e);
+            log.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
@@ -1206,7 +1205,7 @@ public class QuestionController {
                 questionRepository.save(question);
             }
         } catch (Exception e) {
-            logger.error("An error has occurred", e);
+            log.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }

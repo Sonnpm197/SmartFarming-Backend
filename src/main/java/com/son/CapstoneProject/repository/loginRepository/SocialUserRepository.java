@@ -1,6 +1,6 @@
 package com.son.CapstoneProject.repository.loginRepository;
 
-import com.son.CapstoneProject.entity.login.SocialUser;
+import com.son.CapstoneProject.common.entity.login.SocialUser;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 

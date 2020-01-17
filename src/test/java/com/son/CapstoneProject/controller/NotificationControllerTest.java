@@ -1,11 +1,10 @@
 package com.son.CapstoneProject.controller;
 
 import com.son.CapstoneProject.Application;
-import com.son.CapstoneProject.entity.Notification;
-import com.son.CapstoneProject.entity.Question;
-import com.son.CapstoneProject.entity.login.AppUser;
-import com.son.CapstoneProject.entity.pagination.NotificationPagination;
-import com.son.CapstoneProject.entity.pagination.QuestionPagination;
+import com.son.CapstoneProject.common.entity.Notification;
+import com.son.CapstoneProject.common.entity.Question;
+import com.son.CapstoneProject.common.entity.login.AppUser;
+import com.son.CapstoneProject.common.entity.pagination.NotificationPagination;
 import com.son.CapstoneProject.repository.NotificationRepository;
 import com.son.CapstoneProject.repository.QuestionRepository;
 import org.junit.Assert;

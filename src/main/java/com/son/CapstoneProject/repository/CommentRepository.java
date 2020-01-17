@@ -1,8 +1,7 @@
 package com.son.CapstoneProject.repository;
 
-import com.son.CapstoneProject.entity.Comment;
-import com.son.CapstoneProject.entity.Question;
-import com.son.CapstoneProject.entity.login.AppUser;
+import com.son.CapstoneProject.common.entity.Comment;
+import com.son.CapstoneProject.common.entity.login.AppUser;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;

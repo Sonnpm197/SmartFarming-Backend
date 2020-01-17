@@ -2,8 +2,7 @@ package com.son.CapstoneProject.controller.user;
 
 import com.son.CapstoneProject.Application;
 import com.son.CapstoneProject.controller.CommonTest;
-import com.son.CapstoneProject.entity.Tag;
-import com.son.CapstoneProject.entity.pagination.TagPagination;
+import com.son.CapstoneProject.common.entity.pagination.TagPagination;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,8 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import java.util.List;
 
 import static com.son.CapstoneProject.controller.CommonTest.createURL;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;

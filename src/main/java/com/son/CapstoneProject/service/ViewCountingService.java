@@ -1,10 +1,10 @@
 package com.son.CapstoneProject.service;
 
-import com.son.CapstoneProject.entity.AppUserTag;
-import com.son.CapstoneProject.entity.Article;
-import com.son.CapstoneProject.entity.Question;
-import com.son.CapstoneProject.entity.Tag;
-import com.son.CapstoneProject.entity.login.AppUser;
+import com.son.CapstoneProject.common.entity.AppUserTag;
+import com.son.CapstoneProject.common.entity.Article;
+import com.son.CapstoneProject.common.entity.Question;
+import com.son.CapstoneProject.common.entity.Tag;
+import com.son.CapstoneProject.common.entity.login.AppUser;
 import com.son.CapstoneProject.repository.AppUserTagRepository;
 import com.son.CapstoneProject.repository.ArticleRepository;
 import com.son.CapstoneProject.repository.QuestionRepository;

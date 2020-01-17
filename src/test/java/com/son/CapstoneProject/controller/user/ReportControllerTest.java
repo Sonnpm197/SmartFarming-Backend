@@ -2,9 +2,7 @@ package com.son.CapstoneProject.controller.user;
 
 import com.son.CapstoneProject.Application;
 import com.son.CapstoneProject.controller.CommonTest;
-import com.son.CapstoneProject.entity.UserAndReportTime;
-import com.son.CapstoneProject.entity.pagination.QuestionPagination;
-import com.son.CapstoneProject.entity.pagination.UserAndReportTimePagination;
+import com.son.CapstoneProject.common.entity.pagination.UserAndReportTimePagination;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,11 +18,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static com.son.CapstoneProject.controller.CommonTest.createURL;
-import static org.junit.Assert.*;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
 @RunWith(SpringRunner.class)

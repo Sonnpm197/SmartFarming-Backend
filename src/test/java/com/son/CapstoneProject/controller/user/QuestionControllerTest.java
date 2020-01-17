@@ -1,10 +1,10 @@
 package com.son.CapstoneProject.controller.user;
 
 import com.son.CapstoneProject.Application;
+import com.son.CapstoneProject.common.entity.*;
 import com.son.CapstoneProject.controller.CommonTest;
-import com.son.CapstoneProject.entity.*;
-import com.son.CapstoneProject.entity.login.AppUser;
-import com.son.CapstoneProject.entity.pagination.QuestionPagination;
+import com.son.CapstoneProject.common.entity.login.AppUser;
+import com.son.CapstoneProject.common.entity.pagination.QuestionPagination;
 import com.son.CapstoneProject.repository.*;
 import com.son.CapstoneProject.repository.loginRepository.AppUserRepository;
 import org.junit.Assert;

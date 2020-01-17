@@ -1,6 +1,6 @@
 package com.son.CapstoneProject;
 
-import com.son.CapstoneProject.entity.uploadFile.FileStorageProperties;
+import com.son.CapstoneProject.common.entity.uploadFile.FileStorageProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;

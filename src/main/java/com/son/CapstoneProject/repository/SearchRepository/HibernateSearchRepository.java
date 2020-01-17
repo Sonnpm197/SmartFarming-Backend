@@ -1,21 +1,18 @@
 package com.son.CapstoneProject.repository.searchRepository;
 
 import com.son.CapstoneProject.common.StringUtils;
-import com.son.CapstoneProject.controller.FileController;
-import com.son.CapstoneProject.entity.Article;
-import com.son.CapstoneProject.entity.Question;
-import com.son.CapstoneProject.entity.Tag;
-import com.son.CapstoneProject.entity.pagination.ArticlePagination;
-import com.son.CapstoneProject.entity.pagination.Pagination;
-import com.son.CapstoneProject.entity.pagination.QuestionPagination;
-import com.son.CapstoneProject.entity.pagination.TagPagination;
-import com.son.CapstoneProject.entity.search.GenericClass;
+import com.son.CapstoneProject.common.entity.Article;
+import com.son.CapstoneProject.common.entity.Question;
+import com.son.CapstoneProject.common.entity.Tag;
+import com.son.CapstoneProject.common.entity.pagination.ArticlePagination;
+import com.son.CapstoneProject.common.entity.pagination.Pagination;
+import com.son.CapstoneProject.common.entity.pagination.QuestionPagination;
+import com.son.CapstoneProject.common.entity.pagination.TagPagination;
+import com.son.CapstoneProject.common.entity.search.GenericClass;
 import com.son.CapstoneProject.repository.TagRepository;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.SortField;
-import org.hibernate.Cache;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.FullTextQuery;
 import org.hibernate.search.jpa.Search;
@@ -23,13 +20,9 @@ import org.hibernate.search.query.dsl.QueryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Index;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static com.son.CapstoneProject.common.ConstantValue.*;

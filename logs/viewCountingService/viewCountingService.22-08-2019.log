@@ -1,0 +1,16 @@
+22-08-2019 23:29:50.154 INFO  c.s.C.service.ViewCountingService.countViewByUserId - UserId: 2 counting for type: question with contentId: 8
+22-08-2019 23:29:50.169 INFO  c.s.C.service.ViewCountingService.countViewByUserId - Found no map userIdWithTime for type: question and contentId: 8
+22-08-2019 23:34:27.100 INFO  c.s.C.service.ViewCountingService.countViewByUserId - UserId: 232 counting for type: article with contentId: 257
+22-08-2019 23:34:27.103 INFO  c.s.C.service.ViewCountingService.countViewByUserId - Found no map userIdWithTime for type: article and contentId: 257
+22-08-2019 23:36:32.043 INFO  c.s.C.service.ViewCountingService.countViewByUserId - UserId: 138 counting for type: question with contentId: 721
+22-08-2019 23:36:32.043 INFO  c.s.C.service.ViewCountingService.countViewByUserId - Found no map userIdWithTime for type: question and contentId: 721
+22-08-2019 23:37:41.365 INFO  c.s.C.service.ViewCountingService.countViewByUserId - UserId: 138 counting for type: question with contentId: 681
+22-08-2019 23:37:41.365 INFO  c.s.C.service.ViewCountingService.countViewByUserId - Found no map userIdWithTime for type: question and contentId: 681
+22-08-2019 23:37:48.106 INFO  c.s.C.service.ViewCountingService.countViewByUserId - UserId: 138 counting for type: question with contentId: 681
+22-08-2019 23:38:14.615 INFO  c.s.C.service.ViewCountingService.countViewByUserId - UserId: 138 counting for type: question with contentId: 688
+22-08-2019 23:38:14.615 INFO  c.s.C.service.ViewCountingService.countViewByUserId - Found no map userIdWithTime for type: question and contentId: 688
+22-08-2019 23:38:16.851 INFO  c.s.C.service.ViewCountingService.countViewByUserId - UserId: 138 counting for type: question with contentId: 688
+22-08-2019 23:38:18.811 INFO  c.s.C.service.ViewCountingService.countViewByUserId - UserId: 138 counting for type: question with contentId: 688
+22-08-2019 23:38:21.069 INFO  c.s.C.service.ViewCountingService.countViewByUserId - UserId: 138 counting for type: question with contentId: 688
+22-08-2019 23:38:22.943 INFO  c.s.C.service.ViewCountingService.countViewByUserId - UserId: 138 counting for type: question with contentId: 688
+22-08-2019 23:38:25.021 INFO  c.s.C.service.ViewCountingService.countViewByUserId - UserId: 138 counting for type: question with contentId: 688

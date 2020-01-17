@@ -1,0 +1,31 @@
+{
+  "title": "Yêu đơn phương",
+  "content": "Năm nay mình 28 tuổi, đang làm cùng chỗ với crush.",
+  "appUser": {
+    "userId": 1
+  },
+  "tags": [
+    {
+      "name": "trồng trọt                     ",
+      "description": "trồng trọt description"
+    },
+    {
+      "name": "chăn nuôi                     ",
+      "description": "chăn nuôi description"
+    }
+  ],
+  "uploadedFiles": [
+    {
+      "id": "3",
+      "uploadedFileUrlShownOnUI": "uploaded_file_url_shown_onui",
+      "uploadedFileName": "updated_uploaded_file_name",
+      "bucketName": "bucket_name"
+    },
+    {
+      "id": "4",
+      "uploadedFileUrlShownOnUI": "uploaded_file_url_shown_onui_2",
+      "uploadedFileName": "updated_uploaded_file_name",
+      "bucketName": "bucket_name"
+    }
+  ]
+}

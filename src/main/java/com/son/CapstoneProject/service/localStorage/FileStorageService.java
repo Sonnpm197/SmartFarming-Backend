@@ -1,6 +1,6 @@
 package com.son.CapstoneProject.service.localStorage;
 
-import com.son.CapstoneProject.entity.uploadFile.FileStorageProperties;
+import com.son.CapstoneProject.common.entity.uploadFile.FileStorageProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;

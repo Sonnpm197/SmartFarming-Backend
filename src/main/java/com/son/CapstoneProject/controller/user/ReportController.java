@@ -1,15 +1,9 @@
 package com.son.CapstoneProject.controller.user;
 
-import com.son.CapstoneProject.common.ConstantValue;
-import com.son.CapstoneProject.configuration.HttpRequestResponseUtils;
-import com.son.CapstoneProject.controller.ControllerUtils;
-import com.son.CapstoneProject.entity.*;
-import com.son.CapstoneProject.entity.login.AppUser;
-import com.son.CapstoneProject.entity.pagination.ReportPagination;
-import com.son.CapstoneProject.entity.pagination.UserAndReportTimePagination;
-import com.son.CapstoneProject.repository.ArticleRepository;
-import com.son.CapstoneProject.repository.CommentRepository;
-import com.son.CapstoneProject.repository.NotificationRepository;
+import com.son.CapstoneProject.common.entity.UserAndReportTime;
+import com.son.CapstoneProject.common.entity.login.AppUser;
+import com.son.CapstoneProject.common.entity.pagination.ReportPagination;
+import com.son.CapstoneProject.common.entity.pagination.UserAndReportTimePagination;
 import com.son.CapstoneProject.repository.ReportRepository;
 import com.son.CapstoneProject.repository.loginRepository.AppUserRepository;
 import org.slf4j.Logger;
@@ -18,16 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
-import static com.son.CapstoneProject.common.ConstantValue.QUESTIONS_PER_PAGE;
 import static com.son.CapstoneProject.common.ConstantValue.REPORTS_PER_PAGE;
 
 @RestController

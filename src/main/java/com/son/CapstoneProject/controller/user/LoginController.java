@@ -1,8 +1,8 @@
 package com.son.CapstoneProject.controller.user;
 
 import com.son.CapstoneProject.common.ConstantValue;
-import com.son.CapstoneProject.entity.login.AppUser;
-import com.son.CapstoneProject.entity.login.SocialUser;
+import com.son.CapstoneProject.common.entity.login.AppUser;
+import com.son.CapstoneProject.common.entity.login.SocialUser;
 import com.son.CapstoneProject.repository.loginRepository.AppUserRepository;
 import com.son.CapstoneProject.repository.loginRepository.SocialUserRepository;
 import org.slf4j.Logger;

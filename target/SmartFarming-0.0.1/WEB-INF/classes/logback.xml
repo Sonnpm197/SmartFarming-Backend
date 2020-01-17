@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <property name="LOG_PATH" value="logs"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>
+                %d{dd-MM-yyyy HH:mm:ss.SSS} %magenta([%thread]) %highlight(%-5level) %logger.%M - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <!--System logging and sql-->
+    <appender name="DEFAULT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/default/default.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>
+                %d{dd-MM-yyyy HH:mm:ss.SSS} %-5level %logger{36}.%M - %msg%n
+            </Pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>
+                ${LOG_PATH}/default/default.%d{dd-MM-yyyy}.log
+            </fileNamePattern>
+            <!--a maximum of 10 days worth of archived logs to be stored before they are deleted-->
+            <maxHistory>10</maxHistory>
+            <!--totalSizeCap limits the maximum size of all archived log files.
+            It requires the maxHistory property to be set with maxHistory , taking precedence over totalSizeCap when removing archived files.-->
+            <totalSizeCap>200MB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="ADMIN_CONTROLLER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/adminController/adminController.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>
+                %d{dd-MM-yyyy HH:mm:ss.SSS} %-5level %logger{36}.%M - %msg%n
+            </Pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>
+                ${LOG_PATH}/adminController/adminController.%d{dd-MM-yyyy}.log
+            </fileNamePattern>
+            <!--a maximum of 10 days worth of archived logs to be stored before they are deleted-->
+            <maxHistory>10</maxHistory>
+            <!--totalSizeCap limits the maximum size of all archived log files.
+            It requires the maxHistory property to be set with maxHistory , taking precedence over totalSizeCap when removing archived files.-->
+            <totalSizeCap>100MB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="ARTICLE_CONTROLLER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/articleController/articleController.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>
+                %d{dd-MM-yyyy HH:mm:ss.SSS} %-5level %logger{36}.%M - %msg%n
+            </Pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>
+                ${LOG_PATH}/articleController/articleController.%d{dd-MM-yyyy}.log
+            </fileNamePattern>
+            <!--a maximum of 10 days worth of archived logs to be stored before they are deleted-->
+            <maxHistory>10</maxHistory>
+            <!--totalSizeCap limits the maximum size of all archived log files.
+            It requires the maxHistory property to be set with maxHistory , taking precedence over totalSizeCap when removing archived files.-->
+            <totalSizeCap>100MB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="ANSWER_CONTROLLER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/answerController/answerController.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>
+                %d{dd-MM-yyyy HH:mm:ss.SSS} %-5level %logger{36}.%M - %msg%n
+            </Pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>
+                ${LOG_PATH}/answerController/answerController.%d{dd-MM-yyyy}.log
+            </fileNamePattern>
+            <!--a maximum of 10 days worth of archived logs to be stored before they are deleted-->
+            <maxHistory>10</maxHistory>
+            <!--totalSizeCap limits the maximum size of all archived log files.
+            It requires the maxHistory property to be set with maxHistory , taking precedence over totalSizeCap when removing archived files.-->
+            <totalSizeCap>100MB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="APPUSER_CONTROLLER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/appUserController/appUserController.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>
+                %d{dd-MM-yyyy HH:mm:ss.SSS} %-5level %logger{36}.%M - %msg%n
+            </Pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>
+                ${LOG_PATH}/appUserController/appUserController.%d{dd-MM-yyyy}.log
+            </fileNamePattern>
+            <!--a maximum of 10 days worth of archived logs to be stored before they are deleted-->
+            <maxHistory>10</maxHistory>
+            <!--totalSizeCap limits the maximum size of all archived log files.
+            It requires the maxHistory property to be set with maxHistory , taking precedence over totalSizeCap when removing archived files.-->
+            <totalSizeCap>100MB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="COMMENT_CONTROLLER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/commentController/commentController.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>
+                %d{dd-MM-yyyy HH:mm:ss.SSS} %-5level %logger{36}.%M - %msg%n
+            </Pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>
+                ${LOG_PATH}/commentController/commentController.%d{dd-MM-yyyy}.log
+            </fileNamePattern>
+            <!--a maximum of 10 days worth of archived logs to be stored before they are deleted-->
+            <maxHistory>10</maxHistory>
+            <!--totalSizeCap limits the maximum size of all archived log files.
+            It requires the maxHistory property to be set with maxHistory , taking precedence over totalSizeCap when removing archived files.-->
+            <totalSizeCap>100MB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="LOGIN_CONTROLLER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/loginController/loginController.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>
+                %d{dd-MM-yyyy HH:mm:ss.SSS} %-5level %logger{36}.%M - %msg%n
+            </Pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>
+                ${LOG_PATH}/loginController/loginController.%d{dd-MM-yyyy}.log
+            </fileNamePattern>
+            <!--a maximum of 10 days worth of archived logs to be stored before they are deleted-->
+            <maxHistory>10</maxHistory>
+            <!--totalSizeCap limits the maximum size of all archived log files.
+            It requires the maxHistory property to be set with maxHistory , taking precedence over totalSizeCap when removing archived files.-->
+            <totalSizeCap>100MB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="QUESTION_CONTROLLER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/questionController/questionController.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>
+                %d{dd-MM-yyyy HH:mm:ss.SSS} %-5level %logger{36}.%M - %msg%n
+            </Pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>
+                ${LOG_PATH}/questionController/questionController.%d{dd-MM-yyyy}.log
+            </fileNamePattern>
+            <!--a maximum of 10 days worth of archived logs to be stored before they are deleted-->
+            <maxHistory>10</maxHistory>
+            <!--totalSizeCap limits the maximum size of all archived log files.
+            It requires the maxHistory property to be set with maxHistory , taking precedence over totalSizeCap when removing archived files.-->
+            <totalSizeCap>100MB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="TAG_CONTROLLER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/tagController/tagController.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>
+                %d{dd-MM-yyyy HH:mm:ss.SSS} %-5level %logger{36}.%M - %msg%n
+            </Pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>
+                ${LOG_PATH}/tagController/tagController.%d{dd-MM-yyyy}.log
+            </fileNamePattern>
+            <!--a maximum of 10 days worth of archived logs to be stored before they are deleted-->
+            <maxHistory>10</maxHistory>
+            <!--totalSizeCap limits the maximum size of all archived log files.
+            It requires the maxHistory property to be set with maxHistory , taking precedence over totalSizeCap when removing archived files.-->
+            <totalSizeCap>100MB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="UPVOTE_CONTROLLER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/upvoteController/upvoteController.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>
+                %d{dd-MM-yyyy HH:mm:ss.SSS} %-5level %logger{36}.%M - %msg%n
+            </Pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>
+                ${LOG_PATH}/upvoteController/upvoteController.%d{dd-MM-yyyy}.log
+            </fileNamePattern>
+            <!--a maximum of 10 days worth of archived logs to be stored before they are deleted-->
+            <maxHistory>10</maxHistory>
+            <!--totalSizeCap limits the maximum size of all archived log files.
+            It requires the maxHistory property to be set with maxHistory , taking precedence over totalSizeCap when removing archived files.-->
+            <totalSizeCap>100MB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="CONTROLLER_UTILS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/controllerUtils/controllerUtils.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>
+                %d{dd-MM-yyyy HH:mm:ss.SSS} %-5level %logger{36}.%M - %msg%n
+            </Pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>
+                ${LOG_PATH}/controllerUtils/controllerUtils.%d{dd-MM-yyyy}.log
+            </fileNamePattern>
+            <!--a maximum of 10 days worth of archived logs to be stored before they are deleted-->
+            <maxHistory>10</maxHistory>
+            <!--totalSizeCap limits the maximum size of all archived log files.
+            It requires the maxHistory property to be set with maxHistory , taking precedence over totalSizeCap when removing archived files.-->
+            <totalSizeCap>100MB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="FILE_CONTROLLER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/fileController/fileController.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>
+                %d{dd-MM-yyyy HH:mm:ss.SSS} %-5level %logger{36}.%M - %msg%n
+            </Pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>
+                ${LOG_PATH}/fileController/fileController.%d{dd-MM-yyyy}.log
+            </fileNamePattern>
+            <!--a maximum of 10 days worth of archived logs to be stored before they are deleted-->
+            <maxHistory>10</maxHistory>
+            <!--totalSizeCap limits the maximum size of all archived log files.
+            It requires the maxHistory property to be set with maxHistory , taking precedence over totalSizeCap when removing archived files.-->
+            <totalSizeCap>100MB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <!--GG Cloud storage-->
+    <appender name="BLOB_HANDLER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/blobHandler/blobHandler.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>
+                %d{dd-MM-yyyy HH:mm:ss.SSS} %-5level %logger{36}.%M - %msg%n
+            </Pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>
+                ${LOG_PATH}/blobHandler/blobHandler.%d{dd-MM-yyyy}.log
+            </fileNamePattern>
+            <!--a maximum of 10 days worth of archived logs to be stored before they are deleted-->
+            <maxHistory>10</maxHistory>
+            <!--totalSizeCap limits the maximum size of all archived log files.
+            It requires the maxHistory property to be set with maxHistory , taking precedence over totalSizeCap when removing archived files.-->
+            <totalSizeCap>100MB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="GOOGLE_CLOUD_STORAGE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/googleCloudStorage/googleCloudStorage.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>
+                %d{dd-MM-yyyy HH:mm:ss.SSS} %-5level %logger{36}.%M - %msg%n
+            </Pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>
+                ${LOG_PATH}/googleCloudStorage/googleCloudStorage.%d{dd-MM-yyyy}.log
+            </fileNamePattern>
+            <!--a maximum of 10 days worth of archived logs to be stored before they are deleted-->
+            <maxHistory>10</maxHistory>
+            <!--totalSizeCap limits the maximum size of all archived log files.
+            It requires the maxHistory property to be set with maxHistory , taking precedence over totalSizeCap when removing archived files.-->
+            <totalSizeCap>100MB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="VIEW_COUNTING_SERVICE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/viewCountingService/viewCountingService.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>
+                %d{dd-MM-yyyy HH:mm:ss.SSS} %-5level %logger{36}.%M - %msg%n
+            </Pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>
+                ${LOG_PATH}/viewCountingService/viewCountingService.%d{dd-MM-yyyy}.log
+            </fileNamePattern>
+            <!--a maximum of 10 days worth of archived logs to be stored before they are deleted-->
+            <maxHistory>10</maxHistory>
+            <!--totalSizeCap limits the maximum size of all archived log files.
+            It requires the maxHistory property to be set with maxHistory , taking precedence over totalSizeCap when removing archived files.-->
+            <totalSizeCap>100MB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="HIBERNATE_SEARCH_REPOSITORY" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/hibernateSearchRepository/hibernateSearchRepository.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>
+                %d{dd-MM-yyyy HH:mm:ss.SSS} %-5level %logger{36}.%M - %msg%n
+            </Pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>
+                ${LOG_PATH}/hibernateSearchRepository/hibernateSearchRepository.%d{dd-MM-yyyy}.log
+            </fileNamePattern>
+            <!--a maximum of 10 days worth of archived logs to be stored before they are deleted-->
+            <maxHistory>10</maxHistory>
+            <!--totalSizeCap limits the maximum size of all archived log files.
+            It requires the maxHistory property to be set with maxHistory , taking precedence over totalSizeCap when removing archived files.-->
+            <totalSizeCap>100MB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <!--Package level logging including-->
+    <!--log4j.logger.jdbc.sqlonly=OFF-->
+    <!--log4j.logger.jdbc.sqltiming=OFF-->
+    <!--log4j.logger.jdbc.audit=OFF-->
+    <!--log4j.logger.jdbc.resultset=OFF-->
+    <!--log4j.logger.jdbc.connection=OFF-->
+    <!--log4j.logger.jdbc.resultsettable=OFF-->
+    <logger name="jdbc" level="OFF"/>
+    <!--Not using additivity="false" will cause the message to be printed out twice due-->
+    <!--to the root log appender and the class level appender both writing to the log-->
+    <logger name="jdbc.sqlonly" level="INFO" additivity="false">
+        <appender-ref ref="DEFAULT"/>
+    </logger>
+
+    <!--System logging-->
+    <root level="ERROR">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="DEFAULT"/>
+    </root>
+
+    <!--Admin Controller logging-->
+    <logger name="com.son.CapstoneProject.controller.admin.AdminController" additivity="false" level="info">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="ADMIN_CONTROLLER"/>
+    </logger>
+
+    <logger name="com.son.CapstoneProject.controller.admin.ArticleController" additivity="false" level="info">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="ARTICLE_CONTROLLER"/>
+    </logger>
+
+    <!--User controller logging-->
+    <logger name="com.son.CapstoneProject.controller.user.AnswerController" additivity="false" level="info">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="ANSWER_CONTROLLER"/>
+    </logger>
+
+    <logger name="com.son.CapstoneProject.controller.user.AppUserController" additivity="false" level="info">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="APPUSER_CONTROLLER"/>
+    </logger>
+
+    <logger name="com.son.CapstoneProject.controller.user.CommentController" additivity="false" level="info">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="COMMENT_CONTROLLER"/>
+    </logger>
+
+    <logger name="com.son.CapstoneProject.controller.user.LoginController" additivity="false" level="info">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="LOGIN_CONTROLLER"/>
+    </logger>
+
+    <logger name="com.son.CapstoneProject.controller.user.QuestionController" additivity="false" level="info">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="QUESTION_CONTROLLER"/>
+    </logger>
+
+    <logger name="com.son.CapstoneProject.controller.user.TagController" additivity="false" level="info">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="TAG_CONTROLLER"/>
+    </logger>
+
+    <logger name="com.son.CapstoneProject.controller.user.UpvoteController" additivity="false" level="info">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="UPVOTE_CONTROLLER"/>
+    </logger>
+
+    <logger name="com.son.CapstoneProject.controller.ControllerUtils" additivity="false" level="info">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="CONTROLLER_UTILS"/>
+    </logger>
+
+    <logger name="com.son.CapstoneProject.controller.FileController" additivity="false" level="info">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE_CONTROLLER"/>
+    </logger>
+
+    <logger name="com.son.CapstoneProject.repository.searchRepository.HibernateSearchRepository" additivity="false" level="info">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="HIBERNATE_SEARCH_REPOSITORY"/>
+    </logger>
+
+    <logger name="com.son.CapstoneProject.service.googleStorage.BlobHandler" additivity="false" level="info">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="BLOB_HANDLER"/>
+    </logger>
+
+    <logger name="com.son.CapstoneProject.service.googleStorage.GoogleCloudStorage" additivity="false" level="info">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="GOOGLE_CLOUD_STORAGE"/>
+    </logger>
+
+    <logger name="com.son.CapstoneProject.service.ViewCountingService" additivity="false" level="info">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="VIEW_COUNTING_SERVICE"/>
+    </logger>
+
+</configuration>

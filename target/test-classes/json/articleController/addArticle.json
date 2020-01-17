@@ -1,0 +1,30 @@
+{
+  "title": "title",
+  "content": "content",
+  "category": "category",
+  "tags": [
+    {
+      "name": "sen sen"
+    },
+    {
+      "name": "sen bị cá ăn"
+    }
+  ],
+  "appUser": {
+    "userId": 1
+  },
+  "uploadedFiles": [
+    {
+      "id": "1",
+      "uploadedFileUrlShownOnUI": "trồng trọt article",
+      "uploadedFileName": "uploaded_file_name",
+      "bucketName": "bucket_name"
+    },
+    {
+      "id": "2",
+      "uploadedFileUrlShownOnUI": "trồng trọt article2",
+      "uploadedFileName": "uploaded_file_name_2",
+      "bucketName": "bucket_name"
+    }
+  ]
+}

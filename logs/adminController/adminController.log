@@ -1,0 +1,3 @@
+28-08-2019 02:19:05.520 INFO  c.s.C.c.admin.AdminController.viewReportsByPageIndex - pageNumber: 0
+28-08-2019 02:19:05.571 INFO  c.s.C.c.admin.AdminController.viewNumberOfReportPages - numberOfReportPages : 1
+28-08-2019 02:19:06.252 INFO  c.s.C.c.admin.AdminController.viewNumberOfReportPages - numberOfReportPages : 1

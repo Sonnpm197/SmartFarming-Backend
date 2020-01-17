@@ -1,21 +1,19 @@
 package com.son.CapstoneProject.controller.admin;
 
-import com.son.CapstoneProject.configuration.HttpRequestResponseUtils;
+import com.son.CapstoneProject.common.entity.*;
+import com.son.CapstoneProject.common.entity.adminChart.SystemChartInfo;
+import com.son.CapstoneProject.common.entity.adminChart.SystemChartParams;
+import com.son.CapstoneProject.common.entity.adminChart.UserChartInfo;
+import com.son.CapstoneProject.common.entity.login.AppUser;
+import com.son.CapstoneProject.common.entity.pagination.TagPagination;
+import com.son.CapstoneProject.common.entity.search.TagSearch;
 import com.son.CapstoneProject.controller.ControllerUtils;
 import com.son.CapstoneProject.controller.FileController;
-import com.son.CapstoneProject.entity.*;
-import com.son.CapstoneProject.entity.adminChart.SystemChartInfo;
-import com.son.CapstoneProject.entity.adminChart.SystemChartParams;
-import com.son.CapstoneProject.entity.adminChart.UserChartInfo;
-import com.son.CapstoneProject.entity.login.AppUser;
-import com.son.CapstoneProject.entity.pagination.ReportPagination;
-import com.son.CapstoneProject.entity.pagination.TagPagination;
-import com.son.CapstoneProject.entity.search.TagSearch;
+import com.son.CapstoneProject.common.entity.pagination.ReportPagination;
 import com.son.CapstoneProject.repository.*;
 import com.son.CapstoneProject.repository.loginRepository.AppUserRepository;
 import com.son.CapstoneProject.repository.searchRepository.HibernateSearchRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -36,9 +34,8 @@ import static com.son.CapstoneProject.common.ConstantValue.Role.USER;
 @RestController
 @RequestMapping("/admin")
 @CrossOrigin(origins = {"${front-end.settings.cross-origin.url}"})
+@Slf4j
 public class AdminController {
-
-    private static final Logger logger = LoggerFactory.getLogger(AdminController.class);
 
     @Autowired
     private ArticleRepository articleRepository;
@@ -95,14 +92,14 @@ public class AdminController {
         try {
             long numberOfReport = reportRepository.count();
             if (numberOfReport % REPORTS_PER_PAGE == 0) {
-                logger.info("numberOfReportPages : {}", numberOfReport / REPORTS_PER_PAGE);
+                log.info("numberOfReportPages : {}", numberOfReport / REPORTS_PER_PAGE);
                 return numberOfReport / REPORTS_PER_PAGE;
             } else {
-                logger.info("numberOfReportPages : {}", (numberOfReport / REPORTS_PER_PAGE) + 1);
+                log.info("numberOfReportPages : {}", (numberOfReport / REPORTS_PER_PAGE) + 1);
                 return (numberOfReport / REPORTS_PER_PAGE) + 1;
             }
         } catch (Exception e) {
-            logger.error("An error has occurred", e);
+            log.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
@@ -111,7 +108,7 @@ public class AdminController {
     @Transactional
     public ReportPagination viewReportsByPageIndex(@PathVariable int pageNumber) {
         try {
-            logger.info("pageNumber: {}", pageNumber);
+            log.info("pageNumber: {}", pageNumber);
             PageRequest pageNumWithElements = PageRequest.of(pageNumber, REPORTS_PER_PAGE, Sort.by("utilTimestamp"));
             Page<Report> reportPage = reportRepository.findAll(pageNumWithElements);
 
@@ -122,7 +119,7 @@ public class AdminController {
             reportPagination.setNumberOfContents(Integer.parseInt("" + reportRepository.count()));
             return reportPagination;
         } catch (Exception e) {
-            logger.error("An error has occurred", e);
+            log.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
@@ -135,7 +132,7 @@ public class AdminController {
             return reportRepository.findById(reportId)
                     .orElseThrow(() -> new Exception(methodName + ": cannot find any report with id: " + reportId));
         } catch (Exception e) {
-            logger.error("An error has occurred", e);
+            log.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
@@ -153,7 +150,7 @@ public class AdminController {
             map.put("deleted", "true");
             return map;
         } catch (Exception e) {
-            logger.error("An error has occurred", e);
+            log.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
@@ -177,7 +174,7 @@ public class AdminController {
 
             return tagPagination;
         } catch (Exception e) {
-            logger.error("An error has occurred", e);
+            log.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
@@ -231,7 +228,7 @@ public class AdminController {
 
             return finalAppUserTags;
         } catch (Exception e) {
-            logger.error("An error has occurred", e);
+            log.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
@@ -260,7 +257,7 @@ public class AdminController {
 
             return articleViewValue + questionViewValue;
         } catch (Exception e) {
-            logger.error("An error has occurred", e);
+            log.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
@@ -372,7 +369,7 @@ public class AdminController {
 
             return userChartInfoByDate;
         } catch (Exception e) {
-            logger.error("An error has occurred", e);
+            log.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
@@ -497,7 +494,7 @@ public class AdminController {
 
             return listSystemChartInfo;
         } catch (Exception e) {
-            logger.error("An error has occurred", e);
+            log.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
@@ -637,7 +634,7 @@ public class AdminController {
 
             return listSystemChartInfo;
         } catch (Exception e) {
-            logger.error("An error has occurred", e);
+            log.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
@@ -765,7 +762,7 @@ public class AdminController {
 
             return listSystemChartInfo;
         } catch (Exception e) {
-            logger.error("An error has occurred", e);
+            log.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
@@ -889,7 +886,7 @@ public class AdminController {
             map.put("deleted", "true");
             return map;
         } catch (Exception e) {
-            logger.error("An error has occurred", e);
+            log.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
@@ -973,7 +970,7 @@ public class AdminController {
             map.put("deleted", "true");
             return map;
         } catch (Exception e) {
-            logger.error("An error has occurred", e);
+            log.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
@@ -1026,7 +1023,7 @@ public class AdminController {
             map.put("deleted", "true");
             return map;
         } catch (Exception e) {
-            logger.error("An error has occurred", e);
+            log.error("An error has occurred", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }

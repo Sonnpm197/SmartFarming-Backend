@@ -1,17 +1,13 @@
 package com.son.CapstoneProject.repository;
 
-import com.son.CapstoneProject.entity.Question;
-import com.son.CapstoneProject.entity.Report;
-import com.son.CapstoneProject.entity.UserAndReportTime;
+import com.son.CapstoneProject.common.entity.Report;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.Date;
 import java.util.List;
 
 @Repository

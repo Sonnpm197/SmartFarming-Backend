@@ -1,15 +1,13 @@
 package com.son.CapstoneProject.controller.admin;
 
-import com.son.CapstoneProject.common.ConstantValue;
 import com.son.CapstoneProject.common.StringUtils;
+import com.son.CapstoneProject.common.entity.*;
+import com.son.CapstoneProject.common.entity.login.AppUser;
+import com.son.CapstoneProject.common.entity.pagination.ArticlePagination;
+import com.son.CapstoneProject.common.entity.search.ArticleSearch;
 import com.son.CapstoneProject.configuration.HttpRequestResponseUtils;
 import com.son.CapstoneProject.controller.ControllerUtils;
 import com.son.CapstoneProject.controller.FileController;
-import com.son.CapstoneProject.entity.*;
-import com.son.CapstoneProject.entity.login.AppUser;
-import com.son.CapstoneProject.entity.pagination.ArticlePagination;
-import com.son.CapstoneProject.entity.pagination.TagPagination;
-import com.son.CapstoneProject.entity.search.ArticleSearch;
 import com.son.CapstoneProject.repository.*;
 import com.son.CapstoneProject.repository.searchRepository.HibernateSearchRepository;
 import com.son.CapstoneProject.service.ViewCountingService;

@@ -1,16 +1,5 @@
 package com.son.CapstoneProject.repository.loginRepository;
 
-import com.son.CapstoneProject.entity.login.AppRole;
-import com.son.CapstoneProject.entity.login.AppUser;
-import com.son.CapstoneProject.entity.login.UserRole;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-import java.util.List;
-
 // // Since this will be executed on UI => comment this class
 
 //@Repository
