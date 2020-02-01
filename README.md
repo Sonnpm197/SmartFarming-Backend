@@ -14,7 +14,7 @@ For login we use GMail authentication on Angular.
 3. Database: MSSQL Server
 4. How to deploy:
 5. Checkout SmartFarming-Common at https://github.com/Sonnpm197/SmartFarming-Common.git (Here I specify all the entities) and run mvn clean install to add to local maven repository
-6. Checkout this project and change some properties in application.properties to fit your database
+6. Checkout https://github.com/Sonnpm197/SmartFarming-Backend.git and change your config to your own database at application.peoperties
 7. Checkout SmartFamring (UI - Angular) at https://github.com/Sonnpm197/SmartFarming.git and run ng s.
 
 # Update 1/2/2020:
