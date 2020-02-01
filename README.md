@@ -19,8 +19,6 @@ For login we use GMail authentication on Angular.
 
 # Update 1/2/2020:
 
-- I have deactivated my gg cloud storage due to the expiration of my account so if you want to try out this project you may need to create your own storage. More information can be found at https://cloud.google.com/storage 
-and then change your credential at this file SmartFarming-Backend :src\main\java\com\son\CapstoneProject\common\ConstantValue.java
+- I have deactivated my gg cloud storage due to the expiration of my account so if you want to try out this project you may need to create your own storage. More information can be found at https://cloud.google.com/storage and then change your credential at this file SmartFarming-Backend: src\main\java\com\son\CapstoneProject\common\ConstantValue.java
 
-- On UI, the CKEditor lib is expired on Angular so you should create a new one. More information can be found at https://dashboard.ckeditor.com/
-and then change your credential at this file SmartFarming (UI) src\app\qa-page\qa-page-post\qa-page-post.component.ts
+- On UI, the CKEditor lib is expired on Angular so you should create a new one. More information can be found at https://dashboard.ckeditor.com/ and then change your credential at this file SmartFarming (UI) src\app\qa-page\qa-page-post\qa-page-post.component.ts
