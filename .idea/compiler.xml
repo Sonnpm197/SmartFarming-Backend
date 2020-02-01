@@ -6,18 +6,20 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="service-registry" />
-        <module name="config-server" />
         <module name="CapstoneProject" />
-        <module name="ingredient-service" />
+        <module name="jwt-auth-service" />
         <module name="SmartFarming" />
-        <module name="config-server (1)" />
         <module name="Common" />
-        <module name="ingredient-client" />
-        <module name="greetings" />
+        <module name="jwt-security" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="config-server" target="1.8" />
+      <module name="config-server (1)" target="1.8" />
+      <module name="greetings" target="1.8" />
+      <module name="ingredient-client" target="1.8" />
+      <module name="ingredient-service" target="1.8" />
+      <module name="service-registry" target="1.8" />
       <module name="ServiceRegistry" target="1.8" />
     </bytecodeTargetLevel>
   </component>
@@ -31,6 +33,8 @@
       <module name="greetings" options="-parameters" />
       <module name="ingredient-client" options="-parameters" />
       <module name="ingredient-service" options="-parameters" />
+      <module name="jwt-auth-service" options="-parameters" />
+      <module name="jwt-security" options="-parameters" />
       <module name="service-registry" options="-parameters" />
     </option>
   </component>

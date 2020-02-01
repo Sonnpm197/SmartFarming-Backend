@@ -12,12 +12,8 @@
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/../Common/pom.xml" />
-        <option value="D:/IntelliJ Projects/spring-in-action-5-samples-master/spring-in-action-5-samples-master/ch13/service-registry/pom.xml" />
-        <option value="D:/IntelliJ Projects/spring-in-action-5-samples-master/spring-in-action-5-samples-master/ch13/ingredient-service/pom.xml" />
-        <option value="D:/IntelliJ Projects/spring-in-action-5-samples-master/spring-in-action-5-samples-master/ch13/ingredient-client/pom.xml" />
-        <option value="D:/IntelliJ Projects/spring-in-action-5-samples-master/spring-in-action-5-samples-master/ch14/config-server/pom.xml" />
-        <option value="D:/IntelliJ Projects/spring-in-action-5-samples-master/spring-in-action-5-samples-master/ch14/greetings/config-server/pom.xml" />
-        <option value="D:/IntelliJ Projects/spring-in-action-5-samples-master/spring-in-action-5-samples-master/ch14/greetings/greetings/pom.xml" />
+        <option value="$PROJECT_DIR$/../spring-boot-jwt/pom.xml" />
+        <option value="$PROJECT_DIR$/../jwt-security/pom.xml" />
       </list>
     </option>
   </component>
